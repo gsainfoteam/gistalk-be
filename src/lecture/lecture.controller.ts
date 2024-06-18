@@ -4,18 +4,24 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LectureService } from './lecture.service';
 import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
-import { RecordResDto } from './dto/res/recordRes.dto';
 import { SearchQueryDto } from './dto/req/searchReq.dto';
+import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 @ApiTags('lecture')
 @Controller('lecture')
 export class LectureController {
   constructor(private readonly lectureService: LectureService) {}
 
-  @ApiOperation({ summary: '강의 전체 조회' })
+  @ApiOperation({
+    summary: '강의 전체 조회',
+    description:
+      '모든 공지 조회, 만약 교수이름을 넣을 시에는 교수이름에 따른 공지 조회',
+  })
   @ApiResponse({ type: [ExpandedLectureResDto] })
   @Get()
-  async getAll(): Promise<ExpandedLectureResDto[]> {
-    return this.lectureService.getAll();
+  async getAll(
+    @Query() query: GetAllQueryDto,
+  ): Promise<ExpandedLectureResDto[]> {
+    return this.lectureService.getAll(query);
   }
 
   @ApiOperation({ summary: '각 강좌의 기본 정보 + 교수 정보 조회' })
@@ -38,19 +44,6 @@ export class LectureController {
     @Query() query: EvaluationQueryDto,
   ): Promise<EvaluationResDto> {
     return this.lectureService.getEvaluation(query);
-  }
-
-  @ApiOperation({
-    summary: '강좌별 강의 평가 조회',
-    description:
-      '강의 Id만 넣으면 전체의 평가를, 교수 Id도 같이 넣으면, 해당 교수의 평가를 조회합니다.',
-  })
-  @ApiResponse({ type: [RecordResDto] })
-  @Get('evaluation/record')
-  async getEvaluationDetail(
-    @Query() query: EvaluationQueryDto,
-  ): Promise<RecordResDto[]> {
-    return this.lectureService.getEvaluationDetail(query);
   }
 
   @ApiOperation({

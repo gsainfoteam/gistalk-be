@@ -10,13 +10,31 @@ import { EvaluationResDto } from './dto/res/evaluationRes.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Record } from '@prisma/client';
 import { SearchQueryDto } from './dto/req/searchReq.dto';
+import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 
 @Injectable()
 export class LectureRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getAll(): Promise<ExpandedLectureResDto[]> {
+  async getAll({
+    professorName,
+  }: GetAllQueryDto): Promise<ExpandedLectureResDto[]> {
     return this.prismaService.lecture.findMany({
+      where: {
+        ...(professorName
+          ? {
+              LectureProfessor: {
+                some: {
+                  professor: {
+                    name: {
+                      contains: professorName,
+                    },
+                  },
+                },
+              },
+            }
+          : {}),
+      },
       include: {
         LectureCode: true,
         LectureProfessor: {
