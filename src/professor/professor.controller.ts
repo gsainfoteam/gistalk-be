@@ -1,5 +1,5 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProfessorService } from './professor.service';
 import { LectureResDto } from './dto/res/lectureRes.dto';
 
@@ -9,6 +9,7 @@ export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
 
   @ApiOperation({ summary: '교수별 개설 강좌 조회 API' })
+  @ApiResponse({ type: [LectureResDto] })
   @Get(':id')
   async getProfessorInfo(
     @Param('id', new ParseIntPipe()) id: number,

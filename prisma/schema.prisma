@@ -89,9 +89,9 @@ model Record {
 
   userUuid         String           @db.Uuid
   user             User             @relation(fields: [userUuid], references: [uuid])
-  LectureId        Int
-  ProfessorId      Int
-  lectureProfessor LectureProfessor @relation(fields: [LectureId, ProfessorId], references: [lectureId, professorId])
+  lectureId        Int
+  professorId      Int
+  lectureProfessor LectureProfessor @relation(fields: [lectureId, professorId], references: [lectureId, professorId])
 
   @@map("record")
 }
