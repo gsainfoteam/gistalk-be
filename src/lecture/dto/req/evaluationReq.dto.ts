@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNumber } from 'class-validator';
+import { IsInt, IsNumber, IsOptional } from 'class-validator';
 
 export class EvaluationQueryDto {
   @ApiProperty({
@@ -16,5 +16,6 @@ export class EvaluationQueryDto {
   })
   @IsNumber()
   @IsInt()
-  professorId: number;
+  @IsOptional()
+  professorId?: number;
 }

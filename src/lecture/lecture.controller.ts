@@ -1,10 +1,11 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
 import { ExpandedLectureResDto } from './dto/res/lectureRes.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LectureService } from './lecture.service';
 import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
-
+import { RecordResDto } from './dto/res/recordRes.dto';
+import { SearchQueryDto } from './dto/req/searchReq.dto';
 @ApiTags('lecture')
 @Controller('lecture')
 export class LectureController {
@@ -17,12 +18,50 @@ export class LectureController {
     return this.lectureService.getAll();
   }
 
-  @ApiOperation({ summary: '강좌별 강의 평가 조회' })
+  @ApiOperation({ summary: '각 강좌의 기본 정보 + 교수 정보 조회' })
+  @ApiResponse({ type: ExpandedLectureResDto })
+  @Get(':id')
+  async getOne(
+    @Query('id', new ParseIntPipe()) id: number,
+  ): Promise<ExpandedLectureResDto> {
+    return this.lectureService.getOne(id);
+  }
+
+  @ApiOperation({
+    summary: '강좌별 강의 평균 점수 조회',
+    description:
+      '강의 Id만 넣으면 전체의 평균을, 교수 Id도 같이 넣으면, 해당 교수의 평균을 조회합니다.',
+  })
   @ApiResponse({ type: EvaluationResDto })
   @Get('evaluation')
   async getEvaluation(
     @Query() query: EvaluationQueryDto,
   ): Promise<EvaluationResDto> {
     return this.lectureService.getEvaluation(query);
+  }
+
+  @ApiOperation({
+    summary: '강좌별 강의 평가 조회',
+    description:
+      '강의 Id만 넣으면 전체의 평가를, 교수 Id도 같이 넣으면, 해당 교수의 평가를 조회합니다.',
+  })
+  @ApiResponse({ type: [RecordResDto] })
+  @Get('evaluation/record')
+  async getEvaluationDetail(
+    @Query() query: EvaluationQueryDto,
+  ): Promise<RecordResDto[]> {
+    return this.lectureService.getEvaluationDetail(query);
+  }
+
+  @ApiOperation({
+    summary: '강의 검색',
+    description: '강의 이름이나 코드로 검색합니다.',
+  })
+  @ApiResponse({ type: [ExpandedLectureResDto] })
+  @Get('search')
+  async search(
+    @Query() query: SearchQueryDto,
+  ): Promise<ExpandedLectureResDto[]> {
+    return this.lectureService.search(query);
   }
 }

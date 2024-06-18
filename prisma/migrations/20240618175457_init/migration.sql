@@ -23,9 +23,16 @@ CREATE TABLE "professor" (
 );
 
 -- CreateTable
+CREATE TABLE "LectureCode" (
+    "code" TEXT NOT NULL,
+    "lecture_id" INTEGER NOT NULL,
+
+    CONSTRAINT "LectureCode_pkey" PRIMARY KEY ("code")
+);
+
+-- CreateTable
 CREATE TABLE "lecture" (
     "id" SERIAL NOT NULL,
-    "lecture_code" TEXT[],
     "lecture_name" TEXT NOT NULL,
 
     CONSTRAINT "lecture_pkey" PRIMARY KEY ("id")
@@ -59,6 +66,9 @@ CREATE TABLE "record" (
 
     CONSTRAINT "record_pkey" PRIMARY KEY ("id")
 );
+
+-- AddForeignKey
+ALTER TABLE "LectureCode" ADD CONSTRAINT "LectureCode_lecture_id_fkey" FOREIGN KEY ("lecture_id") REFERENCES "lecture"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_lectureId_fkey" FOREIGN KEY ("lectureId") REFERENCES "lecture"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

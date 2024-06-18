@@ -1,8 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ExpandedLectureResDto } from './dto/res/lectureRes.dto';
 import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Record } from '@prisma/client';
+import { SearchQueryDto } from './dto/req/searchReq.dto';
 
 @Injectable()
 export class LectureRepository {
@@ -11,6 +18,7 @@ export class LectureRepository {
   async getAll(): Promise<ExpandedLectureResDto[]> {
     return this.prismaService.lecture.findMany({
       include: {
+        LectureCode: true,
         LectureProfessor: {
           include: {
             professor: true,
@@ -18,6 +26,34 @@ export class LectureRepository {
         },
       },
     });
+  }
+
+  async getOne(id: number): Promise<ExpandedLectureResDto> {
+    return this.prismaService.lecture
+      .findUniqueOrThrow({
+        where: {
+          id,
+        },
+        include: {
+          LectureCode: true,
+          LectureProfessor: {
+            include: {
+              professor: true,
+            },
+          },
+        },
+      })
+      .catch((err) => {
+        if (err instanceof PrismaClientKnownRequestError) {
+          if (err.code === 'P2025') {
+            throw new NotFoundException('Invalid ID');
+          }
+          throw new InternalServerErrorException(
+            'Unexpected Database Error Occurred',
+          );
+        }
+        throw new InternalServerErrorException('Unexpected Error Occurred');
+      });
   }
 
   async getEvaluation({
@@ -40,5 +76,45 @@ export class LectureRepository {
     });
 
     return evaluation._avg;
+  }
+
+  async getEvaluationDetail({
+    lectureId,
+    professorId,
+  }: EvaluationQueryDto): Promise<Record[]> {
+    return this.prismaService.record.findMany({
+      where: { lectureId, professorId },
+    });
+  }
+
+  async search({ keyword }: SearchQueryDto): Promise<ExpandedLectureResDto[]> {
+    return this.prismaService.lecture.findMany({
+      where: {
+        OR: [
+          {
+            lectureName: {
+              contains: keyword,
+            },
+          },
+          {
+            LectureCode: {
+              some: {
+                code: {
+                  contains: keyword,
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        LectureCode: true,
+        LectureProfessor: {
+          include: {
+            professor: true,
+          },
+        },
+      },
+    });
   }
 }

@@ -47,11 +47,19 @@ model Professor {
   @@map("professor")
 }
 
+model LectureCode {
+  code String @id
+
+  Lecture   Lecture @relation(fields: [lectureId], references: [id])
+  lectureId Int     @map("lecture_id")
+}
+
 model Lecture {
   id Int @id @default(autoincrement())
 
-  lectureCode      String[]           @map("lecture_code")
-  lectureName      String             @map("lecture_name")
+  lectureName String @map("lecture_name")
+
+  LectureCode      LectureCode[]
   LectureProfessor LectureProfessor[]
 
   @@map("lecture")

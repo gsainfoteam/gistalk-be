@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma, Professor } from '@prisma/client';
+import { LectureCode, Prisma, Professor } from '@prisma/client';
 
 class ProfessorResDto implements Professor {
   @ApiProperty({
@@ -42,10 +42,25 @@ class LectureProfessorResDto
   professor: ProfessorResDto;
 }
 
+class LectureCodeResDto implements LectureCode {
+  @ApiProperty({
+    example: 'A0001',
+    description: '강의 코드',
+  })
+  code: string;
+
+  @ApiProperty({
+    example: '1',
+    description: '강의 Id',
+  })
+  lectureId: number;
+}
+
 export class ExpandedLectureResDto
   implements
     Prisma.LectureGetPayload<{
       include: {
+        LectureCode: true;
         LectureProfessor: {
           include: {
             professor: true;
@@ -67,10 +82,10 @@ export class ExpandedLectureResDto
   id: number;
 
   @ApiProperty({
-    example: 'A0001',
     description: '강의 코드',
+    type: [LectureCodeResDto],
   })
-  lectureCode: string[];
+  LectureCode: LectureCodeResDto[];
 
   @ApiProperty({
     example: '운영체제',
