@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
-import { ProfessorController } from './professor/professor.controller';
 import { ProfessorModule } from './professor/professor.module';
 import { UserModule } from './user/user.module';
 
@@ -13,6 +12,6 @@ import { UserModule } from './user/user.module';
     ProfessorModule,
     UserModule,
   ],
-  controllers: [AppController, ProfessorController],
+  controllers: [AppController],
 })
 export class AppModule {}
