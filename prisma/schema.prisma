@@ -29,6 +29,8 @@ enum RECOMMENDATION {
 
 model User {
   uuid      String   @id @db.Uuid
+  name      String
+  consent   Boolean
   createdAt DateTime @default(now()) @map("created_at")
 
   Record Record[]

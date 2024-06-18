@@ -7,6 +7,8 @@ CREATE TYPE "RECOMMENDATION" AS ENUM ('YES', 'NO', 'MAYBE');
 -- CreateTable
 CREATE TABLE "user" (
     "uuid" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "consent" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("uuid")
