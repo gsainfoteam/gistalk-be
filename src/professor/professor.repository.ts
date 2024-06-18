@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Lecture } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -6,7 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProfessorRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findProfessorLecture(id: number) {
+  async findProfessorLecture(id: number): Promise<Lecture[]> {
     return this.prismaService.lecture
       .findMany({
         where: {

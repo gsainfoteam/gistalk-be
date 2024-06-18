@@ -48,7 +48,7 @@ model Professor {
 }
 
 model Lecture {
-  Id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   lectureCode      String[]           @map("lecture_code")
   lectureName      String             @map("lecture_name")
@@ -61,7 +61,7 @@ model LectureProfessor {
   id Int @id @default(autoincrement())
 
   lectureId   Int
-  lecture     Lecture   @relation(fields: [lectureId], references: [Id])
+  lecture     Lecture   @relation(fields: [lectureId], references: [id])
   professorId Int
   professor   Professor @relation(fields: [professorId], references: [id])
 

@@ -24,11 +24,11 @@ CREATE TABLE "professor" (
 
 -- CreateTable
 CREATE TABLE "lecture" (
-    "Id" SERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "lecture_code" TEXT[],
     "lecture_name" TEXT NOT NULL,
 
-    CONSTRAINT "lecture_pkey" PRIMARY KEY ("Id")
+    CONSTRAINT "lecture_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -61,7 +61,7 @@ CREATE TABLE "record" (
 );
 
 -- AddForeignKey
-ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_lectureId_fkey" FOREIGN KEY ("lectureId") REFERENCES "lecture"("Id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_lectureId_fkey" FOREIGN KEY ("lectureId") REFERENCES "lecture"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_professorId_fkey" FOREIGN KEY ("professorId") REFERENCES "professor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
