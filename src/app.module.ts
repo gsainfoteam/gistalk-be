@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { ProfessorModule } from './professor/professor.module';
 import { UserModule } from './user/user.module';
+import { LectureModule } from './lecture/lecture.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { UserModule } from './user/user.module';
     }),
     ProfessorModule,
     UserModule,
+    LectureModule,
   ],
   controllers: [AppController],
 })

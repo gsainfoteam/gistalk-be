@@ -33,11 +33,10 @@ CREATE TABLE "lecture" (
 
 -- CreateTable
 CREATE TABLE "lecture_professor" (
-    "id" SERIAL NOT NULL,
     "lectureId" INTEGER NOT NULL,
     "professorId" INTEGER NOT NULL,
 
-    CONSTRAINT "lecture_professor_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "lecture_professor_pkey" PRIMARY KEY ("lectureId","professorId")
 );
 
 -- CreateTable
@@ -55,7 +54,8 @@ CREATE TABLE "record" (
     "year" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userUuid" UUID NOT NULL,
-    "lectureProfessorId" INTEGER NOT NULL,
+    "LectureId" INTEGER NOT NULL,
+    "ProfessorId" INTEGER NOT NULL,
 
     CONSTRAINT "record_pkey" PRIMARY KEY ("id")
 );
@@ -70,4 +70,4 @@ ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_professorId_fk
 ALTER TABLE "record" ADD CONSTRAINT "record_userUuid_fkey" FOREIGN KEY ("userUuid") REFERENCES "user"("uuid") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "record" ADD CONSTRAINT "record_lectureProfessorId_fkey" FOREIGN KEY ("lectureProfessorId") REFERENCES "lecture_professor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "record" ADD CONSTRAINT "record_LectureId_ProfessorId_fkey" FOREIGN KEY ("LectureId", "ProfessorId") REFERENCES "lecture_professor"("lectureId", "professorId") ON DELETE RESTRICT ON UPDATE CASCADE;

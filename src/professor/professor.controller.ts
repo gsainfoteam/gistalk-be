@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProfessorService } from './professor.service';
-import { LectureResDto } from './dto/res/getProfessorInfoRes.dto';
+import { LectureResDto } from './dto/res/lectureRes.dto';
 
 @ApiTags('professor')
 @Controller('professor')

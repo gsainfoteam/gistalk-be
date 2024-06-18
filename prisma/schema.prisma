@@ -58,8 +58,6 @@ model Lecture {
 }
 
 model LectureProfessor {
-  id Int @id @default(autoincrement())
-
   lectureId   Int
   lecture     Lecture   @relation(fields: [lectureId], references: [id])
   professorId Int
@@ -67,6 +65,7 @@ model LectureProfessor {
 
   Record Record[]
 
+  @@id([lectureId, professorId])
   @@map("lecture_professor")
 }
 
@@ -88,10 +87,11 @@ model Record {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  userUuid           String           @db.Uuid
-  user               User             @relation(fields: [userUuid], references: [uuid])
-  lectureProfessorId Int
-  lectureProfessor   LectureProfessor @relation(fields: [lectureProfessorId], references: [id])
+  userUuid         String           @db.Uuid
+  user             User             @relation(fields: [userUuid], references: [uuid])
+  LectureId        Int
+  ProfessorId      Int
+  lectureProfessor LectureProfessor @relation(fields: [LectureId, ProfessorId], references: [lectureId, professorId])
 
   @@map("record")
 }
