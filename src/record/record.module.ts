@@ -3,9 +3,10 @@ import { RecordController } from './record.controller';
 import { RecordService } from './record.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { RecordRepository } from './record.repository';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, UserModule],
   controllers: [RecordController],
   providers: [RecordService, RecordRepository],
 })

@@ -2,7 +2,7 @@
 CREATE TYPE "Semester" AS ENUM ('SPRING', 'SUMMER', 'FALL', 'WINTER', 'ALL');
 
 -- CreateEnum
-CREATE TYPE "RECOMMENDATION" AS ENUM ('YES', 'NO', 'MAYBE');
+CREATE TYPE "Recommendation" AS ENUM ('YES', 'NO', 'MAYBE');
 
 -- CreateTable
 CREATE TABLE "user" (
@@ -56,7 +56,7 @@ CREATE TABLE "record" (
     "load" INTEGER NOT NULL,
     "generosity" INTEGER NOT NULL,
     "review" TEXT NOT NULL,
-    "recommendation" "RECOMMENDATION" NOT NULL,
+    "recommendation" "Recommendation" NOT NULL,
     "semester" "Semester" NOT NULL,
     "year" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

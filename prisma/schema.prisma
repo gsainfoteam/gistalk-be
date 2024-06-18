@@ -21,7 +21,7 @@ enum Semester {
   ALL
 }
 
-enum RECOMMENDATION {
+enum Recommendation {
   YES
   NO
   MAYBE
@@ -89,7 +89,7 @@ model Record {
 
   review String
 
-  recommendation RECOMMENDATION
+  recommendation Recommendation
   semester       Semester
   year           Int
 

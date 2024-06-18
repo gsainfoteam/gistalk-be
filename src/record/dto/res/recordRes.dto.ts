@@ -27,10 +27,10 @@ export class RecordResDto implements Record {
   review: string;
 
   @ApiProperty({
-    enum: $Enums.RECOMMENDATION,
-    enumName: 'RECOMMENDATION',
+    enum: $Enums.Recommendation,
+    enumName: 'Recommendation',
   })
-  recommendation: $Enums.RECOMMENDATION;
+  recommendation: $Enums.Recommendation;
 
   @ApiProperty({
     enum: $Enums.Semester,

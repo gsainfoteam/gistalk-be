@@ -1,4 +1,11 @@
-import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  ParseIntPipe,
+  Query,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ExpandedLectureResDto } from './dto/res/lectureRes.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LectureService } from './lecture.service';
@@ -7,6 +14,7 @@ import { EvaluationResDto } from './dto/res/evaluationRes.dto';
 import { SearchQueryDto } from './dto/req/searchReq.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 @ApiTags('lecture')
+@UsePipes(ValidationPipe)
 @Controller('lecture')
 export class LectureController {
   constructor(private readonly lectureService: LectureService) {}

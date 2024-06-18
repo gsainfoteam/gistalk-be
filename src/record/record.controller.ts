@@ -1,9 +1,25 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { RecordService } from './record.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RecordResDto } from './dto/res/recordRes.dto';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
+import { IdPGuard } from 'src/user/guard/idp.guard';
+import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
+import { GetUser } from 'src/user/decorator/get-user.decorator';
+import { User } from '@prisma/client';
+import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
 
+@ApiTags('record')
 @Controller('record')
 export class RecordController {
   constructor(private readonly recordService: RecordService) {}
@@ -19,5 +35,34 @@ export class RecordController {
     @Query() query: GetAllRecordQueryDto,
   ): Promise<RecordResDto[]> {
     return this.recordService.getRecordList(query);
+  }
+
+  @ApiOperation({
+    summary: '강의평 생성',
+    description: '강의평을 생성합니다.',
+  })
+  @ApiResponse({ type: RecordResDto })
+  @UseGuards(IdPGuard)
+  @Post()
+  async createRecord(
+    @Body() body: CreateRecordBodyDto,
+    @GetUser() user: User,
+  ): Promise<RecordResDto> {
+    return this.recordService.createRecord(body, user);
+  }
+
+  @ApiOperation({
+    summary: '강의평 수정',
+    description: '강의평을 수정합니다.',
+  })
+  @ApiResponse({ type: RecordResDto })
+  @UseGuards(IdPGuard)
+  @Patch(':id')
+  async updateRecord(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Body() body: UpdateRecordBodyDto,
+    @GetUser() user: User,
+  ): Promise<RecordResDto> {
+    return this.recordService.updateRecord(body, id, user);
   }
 }
