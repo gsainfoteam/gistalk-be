@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Semester {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+  ALL
+}
+
+enum RECOMMENDATION {
+  YES
+  NO
+  MAYBE
+}
+
+model User {
+  uuid      String   @id @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  Record Record[]
+
+  @@map("user")
+}
+
+model Professor {
+  id Int @id @default(autoincrement())
+
+  name             String
+  LectureProfessor LectureProfessor[]
+
+  @@map("professor")
+}
+
+model Lecture {
+  Id Int @id @default(autoincrement())
+
+  lectureCode      String[]           @map("lecture_code")
+  lectureName      String             @map("lecture_name")
+  LectureProfessor LectureProfessor[]
+
+  @@map("lecture")
+}
+
+model LectureProfessor {
+  id Int @id @default(autoincrement())
+
+  lectureId   Int
+  lecture     Lecture   @relation(fields: [lectureId], references: [Id])
+  professorId Int
+  professor   Professor @relation(fields: [professorId], references: [id])
+
+  Record Record[]
+
+  @@map("lecture_professor")
+}
+
+model Record {
+  id Int @id @default(autoincrement())
+
+  difficulty  Int
+  skill       Int
+  helpfulness Int
+  interest    Int
+  load        Int
+  generosity  Int
+
+  review String
+
+  recommendation RECOMMENDATION
+  semester       Semester
+  year           Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  userUuid           String           @db.Uuid
+  user               User             @relation(fields: [userUuid], references: [uuid])
+  lectureProfessorId Int
+  lectureProfessor   LectureProfessor @relation(fields: [lectureProfessorId], references: [id])
+
+  @@map("record")
+}
