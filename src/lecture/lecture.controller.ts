@@ -14,7 +14,7 @@ import { EvaluationResDto } from './dto/res/evaluationRes.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 @ApiTags('lecture')
-@UsePipes(ValidationPipe)
+@UsePipes(new ValidationPipe({ transform: true }))
 @Controller('lecture')
 export class LectureController {
   constructor(private readonly lectureService: LectureService) {}

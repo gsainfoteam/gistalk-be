@@ -8,6 +8,8 @@ import {
   Post,
   Query,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { ApiOAuth2, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -21,6 +23,7 @@ import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
 
 @ApiTags('record')
 @Controller('record')
+@UsePipes(new ValidationPipe({ transform: true }))
 export class RecordController {
   constructor(private readonly recordService: RecordService) {}
 

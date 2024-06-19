@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 import { SearchEnum, SearchType } from 'src/record/types/search.type';
 import { PagenationQueryDto } from './pagenationQuery.dto';
+import { Transform } from 'class-transformer';
 
 export class GetAllRecordQueryDto extends PagenationQueryDto {
   @ApiProperty({
@@ -17,6 +18,13 @@ export class GetAllRecordQueryDto extends PagenationQueryDto {
     example: 1,
     required: false,
   })
+  @Transform(({ value }) => {
+    try {
+      return parseInt(value);
+    } catch {
+      return value;
+    }
+  })
   @IsNumber()
   @IsInt()
   @IsOptional()
@@ -26,6 +34,13 @@ export class GetAllRecordQueryDto extends PagenationQueryDto {
     description: 'Professor id',
     example: 1,
     required: false,
+  })
+  @Transform(({ value }) => {
+    try {
+      return parseInt(value);
+    } catch {
+      return value;
+    }
   })
   @IsNumber()
   @IsInt()
