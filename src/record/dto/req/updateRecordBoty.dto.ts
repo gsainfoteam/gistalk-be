@@ -6,6 +6,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '강의의 난이도',
     example: 3,
+    required: false,
   })
   @IsNumber()
   @IsInt()
@@ -15,6 +16,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '강의력',
     example: 3,
+    required: false,
   })
   @IsNumber()
   @IsInt()
@@ -24,6 +26,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '유익함',
     example: 3,
+    required: false,
   })
   @IsNumber()
   @IsInt()
@@ -33,6 +36,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '흥미도',
     example: 3,
+    required: false,
   })
   @IsNumber()
   @IsInt()
@@ -42,6 +46,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '과제량',
     example: 3,
+    required: false,
   })
   @IsNumber()
   @IsInt()
@@ -51,6 +56,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '성적기준의 엄격함',
     example: 3,
+    required: false,
   })
   @IsNumber()
   @IsInt()
@@ -60,6 +66,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '강의평',
     example: '좋아요',
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -68,6 +75,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '추천여부',
     enumName: 'Recommendation',
+    required: false,
   })
   @IsString()
   @IsEnum(Recommendation)
@@ -77,6 +85,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '학기',
     enumName: 'Semester',
+    required: false,
   })
   @IsString()
   @IsEnum(Semester)
@@ -86,6 +95,7 @@ export class UpdateRecordBodyDto {
   @ApiProperty({
     description: '년도',
     example: 2021,
+    required: false,
   })
   @IsNumber()
   @IsInt()

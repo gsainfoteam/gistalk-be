@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RecordService } from './record.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOAuth2, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RecordResDto } from './dto/res/recordRes.dto';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
 import { IdPGuard } from 'src/user/guard/idp.guard';
@@ -41,6 +41,7 @@ export class RecordController {
     summary: '강의평 생성',
     description: '강의평을 생성합니다.',
   })
+  @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
   @ApiResponse({ type: RecordResDto })
   @UseGuards(IdPGuard)
   @Post()
@@ -55,6 +56,7 @@ export class RecordController {
     summary: '강의평 수정',
     description: '강의평을 수정합니다.',
   })
+  @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
   @ApiResponse({ type: RecordResDto })
   @UseGuards(IdPGuard)
   @Patch(':id')

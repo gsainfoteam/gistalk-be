@@ -15,6 +15,7 @@ export class GetAllRecordQueryDto extends PagenationQueryDto {
   @ApiProperty({
     description: 'Lecture id',
     example: 1,
+    required: false,
   })
   @IsNumber()
   @IsInt()
@@ -24,6 +25,7 @@ export class GetAllRecordQueryDto extends PagenationQueryDto {
   @ApiProperty({
     description: 'Professor id',
     example: 1,
+    required: false,
   })
   @IsNumber()
   @IsInt()
