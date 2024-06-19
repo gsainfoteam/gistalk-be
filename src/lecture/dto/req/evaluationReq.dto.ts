@@ -13,6 +13,7 @@ export class EvaluationQueryDto {
   @ApiProperty({
     example: 1,
     description: '교수 Id',
+    required: false,
   })
   @IsNumber()
   @IsInt()
