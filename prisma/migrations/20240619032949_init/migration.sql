@@ -23,11 +23,11 @@ CREATE TABLE "professor" (
 );
 
 -- CreateTable
-CREATE TABLE "LectureCode" (
+CREATE TABLE "lecture_code" (
     "code" TEXT NOT NULL,
     "lecture_id" INTEGER NOT NULL,
 
-    CONSTRAINT "LectureCode_pkey" PRIMARY KEY ("code")
+    CONSTRAINT "lecture_code_pkey" PRIMARY KEY ("code")
 );
 
 -- CreateTable
@@ -40,10 +40,10 @@ CREATE TABLE "lecture" (
 
 -- CreateTable
 CREATE TABLE "lecture_professor" (
-    "lectureId" INTEGER NOT NULL,
-    "professorId" INTEGER NOT NULL,
+    "lecture_id" INTEGER NOT NULL,
+    "professor_id" INTEGER NOT NULL,
 
-    CONSTRAINT "lecture_professor_pkey" PRIMARY KEY ("lectureId","professorId")
+    CONSTRAINT "lecture_professor_pkey" PRIMARY KEY ("lecture_id","professor_id")
 );
 
 -- CreateTable
@@ -60,24 +60,24 @@ CREATE TABLE "record" (
     "semester" "Semester" NOT NULL,
     "year" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userUuid" UUID NOT NULL,
-    "lectureId" INTEGER NOT NULL,
-    "professorId" INTEGER NOT NULL,
+    "user_uuid" UUID NOT NULL,
+    "lecture_id" INTEGER NOT NULL,
+    "professor_id" INTEGER NOT NULL,
 
     CONSTRAINT "record_pkey" PRIMARY KEY ("id")
 );
 
 -- AddForeignKey
-ALTER TABLE "LectureCode" ADD CONSTRAINT "LectureCode_lecture_id_fkey" FOREIGN KEY ("lecture_id") REFERENCES "lecture"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "lecture_code" ADD CONSTRAINT "lecture_code_lecture_id_fkey" FOREIGN KEY ("lecture_id") REFERENCES "lecture"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_lectureId_fkey" FOREIGN KEY ("lectureId") REFERENCES "lecture"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_lecture_id_fkey" FOREIGN KEY ("lecture_id") REFERENCES "lecture"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_professorId_fkey" FOREIGN KEY ("professorId") REFERENCES "professor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "lecture_professor" ADD CONSTRAINT "lecture_professor_professor_id_fkey" FOREIGN KEY ("professor_id") REFERENCES "professor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "record" ADD CONSTRAINT "record_userUuid_fkey" FOREIGN KEY ("userUuid") REFERENCES "user"("uuid") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "record" ADD CONSTRAINT "record_user_uuid_fkey" FOREIGN KEY ("user_uuid") REFERENCES "user"("uuid") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "record" ADD CONSTRAINT "record_lectureId_professorId_fkey" FOREIGN KEY ("lectureId", "professorId") REFERENCES "lecture_professor"("lectureId", "professorId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "record" ADD CONSTRAINT "record_lecture_id_professor_id_fkey" FOREIGN KEY ("lecture_id", "professor_id") REFERENCES "lecture_professor"("lecture_id", "professor_id") ON DELETE RESTRICT ON UPDATE CASCADE;
