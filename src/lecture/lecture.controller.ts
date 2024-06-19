@@ -44,15 +44,6 @@ export class LectureController {
     return this.lectureService.search(query);
   }
 
-  @ApiOperation({ summary: '각 강좌의 기본 정보 + 교수 정보 조회' })
-  @ApiResponse({ type: ExpandedLectureResDto })
-  @Get(':id')
-  async getOne(
-    @Query('id', new ParseIntPipe()) id: number,
-  ): Promise<ExpandedLectureResDto> {
-    return this.lectureService.getOne(id);
-  }
-
   @ApiOperation({
     summary: '강좌별 강의 평균 점수 조회',
     description:
@@ -64,5 +55,14 @@ export class LectureController {
     @Query() query: EvaluationQueryDto,
   ): Promise<EvaluationResDto> {
     return this.lectureService.getEvaluation(query);
+  }
+
+  @ApiOperation({ summary: '각 강좌의 기본 정보 + 교수 정보 조회' })
+  @ApiResponse({ type: ExpandedLectureResDto })
+  @Get(':id')
+  async getOne(
+    @Query('id', new ParseIntPipe()) id: number,
+  ): Promise<ExpandedLectureResDto> {
+    return this.lectureService.getOne(id);
   }
 }
