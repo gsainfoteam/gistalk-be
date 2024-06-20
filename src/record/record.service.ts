@@ -16,8 +16,8 @@ export class RecordService {
     if (query.type === 'recent') {
       return this.recordRepository.getRecentRecord(query);
     }
-    if (!query.professorId || !query.lectureId) {
-      throw new BadRequestException('need professorId and lectureId');
+    if (!query.lectureId) {
+      throw new BadRequestException('need lectureId');
     }
     return this.recordRepository.getRecordByLectureProfessor(query);
   }
