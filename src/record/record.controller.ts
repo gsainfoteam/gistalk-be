@@ -20,6 +20,7 @@ import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from '@prisma/client';
 import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
+import { ExpandedRecordResDto } from './dto/res/expandedRes.dto';
 
 @ApiTags('record')
 @Controller('record')
@@ -36,7 +37,7 @@ export class RecordController {
   @Get()
   async getRecordList(
     @Query() query: GetAllRecordQueryDto,
-  ): Promise<RecordResDto[]> {
+  ): Promise<ExpandedRecordResDto[]> {
     return this.recordService.getRecordList(query);
   }
 

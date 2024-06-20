@@ -5,6 +5,7 @@ import { PagenationQueryDto } from './dto/req/pagenationQuery.dto';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
 import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
+import { ExpandedRecordType } from './types/ExpandedRecord.type';
 
 @Injectable()
 export class RecordRepository {
@@ -13,12 +14,20 @@ export class RecordRepository {
   async getRecentRecord({
     take,
     offset,
-  }: PagenationQueryDto): Promise<Record[]> {
+  }: PagenationQueryDto): Promise<ExpandedRecordType[]> {
     return this.prismaService.record.findMany({
       skip: offset,
       take,
       orderBy: {
         createdAt: 'desc',
+      },
+      include: {
+        lectureProfessor: {
+          include: {
+            lecture: true,
+            professor: true,
+          },
+        },
       },
     });
   }
@@ -28,7 +37,7 @@ export class RecordRepository {
     professorId,
     take,
     offset,
-  }: Omit<GetAllRecordQueryDto, 'type'>): Promise<Record[]> {
+  }: Omit<GetAllRecordQueryDto, 'type'>): Promise<ExpandedRecordType[]> {
     return this.prismaService.record.findMany({
       where: {
         lectureId,
@@ -38,6 +47,14 @@ export class RecordRepository {
       take,
       orderBy: {
         createdAt: 'desc',
+      },
+      include: {
+        lectureProfessor: {
+          include: {
+            lecture: true,
+            professor: true,
+          },
+        },
       },
     });
   }

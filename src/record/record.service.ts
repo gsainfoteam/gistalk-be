@@ -4,12 +4,15 @@ import { Record, User } from '@prisma/client';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
 import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
+import { ExpandedRecordType } from './types/ExpandedRecord.type';
 
 @Injectable()
 export class RecordService {
   constructor(private readonly recordRepository: RecordRepository) {}
 
-  async getRecordList(query: GetAllRecordQueryDto): Promise<Record[]> {
+  async getRecordList(
+    query: GetAllRecordQueryDto,
+  ): Promise<ExpandedRecordType[]> {
     if (query.type === 'recent') {
       return this.recordRepository.getRecentRecord(query);
     }
