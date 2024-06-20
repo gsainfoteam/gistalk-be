@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Param,
   ParseIntPipe,
   Query,
   UsePipes,
@@ -61,7 +62,7 @@ export class LectureController {
   @ApiResponse({ type: ExpandedLectureResDto })
   @Get(':id')
   async getOne(
-    @Query('id', new ParseIntPipe()) id: number,
+    @Param('id', new ParseIntPipe()) id: number,
   ): Promise<ExpandedLectureResDto> {
     return this.lectureService.getOne(id);
   }
