@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Recommendation, Semester } from '@prisma/client';
-import { IsEnum, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class UpdateRecordBodyDto {
   @ApiProperty({
@@ -10,6 +18,8 @@ export class UpdateRecordBodyDto {
   })
   @IsNumber()
   @IsInt()
+  @Max(5)
+  @Min(1)
   @IsOptional()
   difficulty?: number;
 
@@ -20,6 +30,8 @@ export class UpdateRecordBodyDto {
   })
   @IsNumber()
   @IsInt()
+  @Max(5)
+  @Min(1)
   @IsOptional()
   skill?: number;
 
@@ -30,6 +42,8 @@ export class UpdateRecordBodyDto {
   })
   @IsNumber()
   @IsInt()
+  @Max(5)
+  @Min(1)
   @IsOptional()
   helpfulness?: number;
 
@@ -40,6 +54,8 @@ export class UpdateRecordBodyDto {
   })
   @IsNumber()
   @IsInt()
+  @Max(5)
+  @Min(1)
   @IsOptional()
   interest?: number;
 
@@ -50,6 +66,8 @@ export class UpdateRecordBodyDto {
   })
   @IsNumber()
   @IsInt()
+  @Max(5)
+  @Min(1)
   @IsOptional()
   load?: number;
 
@@ -60,6 +78,8 @@ export class UpdateRecordBodyDto {
   })
   @IsNumber()
   @IsInt()
+  @Max(5)
+  @Min(1)
   @IsOptional()
   generosity?: number;
 
