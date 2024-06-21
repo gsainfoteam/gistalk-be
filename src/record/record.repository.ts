@@ -32,6 +32,30 @@ export class RecordRepository {
     });
   }
 
+  async getRecordByUser(
+    { take, offset }: PagenationQueryDto,
+    userUuid: string,
+  ): Promise<ExpandedRecordType[]> {
+    return this.prismaService.record.findMany({
+      skip: offset,
+      take,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      where: {
+        userUuid,
+      },
+      include: {
+        lectureProfessor: {
+          include: {
+            lecture: true,
+            professor: true,
+          },
+        },
+      },
+    });
+  }
+
   async getRecordByLectureProfessor({
     lectureId,
     professorId,

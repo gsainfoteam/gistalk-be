@@ -12,9 +12,16 @@ export class RecordService {
 
   async getRecordList(
     query: GetAllRecordQueryDto,
+    user?: User,
   ): Promise<ExpandedRecordType[]> {
     if (query.type === 'recent') {
       return this.recordRepository.getRecentRecord(query);
+    }
+    if (query.type === 'user') {
+      if (!user || !user.uuid) {
+        throw new BadRequestException('need login');
+      }
+      return this.recordRepository.getRecordByUser(query, user.uuid);
     }
     if (!query.lectureId) {
       throw new BadRequestException('need lectureId');

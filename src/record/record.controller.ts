@@ -15,7 +15,7 @@ import { RecordService } from './record.service';
 import { ApiOAuth2, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RecordResDto } from './dto/res/recordRes.dto';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
-import { IdPGuard } from 'src/user/guard/idp.guard';
+import { IdPGuard, IdPOptionalGuard } from 'src/user/guard/idp.guard';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from '@prisma/client';
@@ -34,11 +34,13 @@ export class RecordController {
       'type이 recent면 최근 강의평을, type이 evaluation이면, professorId와 lectureId가 있으면 해당 강의평을 조회합니다.',
   })
   @ApiResponse({ type: [RecordResDto] })
+  @UseGuards(IdPOptionalGuard)
   @Get()
   async getRecordList(
     @Query() query: GetAllRecordQueryDto,
+    @GetUser() user?: User,
   ): Promise<ExpandedRecordResDto[]> {
-    return this.recordService.getRecordList(query);
+    return this.recordService.getRecordList(query, user);
   }
 
   @ApiOperation({
