@@ -31,8 +31,9 @@ export class RecordController {
   @ApiOperation({
     summary: '강의평 조회',
     description:
-      'type이 recent면 최근 강의평을, type이 evaluation이면, professorId와 lectureId가 있으면 해당 강의평을 조회합니다.',
+      'type이 recent면 최근 강의평을, type이 evaluation이면, professorId와 lectureId가 있으면 해당 강의평을 조회합니다. type이 user이면 유저의 강의평을 조회합니다.',
   })
+  @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
   @ApiResponse({ type: [RecordResDto] })
   @UseGuards(IdPOptionalGuard)
   @Get()
