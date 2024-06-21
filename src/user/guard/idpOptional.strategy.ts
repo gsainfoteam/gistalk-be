@@ -19,14 +19,14 @@ export class IdPOptionalStrategy extends PassportStrategy(
   }
 
   async validate(token: string): Promise<{
-    ziggle: User;
+    gistalk: User;
     idp: UserInfo;
   } | void> {
     const idp = await this.idpService.getUserInfo(token).catch(() => {
       return undefined;
     });
     if (!idp) return undefined;
-    const ziggle = await this.userService
+    const gistalk = await this.userService
       .findUserOrCreate({
         uuid: idp.uuid,
         name: idp.name,
@@ -34,7 +34,7 @@ export class IdPOptionalStrategy extends PassportStrategy(
       .catch(() => {
         undefined;
       });
-    if (!ziggle) return undefined;
-    return { ziggle, idp };
+    if (!gistalk) return undefined;
+    return { gistalk, idp };
   }
 }
