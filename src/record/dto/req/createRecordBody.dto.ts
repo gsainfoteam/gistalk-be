@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Recommendation, Semester } from '@prisma/client';
-import { IsEnum, IsInt, IsNumber, IsString, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNumber,
+  IsString,
+  Length,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateRecordBodyDto {
   @ApiProperty({
@@ -68,6 +76,7 @@ export class CreateRecordBodyDto {
     example: '좋아요',
   })
   @IsString()
+  @Length(15, 32767)
   review: string;
 
   @ApiProperty({

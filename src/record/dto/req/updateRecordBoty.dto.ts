@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Length,
   Max,
   Min,
 } from 'class-validator';
@@ -90,6 +91,7 @@ export class UpdateRecordBodyDto {
   })
   @IsString()
   @IsOptional()
+  @Length(15, 32767)
   review?: string;
 
   @ApiProperty({
