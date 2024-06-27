@@ -1,6 +1,8 @@
+#Gistalk-Backend
+
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Backend repository for an application: Gistalk. 
 
 ## Installation
 
