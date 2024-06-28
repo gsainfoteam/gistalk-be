@@ -2,7 +2,7 @@ Project Gistalk {
   database_type: 'PostgreSQL'
   Note: '''
     # Gistalk
-    A database for storing Gistalk project.
+    A database for storing the Gistalk project.
   '''
 }
 
