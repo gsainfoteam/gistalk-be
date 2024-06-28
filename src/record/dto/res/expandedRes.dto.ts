@@ -7,7 +7,7 @@ class LectureResDto implements Lecture {
   id: number;
 
   @ApiProperty()
-  lectureName: string;
+  name: string;
 }
 
 class ProfessorResDto implements Professor {

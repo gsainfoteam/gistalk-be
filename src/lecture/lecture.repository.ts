@@ -112,7 +112,7 @@ export class LectureRepository {
       where: {
         OR: [
           {
-            lectureName: {
+            name: {
               contains: keyword,
             },
           },

@@ -91,5 +91,5 @@ export class ExpandedLectureResDto
     example: '운영체제',
     description: '강의 이름',
   })
-  lectureName: string;
+  name: string;
 }
