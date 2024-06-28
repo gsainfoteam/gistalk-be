@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // get configurations from .env
   const configService = app.get(ConfigService);
   // set CORS config
   const whitelist = [
