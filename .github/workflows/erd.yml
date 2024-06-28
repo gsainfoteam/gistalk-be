@@ -24,4 +24,4 @@ jobs:
       - name: Build and Update ERD
         run: dbdocs build ./erd/database.dbml
         env:
-          GITHUB_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
+          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
