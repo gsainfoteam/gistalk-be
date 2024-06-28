@@ -2,7 +2,8 @@ Project Gistalk {
   database_type: 'PostgreSQL'
   Note: '''
     # Gistalk
-    A database for storing the Gistalk project.
+    A database for storing the Gistalk project. 
+    (GitHub)[https://github.com/gsainfoteam/gistalk-be]
   '''
 }
 
