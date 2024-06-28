@@ -59,7 +59,7 @@ model LectureCode {
 model Lecture {
   id Int @id @default(autoincrement())
 
-  lectureName String @map("lecture_name")
+  name String @map("name")
 
   LectureCode      LectureCode[]
   LectureProfessor LectureProfessor[]

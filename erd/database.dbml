@@ -1,0 +1,76 @@
+Project Gistalk {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Gistalk
+    A database for storing Gistalk project.
+  '''
+}
+
+Enum Semester {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+  ALL
+}
+
+Enum Recommendation {
+  YES
+  NO
+  MAYBE
+}
+
+Table User {
+  uuid uuid [pk]
+  name varchar
+  consent boolean
+  created_at datetime
+}
+
+Table Professor {
+  id int [pk, increment]
+  name varchar
+}
+
+Table LectureCode {
+  code varchar [pk]
+
+  lecture_id int [ref: > Lecture.id]
+}
+
+Table Lecture {
+  id int [pk, increment]
+  name varchar 
+}
+
+Table LectureProfessor {
+  lecture_id int [ref: > Lecture.id]
+  professor_id int [ref: > Professor.id]
+
+  Indexes {
+    (lecture_id, professor_id) [pk]
+  }
+}
+
+Table Record {
+  id int [pk, increment]
+
+  difficulty int
+  skill int
+  helpfulness int
+  interest int
+  load int
+  generosity int
+
+  review varchar
+
+  recommendation Recommendation
+  semester Semester
+  year int
+
+  created_at datetime
+
+  user_uuid uuid [ref: > User.uuid]
+  lecture_id int [ref: > Lecture.id]
+  professor_id int [ref: > Professor.id]
+}
