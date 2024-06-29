@@ -35,6 +35,8 @@ model User {
 
   Record Record[]
 
+  likedRecordID Int[] 
+
   @@map("user")
 }
 
@@ -94,6 +96,8 @@ model Record {
   recommendation Recommendation
   semester       Semester
   year           Int
+
+  like Int
 
   createdAt DateTime @default(now()) @map("created_at")
 
