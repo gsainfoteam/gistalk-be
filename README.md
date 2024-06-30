@@ -7,10 +7,12 @@ Backend repository for Gistalk project.
 ## Deployments
 
 ### production
-https://api.gistalk.gistory.me
+
+<https://api.gistalk.gistory.me>
 
 ### staging
-https://api.stg.gistalk.gistory.me
+
+<https://api.stg.gistalk.gistory.me>
 
 ## Database Diagram
 
@@ -20,7 +22,17 @@ It is available [here](https://dbdocs.io/INFOTEAM%20GIST/Gistalk)
 ## Installation
 
 ```bash
+# install all package
 $ npm install
+```
+
+## Setting prisma client
+
+Since this application uses the prisma client, to run this application, prisma client must be generated before running application.
+
+```bash
+# generate prisma client
+$ npx prisma generate
 ```
 
 ## Running the app
