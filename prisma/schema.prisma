@@ -28,21 +28,32 @@ enum Recommendation {
 }
 
 model User {
-  uuid      String   @id @db.Uuid
-  name      String
-  consent   Boolean
-  createdAt DateTime @default(now()) @map("created_at")
+  uuid          String   @id @db.Uuid
+  studentNumber Int      @map("student_number")
+  name          String
+  consent       Boolean
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  Record Record[]
+  Record         Record[]
+  WriteRecord    WriteRecord[]
+  TakingLectures TakingLectures[]
 
   @@map("user")
 }
 
-model Professor {
-  id Int @id @default(autoincrement())
+model TakingLectures {
+  userUuid  String  @id @map("user_uuid")
+  user      User    @relation(fields: [userUuid], references: [uuid])
+  lecture   Lecture @relation(fields: [lectureId], references: [id])
+  lectureId Int     @map("lecture_id")
+}
 
+model Professor {
+  id               Int               @id @default(autoincrement()) @map("professor_id")
   name             String
-  LectureProfessor LectureProfessor[]
+  LectureProfessor LectureProfessor?
+
+  record Record?
 
   @@map("professor")
 }
@@ -57,12 +68,15 @@ model LectureCode {
 }
 
 model Lecture {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @map("lecture_id")
 
-  name String @map("name")
+  name String
 
+  record           Record[]
   LectureCode      LectureCode[]
+  TakingLectures   TakingLectures[]
   LectureProfessor LectureProfessor[]
+  WriteReocrd      WriteRecord[]
 
   @@map("lecture")
 }
@@ -70,13 +84,23 @@ model Lecture {
 model LectureProfessor {
   lectureId   Int       @map("lecture_id")
   lecture     Lecture   @relation(fields: [lectureId], references: [id])
-  professorId Int       @map("professor_id")
+  professorId Int       @unique @map("professor_id")
   professor   Professor @relation(fields: [professorId], references: [id])
-
-  Record Record[]
 
   @@id([lectureId, professorId])
   @@map("lecture_professor")
+}
+
+model WriteRecord {
+  userUuid  String  @map("user_uuid")
+  user      User    @relation(fields: [userUuid], references: [uuid])
+  recordId  Int     @map("record_id")
+  record    Record  @relation(fields: [recordId], references: [id])
+  lectureId Int     @map("lecture_id")
+  lecture   Lecture @relation(fields: [lectureId], references: [id])
+
+  @@id([userUuid, recordId])
+  @@map("write_record")
 }
 
 model Record {
@@ -95,13 +119,18 @@ model Record {
   semester       Semester
   year           Int
 
+  like Int
+
   createdAt DateTime @default(now()) @map("created_at")
 
-  userUuid         String           @map("user_uuid") @db.Uuid
-  user             User             @relation(fields: [userUuid], references: [uuid])
-  lectureId        Int              @map("lecture_id")
-  professorId      Int              @map("professor_id")
-  lectureProfessor LectureProfessor @relation(fields: [lectureId, professorId], references: [lectureId, professorId])
+  userUuid    String    @map("user_uuid") @db.Uuid
+  user        User      @relation(fields: [userUuid], references: [uuid])
+  lectureId   Int       @unique @map("lecture_id")
+  lecture     Lecture   @relation(fields: [lectureId], references: [id])
+  professorId Int       @unique @map("professor_id")
+  professor   Professor @relation(fields: [professorId], references: [id])
+
+  WriteRecord WriteRecord[]
 
   @@map("record")
 }
