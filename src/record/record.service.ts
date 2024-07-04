@@ -50,7 +50,6 @@ export class RecordService {
       recordId,
       user.uuid,
     );
-    console.log(userRecordLike);
 
     if (userRecordLike !== null) {
       throw new ConflictException('user already liked record');
