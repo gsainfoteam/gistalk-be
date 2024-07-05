@@ -119,8 +119,6 @@ model Record {
   semester       Semester
   year           Int
 
-  like Int
-
   createdAt DateTime @default(now()) @map("created_at")
 
   userUuid    String    @map("user_uuid") @db.Uuid
