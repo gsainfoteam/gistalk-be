@@ -30,8 +30,12 @@ Table User {
 }
 
 Table TakingLectures {
-  user_uuid varchar [pk] [ref: > User.uuid]
+  user_uuid varchar [ref: > User.uuid]
   lecture_id int [ref: > Lecture.id]
+
+  Indexes {
+    (user_uuid, lecture_id)
+  }
 }
 
 Table Professor {
@@ -51,21 +55,11 @@ Table Lecture {
 }
 
 Table LectureProfessor {
-  lecture_id int [ref: > Lecture.id]
+  lecture_id int [ref: - Lecture.id]
   professor_id int [ref: > Professor.id]
 
   Indexes {
     (lecture_id, professor_id) [pk]
-  }
-}
-
-Table WriteRecord {
-  user_uuid varchar [ref: > User.uuid]
-  record_id int [ref: > Record.id]
-  lecture_id int [ref: > Lecture.id]
-
-  Indexes {
-    (user_uuid, record_id)
   }
 }
 

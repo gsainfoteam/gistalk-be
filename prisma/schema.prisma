@@ -35,17 +35,18 @@ model User {
   createdAt     DateTime @default(now()) @map("created_at")
 
   Record         Record[]
-  WriteRecord    WriteRecord[]
   TakingLectures TakingLectures[]
 
   @@map("user")
 }
 
 model TakingLectures {
-  userUuid  String  @id @map("user_uuid")
+  userUuid  String  @map("user_uuid")
   user      User    @relation(fields: [userUuid], references: [uuid])
   lecture   Lecture @relation(fields: [lectureId], references: [id])
   lectureId Int     @map("lecture_id")
+
+  @@id([userUuid, lectureId])
 }
 
 model Professor {
@@ -53,7 +54,7 @@ model Professor {
   name             String
   LectureProfessor LectureProfessor[]
 
-  record Record?
+  record Record[]
 
   @@map("professor")
 }
@@ -76,7 +77,6 @@ model Lecture {
   LectureCode      LectureCode[]
   TakingLectures   TakingLectures[]
   LectureProfessor LectureProfessor?
-  WriteReocrd      WriteRecord[]
 
   @@map("lecture")
 }
@@ -89,18 +89,6 @@ model LectureProfessor {
 
   @@id([lectureId, professorId])
   @@map("lecture_professor")
-}
-
-model WriteRecord {
-  userUuid  String  @map("user_uuid")
-  user      User    @relation(fields: [userUuid], references: [uuid])
-  recordId  Int     @map("record_id")
-  record    Record  @relation(fields: [recordId], references: [id])
-  lectureId Int     @map("lecture_id")
-  lecture   Lecture @relation(fields: [lectureId], references: [id])
-
-  @@id([userUuid, recordId])
-  @@map("write_record")
 }
 
 model Record {
@@ -123,12 +111,10 @@ model Record {
 
   userUuid    String    @map("user_uuid") @db.Uuid
   user        User      @relation(fields: [userUuid], references: [uuid])
-  lectureId   Int       @unique @map("lecture_id")
+  lectureId   Int       @map("lecture_id")
   lecture     Lecture   @relation(fields: [lectureId], references: [id])
-  professorId Int       @unique @map("professor_id")
+  professorId Int       @map("professor_id")
   professor   Professor @relation(fields: [professorId], references: [id])
-
-  WriteRecord WriteRecord[]
 
   @@map("record")
 }
