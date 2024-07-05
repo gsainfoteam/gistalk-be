@@ -28,16 +28,6 @@ Table User {
   created_at datetime
 }
 
-Table TakingLectures {
-  user_uuid uuid [ref: > User.uuid]
-  lecture_id int [ref: > Lecture.id]
-  section_id int [ref: - LectureSection.id]
-
-  Indexes {
-    (user_uuid, lecture_id, section_id) [pk]
-  }
-}
-
 Table Professor {
   id int [pk, increment]
   name varchar
@@ -85,17 +75,6 @@ Table Record {
   year int
 
   created_at datetime
+
+  section_id int
 }
-
-Table RecordProfessor {
-  record_id int [ref: > Record.id]
-  user_uuid uuid [ref: > User.userUuid]
-  lecture_id int [ref: > Lecture.id]
-  section_id int [ref: LectureSectionProfessor.section_id]
-  professor_id int [ref: LectureSectionProfessor.professor_id]
-
-  Indexes {
-    (record_id, user_uuid, lecture_id, section_id, professor_id) [pk]
-  }
-}
-

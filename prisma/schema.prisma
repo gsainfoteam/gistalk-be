@@ -33,22 +33,7 @@ model User {
   consent   Boolean
   createdAt DateTime @default(now()) @map("created_at")
 
-  TakingLectures  TakingLectures[]
-  RecordProfessor RecordProfessor[]
-
   @@map("user")
-}
-
-model TakingLectures {
-  userUuid  String @map("user_uuid") @db.Uuid
-  lectureId Int    @map("lecture_id")
-  sectionId Int    @unique @map("section_id")
-
-  user    User           @relation(fields: [userUuid], references: [uuid])
-  lecture Lecture        @relation(fields: [lectureId], references: [id])
-  section LectureSection @relation(fields: [sectionId], references: [id])
-
-  @@id([userUuid, lectureId, sectionId])
 }
 
 model Professor {
@@ -70,14 +55,11 @@ model LectureCode {
 }
 
 model Lecture {
-  id Int @id @default(autoincrement()) @map("id")
-
+  id   Int    @id @default(autoincrement()) @map("id")
   name String
 
-  LectureCode     LectureCode[]
-  TakingLectures  TakingLectures[]
-  lectureSection  LectureSection[]
-  RecordProfessor RecordProfessor[]
+  LectureCode    LectureCode[]
+  lectureSection LectureSection[]
 
   @@map("lecture")
 }
@@ -88,7 +70,7 @@ model LectureSection {
 
   lecture                 Lecture                  @relation(fields: [lectureId], references: [id])
   lectureSectionProfessor LectureSectionProfessor?
-  takingLectures          TakingLectures?
+  record                  Record[]
 
   @@map("lecture_section")
 }
@@ -99,8 +81,6 @@ model LectureSectionProfessor {
 
   section   LectureSection @relation(fields: [sectionId], references: [id])
   professor Professor      @relation(fields: [professorId], references: [id])
-
-  RecordProfessor RecordProfessor[]
 
   @@id([sectionId, professorId])
   @@map("lecture_section_professor")
@@ -124,23 +104,9 @@ model Record {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  recordProfessor RecordProfessor[]
+  sectionId Int @map("section_id")
+
+  section LectureSection @relation(fields: [sectionId], references: [id])
 
   @@map("record")
-}
-
-model RecordProfessor {
-  recordId    Int    @map("record_id")
-  userUuid    String @map("user_uuid") @db.Uuid
-  lectureId   Int    @map("lecture_id")
-  sectionId   Int    @unique @map("section_id")
-  professorId Int    @map("professor_id")
-
-  record                  Record                  @relation(fields: [recordId], references: [id])
-  user                    User                    @relation(fields: [userUuid], references: [uuid])
-  lecture                 Lecture                 @relation(fields: [lectureId], references: [id])
-  lectureSectionProfessor LectureSectionProfessor @relation(fields: [sectionId, professorId], references: [sectionId, professorId])
-
-  @@id([recordId, userUuid, lectureId, sectionId, professorId])
-  @@map("record_professor")
 }
