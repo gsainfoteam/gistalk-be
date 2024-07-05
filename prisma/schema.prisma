@@ -33,6 +33,8 @@ model User {
   consent   Boolean
   createdAt DateTime @default(now()) @map("created_at")
 
+  record Record[]
+
   @@map("user")
 }
 
@@ -106,7 +108,9 @@ model Record {
 
   sectionId Int @map("section_id")
 
-  section LectureSection @relation(fields: [sectionId], references: [id])
+  userUuid String         @map("user_uuid") @db.Uuid
+  user     User           @relation(fields: [userUuid], references: [uuid])
+  section  LectureSection @relation(fields: [sectionId], references: [id])
 
   @@map("record")
 }

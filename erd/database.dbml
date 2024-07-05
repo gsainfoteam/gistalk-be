@@ -76,5 +76,6 @@ Table Record {
 
   created_at datetime
 
+  user_uuid uuid
   section_id int
 }
