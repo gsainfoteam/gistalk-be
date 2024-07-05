@@ -34,7 +34,7 @@ Table TakingLectures {
   lecture_id int [ref: > Lecture.id]
 
   Indexes {
-    (user_uuid, lecture_id)
+    (user_uuid, lecture_id) [pk]
   }
 }
 

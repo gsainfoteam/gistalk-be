@@ -54,8 +54,6 @@ model Professor {
   name             String
   LectureProfessor LectureProfessor[]
 
-  record Record[]
-
   @@map("professor")
 }
 
@@ -73,10 +71,10 @@ model Lecture {
 
   name String
 
-  record           Record[]
   LectureCode      LectureCode[]
   TakingLectures   TakingLectures[]
   LectureProfessor LectureProfessor?
+  recordId         Int?
 
   @@map("lecture")
 }
@@ -86,6 +84,7 @@ model LectureProfessor {
   lecture     Lecture   @relation(fields: [lectureId], references: [id])
   professorId Int       @map("professor_id")
   professor   Professor @relation(fields: [professorId], references: [id])
+  Record      Record[]
 
   @@id([lectureId, professorId])
   @@map("lecture_professor")
@@ -109,12 +108,11 @@ model Record {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  userUuid    String    @map("user_uuid") @db.Uuid
-  user        User      @relation(fields: [userUuid], references: [uuid])
-  lectureId   Int       @map("lecture_id")
-  lecture     Lecture   @relation(fields: [lectureId], references: [id])
-  professorId Int       @map("professor_id")
-  professor   Professor @relation(fields: [professorId], references: [id])
+  userUuid         String           @map("user_uuid") @db.Uuid
+  user             User             @relation(fields: [userUuid], references: [uuid])
+  lectureId        Int              @unique @map("lecture_id")
+  professorId      Int              @map("professor_id")
+  lectureProfessor LectureProfessor @relation(fields: [lectureId, professorId], references: [professorId, lectureId])
 
   @@map("record")
 }
