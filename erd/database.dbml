@@ -23,18 +23,18 @@ Enum Recommendation {
 
 Table User {
   uuid uuid [pk]
-  student_number int
   name varchar
   consent boolean
   created_at datetime
 }
 
 Table TakingLectures {
-  user_uuid varchar [ref: > User.uuid]
+  user_uuid uuid [ref: > User.uuid]
   lecture_id int [ref: > Lecture.id]
+  section_id int [ref: - LectureSection.id]
 
   Indexes {
-    (user_uuid, lecture_id) [pk]
+    (user_uuid, lecture_id, section_id) [pk]
   }
 }
 
@@ -54,12 +54,17 @@ Table Lecture {
   name varchar 
 }
 
-Table LectureProfessor {
-  lecture_id int [ref: - Lecture.id]
+Table LectureSection {
+  id int [pk, increment]
+  lecture_id int [ref: > Lecture.id]
+}
+
+Table LectureSectionProfessor {
+  section_id int [ref: - LectureSection.id]
   professor_id int [ref: > Professor.id]
 
   Indexes {
-    (lecture_id, professor_id) [pk]
+    (section_id, professor_id) [pk]
   }
 }
 
@@ -80,8 +85,17 @@ Table Record {
   year int
 
   created_at datetime
-
-  user_uuid uuid [ref: > User.uuid]
-  lecture_id int [ref: > Lecture.id]
-  professor_id int [ref: > Professor.id]
 }
+
+Table RecordProfessor {
+  record_id int [ref: > Record.id]
+  user_uuid uuid [ref: > User.userUuid]
+  lecture_id int [ref: > Lecture.id]
+  section_id int [ref: LectureSectionProfessor.section_id]
+  professor_id int [ref: LectureSectionProfessor.professor_id]
+
+  Indexes {
+    (record_id, user_uuid, lecture_id, section_id, professor_id) [pk]
+  }
+}
+

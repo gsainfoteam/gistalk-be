@@ -28,31 +28,34 @@ enum Recommendation {
 }
 
 model User {
-  uuid          String   @id @db.Uuid
-  studentNumber Int      @map("student_number")
-  name          String
-  consent       Boolean
-  createdAt     DateTime @default(now()) @map("created_at")
+  uuid      String   @id @db.Uuid
+  name      String
+  consent   Boolean
+  createdAt DateTime @default(now()) @map("created_at")
 
-  Record         Record[]
-  TakingLectures TakingLectures[]
+  TakingLectures  TakingLectures[]
+  RecordProfessor RecordProfessor[]
 
   @@map("user")
 }
 
 model TakingLectures {
-  userUuid  String  @map("user_uuid")
-  user      User    @relation(fields: [userUuid], references: [uuid])
-  lecture   Lecture @relation(fields: [lectureId], references: [id])
-  lectureId Int     @map("lecture_id")
+  userUuid  String @map("user_uuid") @db.Uuid
+  lectureId Int    @map("lecture_id")
+  sectionId Int    @unique @map("section_id")
 
-  @@id([userUuid, lectureId])
+  user    User           @relation(fields: [userUuid], references: [uuid])
+  lecture Lecture        @relation(fields: [lectureId], references: [id])
+  section LectureSection @relation(fields: [sectionId], references: [id])
+
+  @@id([userUuid, lectureId, sectionId])
 }
 
 model Professor {
-  id               Int                @id @default(autoincrement()) @map("id")
-  name             String
-  LectureProfessor LectureProfessor[]
+  id   Int    @id @default(autoincrement())
+  name String
+
+  LectureSectionProfessor LectureSectionProfessor[]
 
   @@map("professor")
 }
@@ -71,23 +74,36 @@ model Lecture {
 
   name String
 
-  LectureCode      LectureCode[]
-  TakingLectures   TakingLectures[]
-  LectureProfessor LectureProfessor?
-  recordId         Int?
+  LectureCode     LectureCode[]
+  TakingLectures  TakingLectures[]
+  lectureSection  LectureSection[]
+  RecordProfessor RecordProfessor[]
 
   @@map("lecture")
 }
 
-model LectureProfessor {
-  lectureId   Int       @unique @map("lecture_id")
-  lecture     Lecture   @relation(fields: [lectureId], references: [id])
-  professorId Int       @map("professor_id")
-  professor   Professor @relation(fields: [professorId], references: [id])
-  Record      Record[]
+model LectureSection {
+  id        Int @id @default(autoincrement())
+  lectureId Int @map("lecture_id")
 
-  @@id([lectureId, professorId])
-  @@map("lecture_professor")
+  lecture                 Lecture                  @relation(fields: [lectureId], references: [id])
+  lectureSectionProfessor LectureSectionProfessor?
+  takingLectures          TakingLectures?
+
+  @@map("lecture_section")
+}
+
+model LectureSectionProfessor {
+  sectionId   Int @unique @map("section_id")
+  professorId Int @map("professor_id")
+
+  section   LectureSection @relation(fields: [sectionId], references: [id])
+  professor Professor      @relation(fields: [professorId], references: [id])
+
+  RecordProfessor RecordProfessor[]
+
+  @@id([sectionId, professorId])
+  @@map("lecture_section_professor")
 }
 
 model Record {
@@ -108,11 +124,23 @@ model Record {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  userUuid         String           @map("user_uuid") @db.Uuid
-  user             User             @relation(fields: [userUuid], references: [uuid])
-  lectureId        Int              @unique @map("lecture_id")
-  professorId      Int              @map("professor_id")
-  lectureProfessor LectureProfessor @relation(fields: [lectureId, professorId], references: [professorId, lectureId])
+  recordProfessor RecordProfessor[]
 
   @@map("record")
+}
+
+model RecordProfessor {
+  recordId    Int    @map("record_id")
+  userUuid    String @map("user_uuid") @db.Uuid
+  lectureId   Int    @map("lecture_id")
+  sectionId   Int    @unique @map("section_id")
+  professorId Int    @map("professor_id")
+
+  record                  Record                  @relation(fields: [recordId], references: [id])
+  user                    User                    @relation(fields: [userUuid], references: [uuid])
+  lecture                 Lecture                 @relation(fields: [lectureId], references: [id])
+  lectureSectionProfessor LectureSectionProfessor @relation(fields: [sectionId, professorId], references: [sectionId, professorId])
+
+  @@id([recordId, userUuid, lectureId, sectionId, professorId])
+  @@map("record_professor")
 }
