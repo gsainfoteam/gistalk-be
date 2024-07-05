@@ -49,9 +49,9 @@ model TakingLectures {
 }
 
 model Professor {
-  id               Int               @id @default(autoincrement()) @map("id")
+  id               Int                @id @default(autoincrement()) @map("id")
   name             String
-  LectureProfessor LectureProfessor?
+  LectureProfessor LectureProfessor[]
 
   record Record?
 
@@ -75,16 +75,16 @@ model Lecture {
   record           Record[]
   LectureCode      LectureCode[]
   TakingLectures   TakingLectures[]
-  LectureProfessor LectureProfessor[]
+  LectureProfessor LectureProfessor?
   WriteReocrd      WriteRecord[]
 
   @@map("lecture")
 }
 
 model LectureProfessor {
-  lectureId   Int       @map("lecture_id")
+  lectureId   Int       @unique @map("lecture_id")
   lecture     Lecture   @relation(fields: [lectureId], references: [id])
-  professorId Int       @unique @map("professor_id")
+  professorId Int       @map("professor_id")
   professor   Professor @relation(fields: [professorId], references: [id])
 
   @@id([lectureId, professorId])
