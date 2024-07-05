@@ -23,9 +23,15 @@ Enum Recommendation {
 
 Table User {
   uuid uuid [pk]
+  student_number int
   name varchar
   consent boolean
   created_at datetime
+}
+
+Table TakingLectures {
+  user_uuid varchar [pk] [ref: > User.uuid]
+  lecture_id int [ref: > Lecture.id]
 }
 
 Table Professor {
@@ -50,6 +56,16 @@ Table LectureProfessor {
 
   Indexes {
     (lecture_id, professor_id) [pk]
+  }
+}
+
+Table WriteRecord {
+  user_uuid varchar [ref: > User.uuid]
+  record_id int [ref: > Record.id]
+  lecture_id int [ref: > Lecture.id]
+
+  Indexes {
+    (user_uuid, record_id)
   }
 }
 
