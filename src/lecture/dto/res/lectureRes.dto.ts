@@ -1,5 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { LectureCode, Prisma, Professor } from '@prisma/client';
+import { LectureCode, Prisma, Professor, LectureSection } from '@prisma/client';
+
+class LectureResDto implements Lecture {
+  @ApiProperty({
+    example: 1,
+    description: '강의 id',
+  })
+  id: number;
+  @ApiProperty({
+    example: '운영체제',
+    description: '강의명',
+  })
+  name: string;
+}
 
 class ProfessorResDto implements Professor {
   @ApiProperty({
@@ -15,9 +28,9 @@ class ProfessorResDto implements Professor {
   name: string;
 }
 
-class LectureProfessorResDto
+class LectureSectionProfessorResDto
   implements
-    Prisma.LectureProfessorGetPayload<{
+    Prisma.LectureSectionProfessorGetPayload<{
       include: {
         professor: true;
       };
@@ -25,13 +38,13 @@ class LectureProfessorResDto
 {
   @ApiProperty({
     example: '1',
-    description: '강의 Id',
+    description: '강의 section id',
   })
-  lectureId: number;
+  sectionId: number;
 
   @ApiProperty({
     example: 1,
-    description: '교수 Id',
+    description: '교수 id',
   })
   professorId: number;
 
@@ -44,16 +57,43 @@ class LectureProfessorResDto
 
 class LectureCodeResDto implements LectureCode {
   @ApiProperty({
-    example: 'A0001',
-    description: '강의 코드',
+    example: 'GS2301',
+    description: '강의코드',
   })
   code: string;
 
   @ApiProperty({
-    example: '1',
-    description: '강의 Id',
+    example: 1,
+    description: '강의 id',
   })
   lectureId: number;
+}
+
+class LectureSectionResDto
+  implements
+    Prisma.LectureSectionGetPayload<{
+      include: {
+        LectureSectionProfessor: true;
+      };
+    }>
+{
+  @ApiProperty({
+    example: 1,
+    description: '강의 section id',
+  })
+  id: number;
+
+  @ApiProperty({
+    example: 1,
+    description: '강의 id',
+  })
+  lectureId: number;
+
+  @ApiProperty({
+    description: '강의 section 교수 정보',
+    type: [LectureSectionProfessorResDto],
+  })
+  lectureSectionProfessor?: LectureSectionProfessorResDto;
 }
 
 export class ExpandedLectureResDto
@@ -61,35 +101,39 @@ export class ExpandedLectureResDto
     Prisma.LectureGetPayload<{
       include: {
         LectureCode: true;
-        LectureProfessor: {
+        LectureSection: {
           include: {
-            professor: true;
+            LectureSectionProfessor: {
+              include: {
+                professor: true;
+              };
+            };
           };
         };
       };
     }>
 {
   @ApiProperty({
-    description: '교수 정보',
-    type: [LectureProfessorResDto],
-  })
-  LectureProfessor: LectureProfessorResDto[];
-
-  @ApiProperty({
     example: 1,
-    description: '강의 Id',
+    description: '강의 section id',
   })
   id: number;
 
   @ApiProperty({
-    description: '강의 코드',
-    type: [LectureCodeResDto],
+    example: 1,
+    description: '강의 id',
   })
-  LectureCode: LectureCodeResDto[];
+  lectureId: number;
 
   @ApiProperty({
-    example: '운영체제',
-    description: '강의 이름',
+    description: '강의 코드 정보',
+    type: [LectureCodeResDto],
   })
-  name: string;
+  lecture: LectureCodeResDto[];
+
+  @ApiProperty({
+    description: '강의 section 정보',
+    type: [LectureSectionResDto],
+  })
+  lectureSection: LectureSectionResDto[];
 }

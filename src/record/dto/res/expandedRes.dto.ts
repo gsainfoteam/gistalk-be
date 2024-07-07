@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RecordResDto } from './recordRes.dto';
-import { Lecture, Professor } from '@prisma/client';
+import {
+  Lecture,
+  Professor,
+  LectureSection,
+  LectureSectionProfessor,
+} from '@prisma/client';
 
 class LectureResDto implements Lecture {
   @ApiProperty()
@@ -18,15 +23,23 @@ class ProfessorResDto implements Professor {
   name: string;
 }
 
-class LectureProfessorResDto {
-  @ApiProperty()
-  lecture: LectureResDto;
-
+class LectureSectionProfessorResDto implements LectureSectionProfessor {
   @ApiProperty()
   professor: ProfessorResDto;
 }
 
+class LectureSectionResDto implements LectureSectionProfessor {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  lecture: LectureResDto;
+
+  @ApiProperty()
+  lectureSectionProfessor?: LectureSectionProfessorResDto;
+}
+
 export class ExpandedRecordResDto extends RecordResDto {
   @ApiProperty()
-  lectureProfessor: LectureProfessorResDto;
+  lectureSection: LectureSectionResDto;
 }

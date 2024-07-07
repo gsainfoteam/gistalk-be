@@ -112,6 +112,14 @@ export class CreateRecordBodyDto {
   lectureId: number;
 
   @ApiProperty({
+    description: 'section id',
+    example: 1,
+  })
+  @IsNumber()
+  @IsInt()
+  sectionId: number;
+
+  @ApiProperty({
     description: '교수님 id',
     example: 1,
   })

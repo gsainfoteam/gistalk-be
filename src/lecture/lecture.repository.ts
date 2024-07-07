@@ -23,7 +23,7 @@ export class LectureRepository {
       where: {
         ...(professorName
           ? {
-              LectureProfessor: {
+              LectureSectionProfessor: {
                 some: {
                   professor: {
                     name: {
@@ -37,7 +37,7 @@ export class LectureRepository {
       },
       include: {
         LectureCode: true,
-        LectureProfessor: {
+        LectureSectionProfessor: {
           include: {
             professor: true,
           },
@@ -47,16 +47,18 @@ export class LectureRepository {
   }
 
   async getOne(id: number): Promise<ExpandedLectureResDto> {
-    return this.prismaService.lecture
+    return this.prismaService.lectureSection
       .findUniqueOrThrow({
         where: {
           id,
         },
         include: {
           LectureCode: true,
-          LectureProfessor: {
-            include: {
-              professor: true,
+          LectureSection: {
+            LectureSectionProfessor: {
+              include: {
+                professor: true,
+              },
             },
           },
         },
@@ -75,13 +77,11 @@ export class LectureRepository {
   }
 
   async getEvaluation({
-    lectureId,
-    professorId,
+    sectionId,
   }: EvaluationQueryDto): Promise<EvaluationResDto> {
     const evaluation = await this.prismaService.record.aggregate({
       where: {
-        lectureId,
-        professorId,
+        sectionId,
       },
       _avg: {
         difficulty: true,
@@ -97,11 +97,10 @@ export class LectureRepository {
   }
 
   async getEvaluationDetail({
-    lectureId,
-    professorId,
+    sectionId,
   }: EvaluationQueryDto): Promise<Record[]> {
     return this.prismaService.record.findMany({
-      where: { lectureId, professorId },
+      where: { sectionId },
     });
   }
 
@@ -129,7 +128,7 @@ export class LectureRepository {
       },
       include: {
         LectureCode: true,
-        LectureProfessor: {
+        LectureSectionProfessor: {
           include: {
             professor: true,
           },

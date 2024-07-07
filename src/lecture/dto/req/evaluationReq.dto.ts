@@ -5,7 +5,7 @@ import { IsInt, IsNumber, IsOptional } from 'class-validator';
 export class EvaluationQueryDto {
   @ApiProperty({
     example: 1,
-    description: '강의 Id',
+    description: '강의 section id',
   })
   @Transform(({ value }) => {
     try {
@@ -16,12 +16,11 @@ export class EvaluationQueryDto {
   })
   @IsNumber()
   @IsInt()
-  lectureId: number;
+  sectionId: number;
 
   @ApiProperty({
     example: 1,
-    description: '교수 Id',
-    required: false,
+    description: '교수 id',
   })
   @Transform(({ value }) => {
     try {
@@ -33,5 +32,5 @@ export class EvaluationQueryDto {
   @IsNumber()
   @IsInt()
   @IsOptional()
-  professorId?: number;
+  professorId: number;
 }

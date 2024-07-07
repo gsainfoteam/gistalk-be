@@ -26,6 +26,9 @@ export class RecordService {
     if (!query.lectureId) {
       throw new BadRequestException('need lectureId');
     }
+    if (!query.sectionId) {
+      throw new BadRequestException('need sectionId');
+    }
     return this.recordRepository.getRecordByLectureProfessor(query);
   }
 

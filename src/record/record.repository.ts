@@ -58,13 +58,19 @@ export class RecordRepository {
 
   async getRecordByLectureProfessor({
     lectureId,
+    sectionId,
     professorId,
     take,
     offset,
   }: Omit<GetAllRecordQueryDto, 'type'>): Promise<ExpandedRecordType[]> {
     return this.prismaService.record.findMany({
       where: {
-        lectureId,
+        section: {
+          where: {
+            lectureId,
+          },
+        },
+        sectionId,
         professorId,
       },
       skip: offset,
@@ -73,10 +79,10 @@ export class RecordRepository {
         createdAt: 'desc',
       },
       include: {
-        lectureProfessor: {
+        lectureSection: {
           include: {
             lecture: true,
-            professor: true,
+            lectureSectionProfessor: true,
           },
         },
       },
@@ -95,8 +101,7 @@ export class RecordRepository {
       recommendation,
       semester,
       year,
-      lectureId,
-      professorId,
+      sectionId,
     }: CreateRecordBodyDto,
     userUuid: string,
   ): Promise<Record> {
@@ -112,9 +117,8 @@ export class RecordRepository {
         recommendation,
         semester,
         year,
-        lectureId,
-        professorId,
         userUuid,
+        sectionId,
       },
     });
   }
