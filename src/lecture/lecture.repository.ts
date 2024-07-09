@@ -21,25 +21,21 @@ export class LectureRepository {
   }: GetAllQueryDto): Promise<ExpandedLectureResDto[]> {
     return this.prismaService.lecture.findMany({
       where: {
-        ...(professorName
-          ? {
-              LectureSectionProfessor: {
-                some: {
-                  professor: {
-                    name: {
-                      contains: professorName,
-                    },
-                  },
-                },
+        LectureSection: {
+          some: {
+            Professor: {
+              some: {
+                name: { contains: professorName },
               },
-            }
-          : {}),
+            },
+          },
+        },
       },
       include: {
         LectureCode: true,
-        LectureSectionProfessor: {
+        LectureSection: {
           include: {
-            professor: true,
+            Professor: true,
           },
         },
       },
@@ -47,7 +43,7 @@ export class LectureRepository {
   }
 
   async getOne(id: number): Promise<ExpandedLectureResDto> {
-    return this.prismaService.lectureSection
+    return this.prismaService.lecture
       .findUniqueOrThrow({
         where: {
           id,
@@ -55,10 +51,8 @@ export class LectureRepository {
         include: {
           LectureCode: true,
           LectureSection: {
-            LectureSectionProfessor: {
-              include: {
-                professor: true,
-              },
+            include: {
+              Professor: true,
             },
           },
         },
@@ -128,9 +122,9 @@ export class LectureRepository {
       },
       include: {
         LectureCode: true,
-        LectureSectionProfessor: {
+        LectureSection: {
           include: {
-            professor: true,
+            Professor: true,
           },
         },
       },

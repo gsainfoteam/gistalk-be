@@ -22,10 +22,10 @@ export class RecordRepository {
         createdAt: 'desc',
       },
       include: {
-        lectureProfessor: {
+        LectureSection: {
           include: {
-            lecture: true,
-            professor: true,
+            Lecture: true,
+            Professor: true,
           },
         },
       },
@@ -46,10 +46,10 @@ export class RecordRepository {
         userUuid,
       },
       include: {
-        lectureProfessor: {
+        LectureSection: {
           include: {
-            lecture: true,
-            professor: true,
+            Lecture: true,
+            Professor: true,
           },
         },
       },
@@ -65,13 +65,16 @@ export class RecordRepository {
   }: Omit<GetAllRecordQueryDto, 'type'>): Promise<ExpandedRecordType[]> {
     return this.prismaService.record.findMany({
       where: {
-        section: {
-          where: {
-            lectureId,
+        sectionId,
+        LectureSection: {
+          id: sectionId,
+          lectureId,
+          Professor: {
+            some: {
+              id: professorId,
+            },
           },
         },
-        sectionId,
-        professorId,
       },
       skip: offset,
       take,
@@ -79,10 +82,10 @@ export class RecordRepository {
         createdAt: 'desc',
       },
       include: {
-        lectureSection: {
+        LectureSection: {
           include: {
-            lecture: true,
-            lectureSectionProfessor: true,
+            Lecture: true,
+            Professor: true,
           },
         },
       },

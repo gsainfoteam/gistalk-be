@@ -42,7 +42,7 @@ model Professor {
   id   Int    @id @default(autoincrement())
   name String
 
-  LectureSectionProfessor LectureSectionProfessor[]
+  LectureSection LectureSection[]
 
   @@map("professor")
 }
@@ -50,8 +50,9 @@ model Professor {
 model LectureCode {
   code String @id
 
-  Lecture   Lecture @relation(fields: [lectureId], references: [id])
   lectureId Int     @map("lecture_id")
+
+  Lecture   Lecture @relation(fields: [lectureId], references: [id])
 
   @@map("lecture_code")
 }
@@ -61,7 +62,7 @@ model Lecture {
   name String
 
   LectureCode    LectureCode[]
-  lectureSection LectureSection[]
+  LectureSection LectureSection[]
 
   @@map("lecture")
 }
@@ -70,22 +71,11 @@ model LectureSection {
   id        Int @id @default(autoincrement())
   lectureId Int @map("lecture_id")
 
-  lecture                 Lecture                  @relation(fields: [lectureId], references: [id])
-  lectureSectionProfessor LectureSectionProfessor?
-  record                  Record[]
+  Lecture                 Lecture                  @relation(fields: [lectureId], references: [id])
+  Professor Professor[]
+  Record                  Record[]
 
   @@map("lecture_section")
-}
-
-model LectureSectionProfessor {
-  sectionId   Int @unique @map("section_id")
-  professorId Int @map("professor_id")
-
-  section   LectureSection @relation(fields: [sectionId], references: [id])
-  professor Professor      @relation(fields: [professorId], references: [id])
-
-  @@id([sectionId, professorId])
-  @@map("lecture_section_professor")
 }
 
 model Record {
@@ -110,7 +100,7 @@ model Record {
 
   userUuid String         @map("user_uuid") @db.Uuid
   user     User           @relation(fields: [userUuid], references: [uuid])
-  section  LectureSection @relation(fields: [sectionId], references: [id])
+  LectureSection  LectureSection @relation(fields: [sectionId], references: [id])
 
   @@map("record")
 }
