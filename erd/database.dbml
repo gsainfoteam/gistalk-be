@@ -49,15 +49,6 @@ Table LectureSection {
   lecture_id int [ref: > Lecture.id]
 }
 
-Table LectureSectionProfessor {
-  section_id int [ref: - LectureSection.id]
-  professor_id int [ref: > Professor.id]
-
-  Indexes {
-    (section_id, professor_id) [pk]
-  }
-}
-
 Table Record {
   id int [pk, increment]
 
