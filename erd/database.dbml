@@ -67,6 +67,6 @@ Table Record {
 
   created_at datetime
 
-  user_uuid uuid
-  section_id int
+  user_uuid uuid [ref: > User.uuid]
+  section_id int [ref: > LectureSection.id]
 }

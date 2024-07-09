@@ -1,106 +1,212 @@
 // This is your Prisma schema file,
+
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+
+
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+
+
 generator client {
+
   provider = "prisma-client-js"
+
 }
+
+
 
 datasource db {
+
   provider = "postgresql"
+
   url      = env("DATABASE_URL")
+
 }
+
+
 
 enum Semester {
+
   SPRING
+
   SUMMER
+
   FALL
+
   WINTER
+
   ALL
+
 }
+
+
 
 enum Recommendation {
+
   YES
+
   NO
+
   MAYBE
+
 }
 
+
+
 model User {
+
   uuid      String   @id @db.Uuid
+
   name      String
+
   consent   Boolean
+
   createdAt DateTime @default(now()) @map("created_at")
+
+
 
   Record Record[]
 
+
+
   @@map("user")
+
 }
 
+
+
 model Professor {
+
   id   Int    @id @default(autoincrement())
+
   name String
+
+
 
   LectureSection LectureSection[]
 
+
+
   @@map("professor")
+
 }
 
+
+
 model LectureCode {
+
   code String @id
+
+
 
   lectureId Int     @map("lecture_id")
 
+
+
   Lecture   Lecture @relation(fields: [lectureId], references: [id])
 
+
+
   @@map("lecture_code")
+
 }
+
+
 
 model Lecture {
+
   id   Int    @id @default(autoincrement()) @map("id")
+
   name String
 
+
+
   LectureCode    LectureCode[]
+
   LectureSection LectureSection[]
 
+
+
   @@map("lecture")
+
 }
+
+
 
 model LectureSection {
+
   id        Int @id @default(autoincrement())
+
   lectureId Int @map("lecture_id")
 
+
+
   Lecture                 Lecture                  @relation(fields: [lectureId], references: [id])
+
   Professor Professor[]
+
   Record                  Record[]
 
+
+
   @@map("lecture_section")
+
 }
 
+
+
 model Record {
+
   id Int @id @default(autoincrement())
 
+
+
   difficulty  Int
+
   skill       Int
+
   helpfulness Int
+
   interest    Int
+
   load        Int
+
   generosity  Int
+
+
 
   review String
 
+
+
   recommendation Recommendation
+
   semester       Semester
+
   year           Int
+
+
 
   createdAt DateTime @default(now()) @map("created_at")
 
+
+
   sectionId Int @map("section_id")
+
   userUuid String         @map("user_uuid") @db.Uuid
 
+
+
   User     User           @relation(fields: [userUuid], references: [uuid])
+
   LectureSection  LectureSection @relation(fields: [sectionId], references: [id])
 
+
+
   @@map("record")
+
 }
+
