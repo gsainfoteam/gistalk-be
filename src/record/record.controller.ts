@@ -19,7 +19,7 @@ import { IdPGuard, IdPOptionalGuard } from 'src/user/guard/idp.guard';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from '@prisma/client';
-import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
+import { UpdateRecordBodyDto } from './dto/req/updateRecordBody.dto';
 import { ExpandedRecordResDto } from './dto/res/expandedRes.dto';
 
 @ApiTags('record')

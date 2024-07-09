@@ -3,7 +3,7 @@ import { RecordRepository } from './record.repository';
 import { Record, User } from '@prisma/client';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
-import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
+import { UpdateRecordBodyDto } from './dto/req/updateRecordBody.dto';
 import { ExpandedRecordType } from './types/ExpandedRecord.type';
 
 @Injectable()
