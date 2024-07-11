@@ -19,65 +19,66 @@ export class UserRepository {
     name,
   }: Pick<User, 'uuid' | 'name'>): Promise<User> {
     this.logger.log('findUserOrCreate called');
-    const user = await this.prismaService.user.findUnique({
-      where: { uuid },
-    });
+    const user = await this.prismaService.user
+      .findUnique({
+        where: { uuid },
+      })
+      .catch((error) => {
+        this.logger.debug('findUserOrCreate, findUnique error');
+        this.logger.error(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+          throw new InternalServerErrorException('database error');
+        }
+        throw new InternalServerErrorException('unexpected error');
+      });
     if (user) {
       this.logger.log('user found');
       return user;
     }
     this.logger.log('user not found, create new user');
-    return this.prismaService.user.create({
-      data: {
-        uuid,
-        name,
-        consent: false,
-      },
-    });
+    return this.prismaService.user
+      .create({
+        data: {
+          uuid,
+          name,
+          consent: false,
+        },
+      })
+      .catch((error) => {
+        this.logger.debug('findUserOrCreate, create error');
+        this.logger.error(error);
+        if (error instanceof PrismaClientKnownRequestError) {
+          throw new InternalServerErrorException('database error');
+        }
+        throw new InternalServerErrorException('unexpected error');
+      })
+      .then((user) => {
+        this.logger.log('user created');
+        return user;
+      });
   }
 
   async findUserAndUpdate({
     uuid,
     name,
   }: Pick<User, 'uuid' | 'name'>): Promise<User> {
-    this.logger.log('findUserAndUpdate called');
-    const user = await this.prismaService.user
-      .findUniqueOrThrow({
-        where: { uuid },
-      })
-      .catch((err) => {
-        if (err instanceof PrismaClientKnownRequestError) {
-          if (err.code === 'P2016') {
-            this.logger.debug('user not found');
-            throw new NotFoundException();
-          }
-          this.logger.error(err.message);
-          throw new InternalServerErrorException();
-        }
-        this.logger.error(err);
-        throw new InternalServerErrorException();
-      });
-    if (user.name === name) {
-      this.logger.log('user name is same');
-      return user;
-    }
-    this.logger.log('user name is different, update user');
     return this.prismaService.user
       .update({
         where: { uuid },
         data: { name },
       })
-      .catch((err) => {
-        if (err instanceof PrismaClientKnownRequestError) {
-          if (err.code === 'P2025') {
+      .catch((error) => {
+        this.logger.debug('findUserAndUpdate error');
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code === 'P2025') {
             this.logger.debug('user not found');
-            throw new NotFoundException();
+            throw new NotFoundException('user not found');
           }
-          this.logger.error(err.message);
-          throw new InternalServerErrorException();
+          this.logger.error(error);
+          throw new InternalServerErrorException('database error');
         }
-        this.logger.error(err);
-        throw new InternalServerErrorException();
+        this.logger.error(error);
+        throw new InternalServerErrorException('unexpected error');
       })
       .then((user) => {
         this.logger.log('findUserAndUpdate finished');
@@ -93,16 +94,17 @@ export class UserRepository {
         data: { consent: true },
       })
       .catch((err) => {
+        this.logger.debug('setConsent error');
         if (err instanceof PrismaClientKnownRequestError) {
-          if (err.code === 'P2025' || err.code === 'P2016') {
+          if (err.code === 'P2025') {
             this.logger.log('user not found');
-            throw new NotFoundException();
+            throw new NotFoundException('user not found');
           }
-          this.logger.error(err.message);
-          throw new InternalServerErrorException();
+          this.logger.error(err);
+          throw new InternalServerErrorException('database error');
         }
         this.logger.error(err);
-        throw new InternalServerErrorException();
+        throw new InternalServerErrorException('unexpected error');
       })
       .then((user) => {
         this.logger.log('setConsent finished');
@@ -117,12 +119,13 @@ export class UserRepository {
         where: { name },
       })
       .catch((err) => {
+        this.logger.debug('findUserByName error');
         if (err instanceof PrismaClientKnownRequestError) {
-          this.logger.error(err.message);
-          throw new InternalServerErrorException();
+          this.logger.error(err);
+          throw new InternalServerErrorException('database error');
         }
         this.logger.error(err);
-        throw new InternalServerErrorException();
+        throw new InternalServerErrorException('unexpected error');
       });
   }
 
@@ -137,8 +140,9 @@ export class UserRepository {
         },
       })
       .catch((err) => {
+        this.logger.debug('createTempUser error');
         if (err instanceof PrismaClientKnownRequestError) {
-          this.logger.error(err.message);
+          this.logger.error(err);
           throw new InternalServerErrorException();
         }
         this.logger.error(err);
