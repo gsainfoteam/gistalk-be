@@ -79,6 +79,15 @@ export class RecordRepository {
             professor: true,
           },
         },
+        _count: {
+          select: {
+            RecordLike: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
+        },
       },
     });
   }
