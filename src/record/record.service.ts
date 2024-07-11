@@ -1,6 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { RecordRepository } from './record.repository';
-import { Record, User } from '@prisma/client';
+import { Record, RecordLike, User } from '@prisma/client';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
 import { UpdateRecordBodyDto } from './dto/req/updateRecordBody.dto';
@@ -39,5 +43,22 @@ export class RecordService {
     user: User,
   ): Promise<Record> {
     return this.recordRepository.updateRecord(body, id, user.uuid);
+  }
+
+  async createRecordLike(recordId: number, user: User): Promise<RecordLike> {
+    const userRecordLike = await this.recordRepository.findUserRecordLike(
+      recordId,
+      user.uuid,
+    );
+
+    if (userRecordLike !== null) {
+      throw new ConflictException('user already liked record');
+    }
+
+    return this.recordRepository.createRecordLike(recordId, user.uuid);
+  }
+
+  async removeRecordLike(recordId: number, user: User) {
+    await this.recordRepository.deleteRecordLike(recordId, user.uuid);
   }
 }

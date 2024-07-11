@@ -42,6 +42,7 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
 
   Record Record[]
+  RecordLike RecordLike[]
 
 
 
@@ -125,6 +126,7 @@ model Record {
   User     User           @relation(fields: [userUuid], references: [uuid])
   LectureSection  LectureSection @relation(fields: [sectionId], references: [id])
 
+  RecordLike RecordLike[]
+
   @@map("record")
 }
-

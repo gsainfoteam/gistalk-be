@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -73,5 +74,33 @@ export class RecordController {
     @GetUser() user: User,
   ): Promise<RecordResDto> {
     return this.recordService.updateRecord(body, id, user);
+  }
+
+  @ApiOperation({
+    summary: '강의평 평가 좋아요 추가',
+    description: '강의평에 좋아요 평가를 남긴다.',
+  })
+  @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
+  @UseGuards(IdPGuard)
+  @Post(':id/like')
+  async createRecordLike(
+    @Param('id', new ParseIntPipe()) recordId: number,
+    @GetUser() user: User,
+  ) {
+    return this.recordService.createRecordLike(recordId, user);
+  }
+
+  @ApiOperation({
+    summary: '강의평 평가 좋아요 삭제',
+    description: '강의평에 남긴 좋아요 평가를 삭제한다.',
+  })
+  @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
+  @UseGuards(IdPGuard)
+  @Delete(':id/like')
+  async removeRecordLike(
+    @Param('id', new ParseIntPipe()) recordId: number,
+    @GetUser() user: User,
+  ) {
+    await this.recordService.removeRecordLike(recordId, user);
   }
 }

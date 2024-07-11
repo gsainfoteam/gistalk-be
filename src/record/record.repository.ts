@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Record } from '@prisma/client';
+import { Record, RecordLike } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PagenationQueryDto } from './dto/req/pagenationQuery.dto';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
@@ -82,6 +82,15 @@ export class RecordRepository {
             Professor: true,
           },
         },
+        _count: {
+          select: {
+            RecordLike: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -153,6 +162,51 @@ export class RecordRepository {
         semester,
         year,
       },
+    });
+  }
+
+  async createRecordLike(
+    recordId: number,
+    userUuid: string,
+  ): Promise<RecordLike> {
+    return this.prismaService.recordLike.create({
+      data: {
+        recordId,
+        userUuid,
+      },
+    });
+  }
+
+  async findUserRecordLike(
+    recordId: number,
+    userUuid: string,
+  ): Promise<RecordLike | null> {
+    return this.prismaService.recordLike.findFirst({
+      where: {
+        recordId: recordId,
+        userUuid: userUuid,
+        deletedAt: null,
+      },
+    });
+  }
+
+  async findRecordLike(recordId: number): Promise<RecordLike[]> {
+    return this.prismaService.recordLike.findMany({
+      where: {
+        recordId: recordId,
+        deletedAt: null,
+      },
+    });
+  }
+
+  async deleteRecordLike(recordId: number, userUuid: string) {
+    await this.prismaService.recordLike.updateMany({
+      where: {
+        recordId: recordId,
+        userUuid: userUuid,
+        deletedAt: null,
+      },
+      data: { deletedAt: new Date() },
     });
   }
 }
