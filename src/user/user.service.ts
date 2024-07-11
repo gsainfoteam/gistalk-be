@@ -25,7 +25,7 @@ export class UserService {
     this.logger.log('login called');
     if (!code || !type) {
       this.logger.debug('invalid code or type');
-      throw new BadRequestException();
+      throw new BadRequestException('invalid code or type');
     }
     const redirectUri =
       type === 'flutter'
@@ -100,14 +100,5 @@ export class UserService {
   async findUserOrCreate(user: Pick<User, 'uuid' | 'name'>): Promise<User> {
     this.logger.log('findUserOrCreate called');
     return this.userRepository.findUserOrCreate(user);
-  }
-
-  async findOrCreateTempUser(user: Pick<User, 'name'>): Promise<User> {
-    this.logger.log('findOrCreateTempUser called');
-    const findedUser = await this.userRepository.findUserByName(user);
-    if (findedUser) {
-      return findedUser;
-    }
-    return this.userRepository.createTempUser(user);
   }
 }
