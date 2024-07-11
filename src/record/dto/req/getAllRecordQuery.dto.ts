@@ -46,21 +46,4 @@ export class GetAllRecordQueryDto extends PagenationQueryDto {
   @IsInt()
   @IsOptional()
   sectionId?: number;
-
-  @ApiProperty({
-    description: 'Professor id',
-    example: 1,
-    required: false,
-  })
-  @Transform(({ value }) => {
-    try {
-      return parseInt(value);
-    } catch {
-      return value;
-    }
-  })
-  @IsNumber()
-  @IsInt()
-  @IsOptional()
-  professorId?: number;
 }

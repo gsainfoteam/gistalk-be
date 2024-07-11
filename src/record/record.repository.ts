@@ -56,10 +56,9 @@ export class RecordRepository {
     });
   }
 
-  async getRecordByLectureProfessor({
+  async getRecordByLectureSection({
     lectureId,
     sectionId,
-    professorId,
     take,
     offset,
   }: Omit<GetAllRecordQueryDto, 'type'>): Promise<ExpandedRecordType[]> {
@@ -69,11 +68,6 @@ export class RecordRepository {
         LectureSection: {
           id: sectionId,
           lectureId,
-          Professor: {
-            some: {
-              id: professorId,
-            },
-          },
         },
       },
       skip: offset,

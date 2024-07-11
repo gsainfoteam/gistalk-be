@@ -67,15 +67,15 @@ export class ExpandedLectureResDto
     }>
 {
   @ApiProperty({
+    example: 1,
+    description: '강의 Id',
+  })
+  id: number;
+
+  @ApiProperty({
     description: '강의명',
   })
   name: string;
-
-  @ApiProperty({
-    example: 1,
-    description: '강의 section id',
-  })
-  id: number;
 
   @ApiProperty({
     description: '강의 코드 정보',

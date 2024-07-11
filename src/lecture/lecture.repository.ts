@@ -25,7 +25,9 @@ export class LectureRepository {
           some: {
             Professor: {
               some: {
-                name: { contains: professorName },
+                name: {
+                  contains: professorName,
+                },
               },
             },
           },
@@ -71,11 +73,17 @@ export class LectureRepository {
   }
 
   async getEvaluation({
+    lectureId,
     sectionId,
   }: EvaluationQueryDto): Promise<EvaluationResDto> {
     const evaluation = await this.prismaService.record.aggregate({
       where: {
         sectionId,
+        LectureSection: {
+          Lecture: {
+            id: lectureId,
+          },
+        },
       },
       _avg: {
         difficulty: true,

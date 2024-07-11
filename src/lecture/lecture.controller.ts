@@ -49,7 +49,7 @@ export class LectureController {
   @ApiOperation({
     summary: '강좌별 강의 평균 점수 조회',
     description:
-      'section Id만 넣으면 전체의 평균을, 교수 Id도 같이 넣으면, 해당 교수의 평균을 조회합니다.',
+      'lecture Id만 넣으면 전체의 평균을, section Id도 같이 넣으면, section의 평균을 조회합니다.',
   })
   @ApiResponse({ type: EvaluationResDto })
   @Get('evaluation')
