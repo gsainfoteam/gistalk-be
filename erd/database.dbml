@@ -44,13 +44,9 @@ Table Lecture {
   name varchar 
 }
 
-Table LectureProfessor {
+Table LectureSection {
+  id int [pk, increment]
   lecture_id int [ref: > Lecture.id]
-  professor_id int [ref: > Professor.id]
-
-  Indexes {
-    (lecture_id, professor_id) [pk]
-  }
 }
 
 Table Record {
@@ -72,6 +68,5 @@ Table Record {
   created_at datetime
 
   user_uuid uuid [ref: > User.uuid]
-  lecture_id int [ref: > Lecture.id]
-  professor_id int [ref: > Professor.id]
+  section_id int [ref: > LectureSection.id]
 }

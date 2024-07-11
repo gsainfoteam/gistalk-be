@@ -31,7 +31,7 @@ export class GetAllRecordQueryDto extends PagenationQueryDto {
   lectureId?: number;
 
   @ApiProperty({
-    description: 'Professor id',
+    description: '강의 section id',
     example: 1,
     required: false,
   })
@@ -45,5 +45,5 @@ export class GetAllRecordQueryDto extends PagenationQueryDto {
   @IsNumber()
   @IsInt()
   @IsOptional()
-  professorId?: number;
+  sectionId?: number;
 }

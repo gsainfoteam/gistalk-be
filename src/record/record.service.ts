@@ -7,7 +7,7 @@ import { RecordRepository } from './record.repository';
 import { Record, RecordLike, User } from '@prisma/client';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
-import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
+import { UpdateRecordBodyDto } from './dto/req/updateRecordBody.dto';
 import { ExpandedRecordType } from './types/ExpandedRecord.type';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class RecordService {
     if (!query.lectureId) {
       throw new BadRequestException('need lectureId');
     }
-    return this.recordRepository.getRecordByLectureProfessor(query);
+    return this.recordRepository.getRecordByLectureSection(query);
   }
 
   async createRecord(body: CreateRecordBodyDto, user: User): Promise<Record> {

@@ -2,10 +2,10 @@ import { Prisma } from '@prisma/client';
 
 export type ExpandedRecordType = Prisma.RecordGetPayload<{
   include: {
-    lectureProfessor: {
+    LectureSection: {
       include: {
-        lecture: true;
-        professor: true;
+        Lecture: true;
+        Professor: true;
       };
     };
   };

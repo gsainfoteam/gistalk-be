@@ -4,7 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PagenationQueryDto } from './dto/req/pagenationQuery.dto';
 import { GetAllRecordQueryDto } from './dto/req/getAllRecordQuery.dto';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
-import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
+import { UpdateRecordBodyDto } from './dto/req/updateRecordBody.dto';
 import { ExpandedRecordType } from './types/ExpandedRecord.type';
 
 @Injectable()
@@ -22,10 +22,10 @@ export class RecordRepository {
         createdAt: 'desc',
       },
       include: {
-        lectureProfessor: {
+        LectureSection: {
           include: {
-            lecture: true,
-            professor: true,
+            Lecture: true,
+            Professor: true,
           },
         },
       },
@@ -46,26 +46,29 @@ export class RecordRepository {
         userUuid,
       },
       include: {
-        lectureProfessor: {
+        LectureSection: {
           include: {
-            lecture: true,
-            professor: true,
+            Lecture: true,
+            Professor: true,
           },
         },
       },
     });
   }
 
-  async getRecordByLectureProfessor({
+  async getRecordByLectureSection({
     lectureId,
-    professorId,
+    sectionId,
     take,
     offset,
   }: Omit<GetAllRecordQueryDto, 'type'>): Promise<ExpandedRecordType[]> {
     return this.prismaService.record.findMany({
       where: {
-        lectureId,
-        professorId,
+        sectionId,
+        LectureSection: {
+          id: sectionId,
+          lectureId,
+        },
       },
       skip: offset,
       take,
@@ -73,10 +76,10 @@ export class RecordRepository {
         createdAt: 'desc',
       },
       include: {
-        lectureProfessor: {
+        LectureSection: {
           include: {
-            lecture: true,
-            professor: true,
+            Lecture: true,
+            Professor: true,
           },
         },
         _count: {
@@ -104,8 +107,7 @@ export class RecordRepository {
       recommendation,
       semester,
       year,
-      lectureId,
-      professorId,
+      sectionId,
     }: CreateRecordBodyDto,
     userUuid: string,
   ): Promise<Record> {
@@ -121,9 +123,8 @@ export class RecordRepository {
         recommendation,
         semester,
         year,
-        lectureId,
-        professorId,
         userUuid,
+        sectionId,
       },
     });
   }

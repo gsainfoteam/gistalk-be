@@ -20,7 +20,7 @@ import { IdPGuard, IdPOptionalGuard } from 'src/user/guard/idp.guard';
 import { CreateRecordBodyDto } from './dto/req/createRecordBody.dto';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from '@prisma/client';
-import { UpdateRecordBodyDto } from './dto/req/updateRecordBoty.dto';
+import { UpdateRecordBodyDto } from './dto/req/updateRecordBody.dto';
 import { ExpandedRecordResDto } from './dto/res/expandedRes.dto';
 
 @ApiTags('record')
@@ -32,7 +32,7 @@ export class RecordController {
   @ApiOperation({
     summary: '강의평 조회',
     description:
-      'type이 recent면 최근 강의평을, type이 evaluation이면, professorId와 lectureId가 있으면 해당 강의평을 조회합니다. type이 user이면 유저의 강의평을 조회합니다.',
+      'type이 recent면 최근 강의평을, type이 evaluation이면, lectureId, sectionId가 있으면 해당 강의평을 조회합니다. type이 user이면 유저의 강의평을 조회합니다.',
   })
   @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
   @ApiResponse({ type: [RecordResDto] })

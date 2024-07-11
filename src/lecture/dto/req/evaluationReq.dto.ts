@@ -20,7 +20,7 @@ export class EvaluationQueryDto {
 
   @ApiProperty({
     example: 1,
-    description: '교수 Id',
+    description: '강의 section Id',
     required: false,
   })
   @Transform(({ value }) => {
@@ -33,5 +33,5 @@ export class EvaluationQueryDto {
   @IsNumber()
   @IsInt()
   @IsOptional()
-  professorId?: number;
+  sectionId?: number;
 }

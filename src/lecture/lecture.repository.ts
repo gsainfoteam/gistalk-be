@@ -21,25 +21,23 @@ export class LectureRepository {
   }: GetAllQueryDto): Promise<ExpandedLectureResDto[]> {
     return this.prismaService.lecture.findMany({
       where: {
-        ...(professorName
-          ? {
-              LectureProfessor: {
-                some: {
-                  professor: {
-                    name: {
-                      contains: professorName,
-                    },
-                  },
+        LectureSection: {
+          some: {
+            Professor: {
+              some: {
+                name: {
+                  contains: professorName,
                 },
               },
-            }
-          : {}),
+            },
+          },
+        },
       },
       include: {
         LectureCode: true,
-        LectureProfessor: {
+        LectureSection: {
           include: {
-            professor: true,
+            Professor: true,
           },
         },
       },
@@ -54,9 +52,9 @@ export class LectureRepository {
         },
         include: {
           LectureCode: true,
-          LectureProfessor: {
+          LectureSection: {
             include: {
-              professor: true,
+              Professor: true,
             },
           },
         },
@@ -76,12 +74,16 @@ export class LectureRepository {
 
   async getEvaluation({
     lectureId,
-    professorId,
+    sectionId,
   }: EvaluationQueryDto): Promise<EvaluationResDto> {
     const evaluation = await this.prismaService.record.aggregate({
       where: {
-        lectureId,
-        professorId,
+        sectionId,
+        LectureSection: {
+          Lecture: {
+            id: lectureId,
+          },
+        },
       },
       _avg: {
         difficulty: true,
@@ -97,11 +99,10 @@ export class LectureRepository {
   }
 
   async getEvaluationDetail({
-    lectureId,
-    professorId,
+    sectionId,
   }: EvaluationQueryDto): Promise<Record[]> {
     return this.prismaService.record.findMany({
-      where: { lectureId, professorId },
+      where: { sectionId },
     });
   }
 
@@ -129,9 +130,9 @@ export class LectureRepository {
       },
       include: {
         LectureCode: true,
-        LectureProfessor: {
+        LectureSection: {
           include: {
-            professor: true,
+            Professor: true,
           },
         },
       },

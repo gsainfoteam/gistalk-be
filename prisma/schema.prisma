@@ -8,10 +8,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
 
 enum Semester {
   SPRING
@@ -21,11 +25,15 @@ enum Semester {
   ALL
 }
 
+
+
 enum Recommendation {
   YES
   NO
   MAYBE
 }
+
+
 
 model User {
   uuid      String   @id @db.Uuid
@@ -36,49 +44,63 @@ model User {
   Record Record[]
   RecordLike RecordLike[]
 
+
+
   @@map("user")
+
 }
+
+
 
 model Professor {
-  id Int @id @default(autoincrement())
+  id   Int    @id @default(autoincrement())
+  name String
 
-  name             String
-  LectureProfessor LectureProfessor[]
+  LectureSection LectureSection[]
 
   @@map("professor")
+
 }
+
+
 
 model LectureCode {
   code String @id
-
-  Lecture   Lecture @relation(fields: [lectureId], references: [id])
   lectureId Int     @map("lecture_id")
 
+  Lecture   Lecture @relation(fields: [lectureId], references: [id])
+
   @@map("lecture_code")
+
 }
+
+
 
 model Lecture {
-  id Int @id @default(autoincrement())
+  id   Int    @id @default(autoincrement()) @map("id")
+  name String
 
-  name String @map("name")
-
-  LectureCode      LectureCode[]
-  LectureProfessor LectureProfessor[]
+  LectureCode    LectureCode[]
+  LectureSection LectureSection[]
 
   @@map("lecture")
+
 }
 
-model LectureProfessor {
-  lectureId   Int       @map("lecture_id")
-  lecture     Lecture   @relation(fields: [lectureId], references: [id])
-  professorId Int       @map("professor_id")
-  professor   Professor @relation(fields: [professorId], references: [id])
 
-  Record Record[]
 
-  @@id([lectureId, professorId])
-  @@map("lecture_professor")
+model LectureSection {
+  id        Int @id @default(autoincrement())
+  lectureId Int @map("lecture_id")
+
+  Lecture                 Lecture                  @relation(fields: [lectureId], references: [id])
+  Professor Professor[]
+  Record                  Record[]
+
+  @@map("lecture_section")
 }
+
+
 
 model Record {
   id Int @id @default(autoincrement())
@@ -98,11 +120,11 @@ model Record {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  userUuid         String           @map("user_uuid") @db.Uuid
-  user             User             @relation(fields: [userUuid], references: [uuid])
-  lectureId        Int              @map("lecture_id")
-  professorId      Int              @map("professor_id")
-  lectureProfessor LectureProfessor @relation(fields: [lectureId, professorId], references: [lectureId, professorId])
+  sectionId Int @map("section_id")
+  userUuid String         @map("user_uuid") @db.Uuid
+
+  User     User           @relation(fields: [userUuid], references: [uuid])
+  LectureSection  LectureSection @relation(fields: [sectionId], references: [id])
 
   RecordLike RecordLike[]
 
