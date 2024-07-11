@@ -15,11 +15,14 @@ describe('UserRepository', () => {
 
   beforeEach(async () => {
     const mockModule: TestingModule = await Test.createTestingModule({
-      providers: [UserRepository, PrismaService],
-    })
-      .overrideProvider(PrismaService)
-      .useValue(mockDeep<PrismaService>())
-      .compile();
+      providers: [
+        UserRepository,
+        {
+          provide: PrismaService,
+          useValue: mockDeep<PrismaService>(),
+        },
+      ],
+    }).compile();
 
     repository = mockModule.get<UserRepository>(UserRepository);
     mockPrisma = mockModule.get(PrismaService);
