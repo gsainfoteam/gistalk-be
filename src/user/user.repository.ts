@@ -7,7 +7,6 @@ import {
 import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UserRepository {
@@ -109,44 +108,6 @@ export class UserRepository {
       .then((user) => {
         this.logger.log('setConsent finished');
         return user;
-      });
-  }
-
-  async findUserByName({ name }: Pick<User, 'name'>): Promise<User | null> {
-    this.logger.log('findUserByName called');
-    return this.prismaService.user
-      .findFirst({
-        where: { name },
-      })
-      .catch((err) => {
-        this.logger.debug('findUserByName error');
-        if (err instanceof PrismaClientKnownRequestError) {
-          this.logger.error(err);
-          throw new InternalServerErrorException('database error');
-        }
-        this.logger.error(err);
-        throw new InternalServerErrorException('unexpected error');
-      });
-  }
-
-  async createTempUser({ name }: Pick<User, 'name'>): Promise<User> {
-    this.logger.log('createTempUser called');
-    return this.prismaService.user
-      .create({
-        data: {
-          uuid: uuid(),
-          name,
-          consent: false,
-        },
-      })
-      .catch((err) => {
-        this.logger.debug('createTempUser error');
-        if (err instanceof PrismaClientKnownRequestError) {
-          this.logger.error(err);
-          throw new InternalServerErrorException('database error');
-        }
-        this.logger.error(err);
-        throw new InternalServerErrorException('unexpected error');
       });
   }
 }
