@@ -143,10 +143,10 @@ export class UserRepository {
         this.logger.debug('createTempUser error');
         if (err instanceof PrismaClientKnownRequestError) {
           this.logger.error(err);
-          throw new InternalServerErrorException();
+          throw new InternalServerErrorException('database error');
         }
         this.logger.error(err);
-        throw new InternalServerErrorException();
+        throw new InternalServerErrorException('unexpected error');
       });
   }
 }

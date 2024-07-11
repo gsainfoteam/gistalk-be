@@ -26,6 +26,10 @@ describe('UserRepository', () => {
   });
 
   describe('findUserOrCreate', () => {
+    it('should be defined', () => {
+      expect(repository.findUserOrCreate).toBeDefined();
+    });
+
     it('should find user if exists', async () => {
       const user: User = {
         uuid: 'uuid',
@@ -115,6 +119,10 @@ describe('UserRepository', () => {
   });
 
   describe('findUserAndUpdate', () => {
+    it('should be defined', () => {
+      expect(repository.findUserAndUpdate).toBeDefined();
+    });
+
     it('should find user if exists', async () => {
       const user: User = {
         uuid: 'uuid',
@@ -177,6 +185,10 @@ describe('UserRepository', () => {
   });
 
   describe('setConsent', () => {
+    it('should be defined', () => {
+      expect(repository.setConsent).toBeDefined();
+    });
+
     it('should update user consent', async () => {
       const user: User = {
         uuid: 'uuid',
@@ -239,6 +251,10 @@ describe('UserRepository', () => {
   });
 
   describe('findUserByName', () => {
+    it('should be defined', () => {
+      expect(repository.findUserByName).toBeDefined();
+    });
+
     it('should find user by name', async () => {
       const user: User = {
         uuid: 'uuid',
@@ -283,6 +299,10 @@ describe('UserRepository', () => {
   });
 
   describe('createTempUser', () => {
+    it('should be defined', () => {
+      expect(repository.createTempUser).toBeDefined();
+    });
+
     it('should create temporary user', async () => {
       const user: User = {
         uuid: 'uuid',
