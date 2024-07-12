@@ -8,7 +8,6 @@ import { ExpandedLectureResDto } from './dto/res/lectureRes.dto';
 import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Record } from '@prisma/client';
 import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 
@@ -96,14 +95,6 @@ export class LectureRepository {
     });
 
     return evaluation._avg;
-  }
-
-  async getEvaluationDetail({
-    sectionId,
-  }: EvaluationQueryDto): Promise<Record[]> {
-    return this.prismaService.record.findMany({
-      where: { sectionId },
-    });
   }
 
   async search({
