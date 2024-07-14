@@ -45,8 +45,8 @@ describe('UserService', () => {
       expect(service.login).toBeDefined();
     });
 
-    it('should throw BadRequestException when code or type is not provided', async () => {
-      await expect(service.login({ code: '' })).rejects.toThrow(
+    it('should throw BadRequestException when type is not provided', async () => {
+      await expect(service.login({ code: 'test' })).rejects.toThrow(
         new BadRequestException('invalid code or type'),
       );
     });
@@ -76,6 +76,7 @@ describe('UserService', () => {
       mockIdpService.getUserInfo.mockResolvedValue(userInfo);
       mockUserRepository.findUserOrCreate.mockResolvedValue(user);
       await service.login({ code: 'code', type: 'type' });
+      expect(mockIdpService.getAccessTokenFromIdP).toHaveBeenCalled();
       expect(mockIdpService.getUserInfo).toHaveBeenCalled();
       expect(mockIdpService.getAccessTokenFromIdP).toHaveBeenCalled();
       expect(mockUserRepository.findUserOrCreate).toHaveBeenCalled();
@@ -98,7 +99,7 @@ describe('UserService', () => {
       mockIdpService.getAccessTokenFromIdP.mockRejectedValue(new Error());
       await expect(
         service.login({ code: 'code', type: 'type' }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(Error);
     });
 
     it('should throw error when idpService.getUserInfo throws error', async () => {
@@ -107,7 +108,7 @@ describe('UserService', () => {
       mockIdpService.getUserInfo.mockRejectedValue(new Error());
       await expect(
         service.login({ code: 'code', type: 'type' }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(Error);
     });
 
     it('should throw error when userRepository.findUserOrCreate throws error', async () => {
@@ -117,7 +118,7 @@ describe('UserService', () => {
       mockUserRepository.findUserOrCreate.mockRejectedValue(new Error());
       await expect(
         service.login({ code: 'code', type: 'type' }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(Error);
     });
   });
 
@@ -168,20 +169,20 @@ describe('UserService', () => {
 
     it('should throw error when idpService.refreshToken throws error', async () => {
       mockIdpService.refreshToken.mockRejectedValue(new Error());
-      await expect(service.refresh('refresh token')).rejects.toThrow();
+      await expect(service.refresh('refresh token')).rejects.toThrow(Error);
     });
 
     it('should throw error when idpService.getUserInfo throws error', async () => {
       mockIdpService.refreshToken.mockResolvedValue(tokens);
       mockIdpService.getUserInfo.mockRejectedValue(new Error());
-      await expect(service.refresh('refresh token')).rejects.toThrow();
+      await expect(service.refresh('refresh token')).rejects.toThrow(Error);
     });
 
     it('should throw error when userRepository.findUserOrCreate throws error', async () => {
       mockIdpService.refreshToken.mockResolvedValue(tokens);
       mockIdpService.getUserInfo.mockResolvedValue(userData);
       mockUserRepository.findUserOrCreate.mockRejectedValue(new Error());
-      await expect(service.refresh('refresh token')).rejects.toThrow();
+      await expect(service.refresh('refresh token')).rejects.toThrow(Error);
     });
   });
 
@@ -199,7 +200,7 @@ describe('UserService', () => {
       mockIdpService.revokeToken.mockRejectedValue(new Error());
       await expect(
         service.logout('access token', 'refresh token'),
-      ).rejects.toThrow();
+      ).rejects.toThrow(Error);
     });
   });
 
@@ -221,7 +222,7 @@ describe('UserService', () => {
 
     it('should throw error when userRepository.setConsent throws error', async () => {
       mockUserRepository.setConsent.mockRejectedValue(new Error());
-      await expect(service.setConsent({} as User)).rejects.toThrow();
+      await expect(service.setConsent({} as User)).rejects.toThrow(Error);
     });
   });
 
@@ -244,7 +245,7 @@ describe('UserService', () => {
 
     it('should throw error when userRepository.findUserOrCreate throws error', async () => {
       mockUserRepository.findUserOrCreate.mockRejectedValue(new Error());
-      await expect(service.findUserOrCreate(user)).rejects.toThrow();
+      await expect(service.findUserOrCreate(user)).rejects.toThrow(Error);
     });
   });
 });
