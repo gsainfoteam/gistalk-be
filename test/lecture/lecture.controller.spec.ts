@@ -48,7 +48,7 @@ describe('LectureController', () => {
           name: new RegExp(`.${keyword}.`),
           LectureCode: [
             {
-              code: 'code',
+              code: new RegExp(`.${keyword}.`),
               lectureId: 1,
             },
           ],
@@ -143,11 +143,12 @@ describe('LectureController', () => {
   });
 
   describe('search', () => {
-    it('should return a lecture having keyword in name', async () => {
+    it('should return a lecture having keyword in name or lecture code', async () => {
       const result = await lectureController.search({ keyword: 'name' });
 
       console.log(result[0].name);
       expect(/name/.test(result[0].name)).toBe(true);
+      expect(/name/.test(result[0].LectureCode[0].code)).toBe(true);
     });
   });
 });
