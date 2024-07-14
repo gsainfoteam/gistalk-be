@@ -6,7 +6,6 @@ import { Test } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { EvaluationResDto } from 'src/lecture/dto/res/evaluationRes.dto';
 import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
 import { LectureRepository } from 'src/lecture/lecture.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -38,7 +37,7 @@ describe('LectureRepository', () => {
   });
 
   describe('getOne', () => {
-    it('should return ExpanededLectureResDto', async () => {
+    it('should return ExpandedLectureResDto with given lecture id', async () => {
       const lecture: ExpandedLectureResDto = {
         id: 1,
         name: 'name',
@@ -64,7 +63,7 @@ describe('LectureRepository', () => {
       );
     });
 
-    it('should throw InternalServerErrorException when database error occured', async () => {
+    it('should throw InternalServerErrorException when database error occurred', async () => {
       mockPrisma.lecture.findUniqueOrThrow.mockRejectedValue(
         new PrismaClientKnownRequestError('message', {
           code: 'not P2025',
@@ -76,7 +75,7 @@ describe('LectureRepository', () => {
       );
     });
 
-    it('should throw INterServerErrorException when error is not PrismaClientKnownRequestError', async () => {
+    it('should throw INterServerErrorException when the thrown error is not PrismaClientKnownRequestError', async () => {
       mockPrisma.lecture.findUniqueOrThrow.mockRejectedValue(new Error());
       expect(lectureRepository.getOne(1)).rejects.toThrow(
         new InternalServerErrorException('Unexpected Error Occurred'),
