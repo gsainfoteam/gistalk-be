@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -105,7 +106,7 @@ export class UserController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
     const refreshToken = req.cookies['refresh_token'];
-    if (!refreshToken) throw new UnauthorizedException();
+    if (!refreshToken) throw new BadRequestException();
     res.clearCookie('refresh_token');
     return this.userService.logout(access_token, refreshToken);
   }
