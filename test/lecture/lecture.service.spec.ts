@@ -36,7 +36,7 @@ describe('LectureService', () => {
   });
 
   describe('getOne', () => {
-    it('should return one lecture including lecture code and professor info', async () => {
+    it('should return one lecture whose id, LectureCode.lectureId, LectureSection.lectureId are the same with the given id', async () => {
       mockLectureRepository.getOne.mockImplementation((id) =>
         Promise.resolve({
           id: id,
@@ -51,12 +51,7 @@ describe('LectureService', () => {
             {
               id: 1,
               lectureId: id,
-              Professor: [
-                {
-                  id: 1,
-                  name: 'name',
-                },
-              ],
+              Professor: [],
             },
           ],
         }),
@@ -64,6 +59,14 @@ describe('LectureService', () => {
 
       const result: ExpandedLectureResDto = await lectureService.getOne(1);
       expect(result.id).toBe(1);
+      expect(result.LectureCode[0].lectureId).toBe(1);
+      expect(result.LectureSection[0].lectureId).toBe(1);
+    });
+
+    it('should throw error when mockLectureRepository.getOne throws error', async () => {
+      await mockLectureRepository.getOne.mockRejectedValueOnce(new Error());
+
+      expect(lectureService.getOne(1)).rejects.toThrow(Error);
     });
   });
 
@@ -104,14 +107,27 @@ describe('LectureService', () => {
   });
 
   describe('search', () => {
-    it('should return a list of lecture including lecture code and professor info', async () => {
+    it('should return a list of lecture whose name or LectureCode.code contains the given keyword', async () => {
       mockLectureRepository.search.mockImplementation(({ keyword }) =>
-        Promise.resolve([]),
+        Promise.resolve([
+          {
+            id: 1,
+            name: `.${keyword}.`,
+            LectureCode: [
+              {
+                code: `.${keyword}.`,
+                lectureId: 1,
+              },
+            ],
+            LectureSection: [],
+          },
+        ]),
       );
 
-      expect(await lectureService.search({ keyword: 'name' })).toBeInstanceOf(
-        Array,
-      );
+      const result = await lectureService.search({ keyword: 'name' });
+      expect(result).toBeInstanceOf(Array);
+      expect(/name/.test(result[0].name)).toBe(true);
+      expect(/name/.test(result[0].LectureCode[0].code)).toBe(true);
     });
   });
 });
