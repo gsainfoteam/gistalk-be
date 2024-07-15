@@ -18,29 +18,39 @@ export class LectureRepository {
   async getAll({
     professorName,
   }: GetAllQueryDto): Promise<ExpandedLectureResDto[]> {
-    return this.prismaService.lecture.findMany({
-      where: {
-        LectureSection: {
-          some: {
-            Professor: {
-              some: {
-                name: {
-                  contains: professorName,
+    try {
+      const result = this.prismaService.lecture.findMany({
+        where: {
+          LectureSection: {
+            some: {
+              Professor: {
+                some: {
+                  name: {
+                    contains: professorName,
+                  },
                 },
               },
             },
           },
         },
-      },
-      include: {
-        LectureCode: true,
-        LectureSection: {
-          include: {
-            Professor: true,
+        include: {
+          LectureCode: true,
+          LectureSection: {
+            include: {
+              Professor: true,
+            },
           },
         },
-      },
-    });
+      });
+      return result;
+    } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError) {
+        throw new InternalServerErrorException(
+          'Unexpected Database Error Occurred',
+        );
+      }
+      throw new InternalServerErrorException('Unexpected Error Occurred');
+    }
   }
 
   async getOne(id: number): Promise<ExpandedLectureResDto> {
@@ -75,58 +85,77 @@ export class LectureRepository {
     lectureId,
     sectionId,
   }: EvaluationQueryDto): Promise<EvaluationResDto> {
-    const evaluation = await this.prismaService.record.aggregate({
-      where: {
-        sectionId,
-        LectureSection: {
-          Lecture: {
-            id: lectureId,
+    try {
+      const evaluation = await this.prismaService.record.aggregate({
+        where: {
+          sectionId,
+          LectureSection: {
+            Lecture: {
+              id: lectureId,
+            },
           },
         },
-      },
-      _avg: {
-        difficulty: true,
-        skill: true,
-        helpfulness: true,
-        interest: true,
-        load: true,
-        generosity: true,
-      },
-    });
+        _avg: {
+          difficulty: true,
+          skill: true,
+          helpfulness: true,
+          interest: true,
+          load: true,
+          generosity: true,
+        },
+      });
 
-    return evaluation._avg;
+      return evaluation._avg;
+    } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError) {
+        throw new InternalServerErrorException(
+          'Unexpected Database Error Occurred',
+        );
+      }
+      throw new InternalServerErrorException('Unexpected Error Occurred');
+    }
   }
 
   async search({
     keyword,
   }: SearchLectureQueryDto): Promise<ExpandedLectureResDto[]> {
-    return this.prismaService.lecture.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: keyword,
+    try {
+      const result = this.prismaService.lecture.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: keyword,
+              },
             },
-          },
-          {
-            LectureCode: {
-              some: {
-                code: {
-                  contains: keyword,
+            {
+              LectureCode: {
+                some: {
+                  code: {
+                    contains: keyword,
+                  },
                 },
               },
             },
-          },
-        ],
-      },
-      include: {
-        LectureCode: true,
-        LectureSection: {
-          include: {
-            Professor: true,
+          ],
+        },
+        include: {
+          LectureCode: true,
+          LectureSection: {
+            include: {
+              Professor: true,
+            },
           },
         },
-      },
-    });
+      });
+      return result;
+    } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError) {
+        throw new InternalServerErrorException(
+          'Unexpected Database Error Occurred',
+        );
+      }
+      throw new InternalServerErrorException('Unexpected Error Occurred');
+    }
   }
 }

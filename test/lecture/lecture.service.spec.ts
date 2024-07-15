@@ -33,6 +33,14 @@ describe('LectureService', () => {
       mockLectureRepository.getAll.mockResolvedValue(Promise.resolve([]));
       expect(await lectureService.getAll({})).toBeInstanceOf(Array);
     });
+
+    it('should throw error when mockLectureRepository.getAll throw ', async () => {
+      mockLectureRepository.getAll.mockRejectedValue(new Error());
+
+      expect(
+        lectureService.getAll({ professorName: 'something' }),
+      ).rejects.toThrow(Error);
+    });
   });
 
   describe('getOne', () => {
