@@ -11,7 +11,6 @@ async function bootstrap() {
   const whitelist = [
     /https:\/\/*.gistalk.gistory.me/,
     /https:\/\/*.gistalk-fe.pages.dev/,
-    /http:\/\/localhost:5173/,
   ];
   app.enableCors({
     origin: function (origin, callback) {
