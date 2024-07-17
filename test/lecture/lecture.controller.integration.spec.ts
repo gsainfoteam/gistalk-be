@@ -6,17 +6,12 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { IdpModule } from 'src/idp/idp.module';
 import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
 import { LectureController } from 'src/lecture/lecture.controller';
-import { LectureModule } from 'src/lecture/lecture.module';
 import { LectureRepository } from 'src/lecture/lecture.repository';
 import { LectureService } from 'src/lecture/lecture.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { IdPGuard } from 'src/user/guard/idp.guard';
-import { IdPStrategy } from 'src/user/guard/idp.strategy';
 import * as request from 'supertest';
-import * as cookieParser from 'cookie-parser';
 
 describe('LectureController (integration)', () => {
   let app: INestApplication;
@@ -104,21 +99,27 @@ describe('LectureController (integration)', () => {
     });
 
     it('should 500 error when unexpected database error occurred', async () => {
-      mockLectureRepository.getAll.mockRejectedValue(
+      mockLectureService.getAll.mockRejectedValue(
         new InternalServerErrorException('Unexpected Database Error Occurred'),
       );
 
-      const result = await request(app.getHttpServer()).get('lecture').send();
+      const result = await request(app.getHttpServer())
+        .get('/lecture')
+        .query({})
+        .send();
 
       expect(result.status).toBe(500);
     });
 
     it('should 500 error when unexpected error occurred', async () => {
-      mockLectureRepository.getAll.mockRejectedValue(
+      mockLectureService.getAll.mockRejectedValue(
         new InternalServerErrorException('Unexpected Error Occurred'),
       );
 
-      const result = await request(app.getHttpServer()).get('lecture').send();
+      const result = await request(app.getHttpServer())
+        .get('/lecture')
+        .query({})
+        .send();
 
       expect(result.status).toBe(500);
     });
@@ -204,12 +205,12 @@ describe('LectureController (integration)', () => {
     });
 
     it('should 500 error when unexpected database error occurred', async () => {
-      mockLectureRepository.search.mockRejectedValue(
+      mockLectureService.search.mockRejectedValue(
         new InternalServerErrorException('Unexpected Database Error Occurred'),
       );
 
       const result = await request(app.getHttpServer())
-        .get('lecture/search')
+        .get('/lecture/search')
         .query({ keyword: 'keyword' })
         .send();
 
@@ -222,7 +223,7 @@ describe('LectureController (integration)', () => {
       );
 
       const result = await request(app.getHttpServer())
-        .get('lecture/search')
+        .get('/lecture/search')
         .query({ keyword: 'keyword' })
         .send();
 
@@ -279,7 +280,7 @@ describe('LectureController (integration)', () => {
     });
 
     it('should 500 error when unexpected database error occurred', async () => {
-      mockLectureRepository.getEvaluation.mockRejectedValue(
+      mockLectureService.getEvaluation.mockRejectedValue(
         new InternalServerErrorException('Unexpected Database Error Occurred'),
       );
 
@@ -294,7 +295,7 @@ describe('LectureController (integration)', () => {
     });
 
     it('should 500 error when unexpected error occurred', async () => {
-      mockLectureRepository.getEvaluation.mockRejectedValue(
+      mockLectureService.getEvaluation.mockRejectedValue(
         new InternalServerErrorException('Unexpected Error Occurred'),
       );
 
@@ -357,7 +358,7 @@ describe('LectureController (integration)', () => {
     });
 
     it('should 500 error when unexpected database error occurred', async () => {
-      mockLectureRepository.getOne.mockRejectedValue(
+      mockLectureService.getOne.mockRejectedValue(
         new InternalServerErrorException('Unexpected Database Error Occurred'),
       );
 
@@ -369,7 +370,7 @@ describe('LectureController (integration)', () => {
     });
 
     it('should 500 error when unexpected error occurred', async () => {
-      mockLectureRepository.getOne.mockRejectedValue(
+      mockLectureService.getOne.mockRejectedValue(
         new InternalServerErrorException('Unexpected Error Occurred'),
       );
 
