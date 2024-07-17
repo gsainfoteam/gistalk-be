@@ -2,7 +2,6 @@ import {
   INestApplication,
   InternalServerErrorException,
   NotFoundException,
-  ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
@@ -35,7 +34,6 @@ describe('LectureController (integration)', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ transform: true }));
     mockLectureService = moduleRef.get(LectureService);
     mockLectureRepository = moduleRef.get(LectureRepository);
 
@@ -96,6 +94,19 @@ describe('LectureController (integration)', () => {
 
       expect(result.status).toBe(200);
       expect(result.body).toEqual(expectResult);
+    });
+
+    it('should 400 error when invalid type given as professorName', async () => {
+      const result = await request(app.getHttpServer())
+        .get('/lecture')
+        .query({
+          professorName: {
+            invalid: 'invalid',
+          },
+        })
+        .send();
+
+      expect(result.status).toBe(400);
     });
 
     it('should 500 error when unexpected database error occurred', async () => {
@@ -204,6 +215,19 @@ describe('LectureController (integration)', () => {
       expect(result.body[0].LectureCode[0].code).toContain('keyword');
     });
 
+    it('should 400 error when invalid type given as keyword', async () => {
+      const result = await request(app.getHttpServer())
+        .get('/lecture/search')
+        .query({
+          keyword: {
+            invalid: 'invalid',
+          },
+        })
+        .send();
+
+      expect(result.status).toBe(400);
+    });
+
     it('should 500 error when unexpected database error occurred', async () => {
       mockLectureService.search.mockRejectedValue(
         new InternalServerErrorException('Unexpected Database Error Occurred'),
@@ -279,6 +303,29 @@ describe('LectureController (integration)', () => {
       expect(result.body).toEqual(expectResult);
     });
 
+    it('should 400 error when invalid type given as lectureId', async () => {
+      const result = await request(app.getHttpServer())
+        .get('/lecture/evaluation')
+        .query({
+          lectureId: 'invalid',
+        })
+        .send();
+
+      expect(result.status).toBe(400);
+    });
+
+    it('should 400 error when invalid type given as sectionId', async () => {
+      const result = await request(app.getHttpServer())
+        .get('/lecture/evaluation')
+        .query({
+          lectureId: 1,
+          sectionId: 'invalid',
+        })
+        .send();
+
+      expect(result.status).toBe(400);
+    });
+
     it('should 500 error when unexpected database error occurred', async () => {
       mockLectureService.getEvaluation.mockRejectedValue(
         new InternalServerErrorException('Unexpected Database Error Occurred'),
@@ -343,6 +390,14 @@ describe('LectureController (integration)', () => {
 
       expect(result.status).toBe(200);
       expect(result.body).toEqual(expectResult);
+    });
+
+    it('should 400 error when invalid type given as id', async () => {
+      const result = await request(app.getHttpServer())
+        .get('/lecture/invalid')
+        .send();
+
+      expect(result.status).toBe(400);
     });
 
     it('should return 404 error when invalid id', async () => {

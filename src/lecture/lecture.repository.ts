@@ -18,8 +18,8 @@ export class LectureRepository {
   async getAll({
     professorName,
   }: GetAllQueryDto): Promise<ExpandedLectureResDto[]> {
-    try {
-      const result = this.prismaService.lecture.findMany({
+    return this.prismaService.lecture
+      .findMany({
         where: {
           LectureSection: {
             some: {
@@ -41,16 +41,15 @@ export class LectureRepository {
             },
           },
         },
+      })
+      .catch((err) => {
+        if (err instanceof PrismaClientKnownRequestError) {
+          throw new InternalServerErrorException(
+            'Unexpected Database Error Occurred',
+          );
+        }
+        throw new InternalServerErrorException('Unexpected Error Occurred');
       });
-      return result;
-    } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-        throw new InternalServerErrorException(
-          'Unexpected Database Error Occurred',
-        );
-      }
-      throw new InternalServerErrorException('Unexpected Error Occurred');
-    }
   }
 
   async getOne(id: number): Promise<ExpandedLectureResDto> {
@@ -85,8 +84,8 @@ export class LectureRepository {
     lectureId,
     sectionId,
   }: EvaluationQueryDto): Promise<EvaluationResDto> {
-    try {
-      const evaluation = await this.prismaService.record.aggregate({
+    const evaluation = await this.prismaService.record
+      .aggregate({
         where: {
           sectionId,
           LectureSection: {
@@ -103,24 +102,24 @@ export class LectureRepository {
           load: true,
           generosity: true,
         },
+      })
+      .catch((err) => {
+        if (err instanceof PrismaClientKnownRequestError) {
+          throw new InternalServerErrorException(
+            'Unexpected Database Error Occurred',
+          );
+        }
+        throw new InternalServerErrorException('Unexpected Error Occurred');
       });
 
-      return evaluation._avg;
-    } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-        throw new InternalServerErrorException(
-          'Unexpected Database Error Occurred',
-        );
-      }
-      throw new InternalServerErrorException('Unexpected Error Occurred');
-    }
+    return evaluation._avg;
   }
 
   async search({
     keyword,
   }: SearchLectureQueryDto): Promise<ExpandedLectureResDto[]> {
-    try {
-      const result = this.prismaService.lecture.findMany({
+    return this.prismaService.lecture
+      .findMany({
         where: {
           OR: [
             {
@@ -147,15 +146,14 @@ export class LectureRepository {
             },
           },
         },
+      })
+      .catch((err) => {
+        if (err instanceof PrismaClientKnownRequestError) {
+          throw new InternalServerErrorException(
+            'Unexpected Database Error Occurred',
+          );
+        }
+        throw new InternalServerErrorException('Unexpected Error Occurred');
       });
-      return result;
-    } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-        throw new InternalServerErrorException(
-          'Unexpected Database Error Occurred',
-        );
-      }
-      throw new InternalServerErrorException('Unexpected Error Occurred');
-    }
   }
 }
