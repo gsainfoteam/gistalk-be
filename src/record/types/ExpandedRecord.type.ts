@@ -9,4 +9,8 @@ export type ExpandedRecordType = Prisma.RecordGetPayload<{
       };
     };
   };
-}>;
+}> & {
+  _count?: {
+    RecordLike: number;
+  };
+};
