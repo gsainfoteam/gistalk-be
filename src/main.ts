@@ -10,7 +10,7 @@ async function bootstrap() {
   // set CORS config
   const whitelist = [
     /https:\/\/*.gistalk.gistory.me/,
-    /https:\/\/*.gistalk-fe.pages.dev/,
+    /https:\/\/*.gistalk-frontend.pages.dev/,
     /http:\/\/127.0.0.1:5173/,
   ];
   app.enableCors({
