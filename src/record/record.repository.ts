@@ -190,15 +190,6 @@ export class RecordRepository {
     });
   }
 
-  async findRecordLike(recordId: number): Promise<RecordLike[]> {
-    return this.prismaService.recordLike.findMany({
-      where: {
-        recordId: recordId,
-        deletedAt: null,
-      },
-    });
-  }
-
   async deleteRecordLike(recordId: number, userUuid: string) {
     await this.prismaService.recordLike.updateMany({
       where: {
