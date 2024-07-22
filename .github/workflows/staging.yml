@@ -38,7 +38,7 @@ jobs:
 
       - name: setup environment
         run: |
-          echo "API_VERSION=${{ github.ref_name }}" >> .env
+          echo "API_VERSION=${{ github.ref_name }}-${{ github.run_number }}" >> .env
 
       - name: Build, tag, and push image to Amazon ECR
         uses: docker/build-push-action@v2
