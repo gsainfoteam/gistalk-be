@@ -1,0 +1,105 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Project "Gistalk" {
+  database_type: 'PostgreSQL'
+  Note: 'Gistalk Database'
+}
+
+Table user {
+  uuid String [pk]
+  name String [not null]
+  consent Boolean [not null]
+  createdAt DateTime [default: `now()`, not null]
+  Record record [not null]
+  RecordLike record_like [not null]
+}
+
+Table professor {
+  id Int [pk, increment]
+  name String [not null]
+  LectureSection lecture_section [not null]
+}
+
+Table lecture_code {
+  code String [pk]
+  lectureId Int [not null]
+  Lecture lecture [not null]
+}
+
+Table lecture {
+  id Int [pk, increment]
+  name String [not null]
+  LectureCode lecture_code [not null]
+  LectureSection lecture_section [not null]
+}
+
+Table lecture_section {
+  id Int [pk, increment]
+  lectureId Int [not null]
+  Lecture lecture [not null]
+  Professor professor [not null]
+  Record record [not null]
+}
+
+Table record {
+  id Int [pk, increment]
+  difficulty Int [not null]
+  skill Int [not null]
+  helpfulness Int [not null]
+  interest Int [not null]
+  load Int [not null]
+  generosity Int [not null]
+  review String [not null]
+  recommendation Recommendation [not null]
+  semester Semester [not null]
+  year Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  sectionId Int [not null]
+  userUuid String [not null]
+  User user [not null]
+  LectureSection lecture_section [not null]
+  RecordLike record_like [not null]
+}
+
+Table record_like {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  deletedAt DateTime
+  userUuid String [not null]
+  user user [not null]
+  recordId Int [not null]
+  record record [not null]
+}
+
+Table LectureSectionToProfessor {
+  lecturesectionId Int [ref: > lecture_section.id]
+  professorId Int [ref: > professor.id]
+}
+
+Enum Semester {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+  ALL
+}
+
+Enum Recommendation {
+  YES
+  NO
+  MAYBE
+}
+
+Ref: lecture_code.lectureId > lecture.id
+
+Ref: lecture_section.lectureId > lecture.id
+
+Ref: record.userUuid > user.uuid
+
+Ref: record.sectionId > lecture_section.id
+
+Ref: record_like.userUuid > user.uuid
+
+Ref: record_like.recordId > record.id
