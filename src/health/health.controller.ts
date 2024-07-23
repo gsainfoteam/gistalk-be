@@ -30,22 +30,26 @@ export class HealthController {
     description: 'http, prisma, disk, memory rss 체크',
   })
   @HealthCheck()
-  check() {
+  async check() {
     return this.health.check([
       () =>
         this.http.pingCheck(
-          'gistalk',
-          this.configService.getOrThrow('API_URL'),
+          'idp',
+          this.configService.getOrThrow('SWAGGER_AUTH_URL'),
         ),
-
       () =>
-        this.prisma.pingCheck('database', this.prismaService, { timeout: 300 }),
+        this.prisma.pingCheck('database', this.prismaService, {
+          timeout: 300,
+        }),
 
       () =>
         this.disk.checkStorage('storage', {
           path: this.configService.getOrThrow('DISK_ROOT_PATH'),
           threshold:
-            this.configService.getOrThrow('THRESHOLD_GB') * 1024 * 1024 * 1024,
+            this.configService.getOrThrow('DISK_THRESHOLD_GB') *
+            1024 *
+            1024 *
+            1024,
         }),
 
       () =>
