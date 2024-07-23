@@ -1,19 +1,28 @@
-name: DBDOCS
+name: update erd
 
 on:
   push:
     paths:
-      - 'erd/database.dbml'
+      - 'prisma/schema.prisma'
     branches:
       - master
 
 jobs:
   build:
-    name: Build ERD
+    name: Generate and Build ERD
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          ssh-key: ${{ secrets.DBDOCS_COMMIT_KEY }}
+
+      - name: Install prisma-dbml-generator
+        run: sudo npm install -g prisma-dbml-generator
+
+      - name: Generate dbml
+        run: npx prisma generate
 
       - name: Install dbdocs
         run: sudo npm install -g dbdocs
@@ -22,6 +31,13 @@ jobs:
         run: dbdocs --version
 
       - name: Build and Update ERD
-        run: dbdocs build ./erd/database.dbml
+        run: dbdocs build ./prisma/dbml/schema.dbml
         env:
           DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
+
+      - name: Commit and Push
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions [bot]"
+          git commit -am "Update dbml"
+          git push -u origin master
