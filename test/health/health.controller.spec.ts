@@ -1,3 +1,4 @@
+import { ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   DiskHealthIndicator,
@@ -83,7 +84,7 @@ describe('HealthController', () => {
       const expectedResult = {
         status: 'ok',
         info: {
-          gistalk: {
+          idp: {
             status: 'ok',
           },
           database: {
@@ -98,7 +99,7 @@ describe('HealthController', () => {
         },
         error: {},
         details: {
-          gistalk: {
+          idp: {
             status: 'ok',
           },
           database: {
@@ -118,86 +119,21 @@ describe('HealthController', () => {
       const result: any = await healthController.check();
 
       expect(result.status).toBe('ok');
-      expect(result.info.gistalk.status).toBe('ok');
+      expect(result.info.idp.status).toBe('ok');
       expect(result.info.database.status).toBe('ok');
       expect(result.info.storage.status).toBe('ok');
       expect(result.info.memory_rss.status).toBe('ok');
       expect(result.error).toEqual({});
     });
 
-    it('should contain gistalk in error when API_URL unavailable', async () => {
-      mockHealthCheckService.check.mockResolvedValue({
-        status: 'error',
-        info: {},
-        error: {
-          gistalk: {
-            status: 'down',
-            message: 'message',
-          },
-        },
-      } as any);
+    it('should throw ServiceUnavailableException when mockHealthCheckService.check contains error', async () => {
+      mockHealthCheckService.check.mockRejectedValue(
+        new ServiceUnavailableException(),
+      );
 
-      const result: any = await healthController.check();
-
-      expect(result.status).toBe('error');
-      expect(result.error.gistalk.status).toBe('down');
-    });
-
-    it('should contain database in error when prisma unavailable', async () => {
-      mockHealthCheckService.check.mockResolvedValue({
-        status: 'error',
-        info: {},
-        error: {
-          database: {
-            status: 'down',
-            message: 'message',
-          },
-        },
-        details: {},
-      } as any);
-
-      const result: any = await healthController.check();
-
-      expect(result.status).toBe('error');
-      expect(result.error.database.status).toBe('down');
-    });
-
-    it('should contain storage in error when storage exceed THRESHOLD_GB', async () => {
-      mockHealthCheckService.check.mockResolvedValue({
-        status: 'error',
-        info: {},
-        error: {
-          storage: {
-            status: 'down',
-            message: 'message',
-          },
-        },
-        details: {},
-      } as any);
-
-      const result: any = await healthController.check();
-
-      expect(result.status).toBe('error');
-      expect(result.error.storage.status).toBe('down');
-    });
-
-    it('should contain memory_rss in error when RSS exceed MEMORY_THRESHOLD_MB', async () => {
-      mockHealthCheckService.check.mockResolvedValue({
-        status: 'error',
-        info: {},
-        error: {
-          memory_rss: {
-            status: 'down',
-            message: 'message',
-          },
-        },
-        details: {},
-      } as any);
-
-      const result: any = await healthController.check();
-
-      expect(result.status).toBe('error');
-      expect(result.error.memory_rss.status).toBe('down');
+      expect(healthController.check()).rejects.toThrow(
+        ServiceUnavailableException,
+      );
     });
   });
 });

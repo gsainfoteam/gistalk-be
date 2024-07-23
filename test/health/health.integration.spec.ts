@@ -89,7 +89,7 @@ describe('HealthController (integration)', () => {
       const expectedResult = {
         status: 'ok',
         info: {
-          gistalk: {
+          idp: {
             status: 'ok',
           },
           database: {
@@ -112,7 +112,7 @@ describe('HealthController (integration)', () => {
 
       expect(result.status).toBe(200);
       expect(result.body.status).toBe('ok');
-      expect(result.body.info.gistalk.status).toBe('ok');
+      expect(result.body.info.idp.status).toBe('ok');
       expect(result.body.info.database.status).toBe('ok');
       expect(result.body.info.storage.status).toBe('ok');
       expect(result.body.info.memory_rss.status).toBe('ok');
@@ -124,7 +124,7 @@ describe('HealthController (integration)', () => {
           status: 'error',
           info: {},
           error: {
-            gistalk: {
+            idp: {
               status: 'down',
               message: 'message',
             },
@@ -137,7 +137,7 @@ describe('HealthController (integration)', () => {
 
       expect(result.status).toBe(503);
       expect(result.body.status).toBe('error');
-      expect(result.body.error.gistalk.status).toBe('down');
+      expect(result.body.error.idp.status).toBe('down');
     });
 
     it('should 503 error when database is unavailable', async () => {
