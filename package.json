@@ -35,6 +35,7 @@
     "express-basic-auth": "^1.2.1",
     "passport-anonymous": "^1.0.1",
     "passport-http-bearer": "^1.0.1",
+    "prisma-dbml-generator": "^0.12.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "uuid": "^10.0.0"
