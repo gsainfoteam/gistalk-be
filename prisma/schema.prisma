@@ -2,12 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// generator dbml {
-//   provider            = "prisma-dbml-generator"
-//   projectName         = "Gistalk"
-//   projectDatabaseType = "PostgreSQL"
-//   projectNote         = "Gistalk Database"
-// }
+generator dbml {
+  provider            = "prisma-dbml-generator"
+  projectName         = "Gistalk"
+  projectDatabaseType = "PostgreSQL"
+  projectNote         = "Gistalk Database"
+}
 
 datasource db {
   provider = "postgresql"
