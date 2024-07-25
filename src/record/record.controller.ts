@@ -35,7 +35,7 @@ export class RecordController {
       'type이 recent면 최근 강의평을, type이 evaluation이면, lectureId, sectionId가 있으면 해당 강의평을 조회합니다. type이 user이면 유저의 강의평을 조회합니다.',
   })
   @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
-  @ApiResponse({ type: [RecordResDto] })
+  @ApiResponse({ type: [ExpandedRecordResDto] })
   @UseGuards(IdPOptionalGuard)
   @Get()
   async getRecordList(
