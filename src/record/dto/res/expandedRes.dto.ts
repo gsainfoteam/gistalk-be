@@ -25,6 +25,11 @@ export class ExpandedRecordResDto
 {
   LectureSection: {
     Lecture: LectureResDto;
-    Professor: ProfessorResDto[];
+    // Professor: ProfessorResDto[];
+    LectureSectionProfessor: ({ Professor: ProfessorResDto } & {
+      sectionId: number;
+      professorId: number;
+      lectureId: number;
+    })[];
   } & { id: number; lectureId: number };
 }
