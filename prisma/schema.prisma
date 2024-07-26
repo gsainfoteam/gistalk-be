@@ -44,20 +44,9 @@ model Professor {
   id   Int    @id @default(autoincrement())
   name String
 
-  LectureSectionProfessor LectureSectionProfessor[]
+  LectureSection LectureSection[]
 
   @@map("professor")
-}
-
-model LectureSectionProfessor {
-  sectionId Int @map("section_id")
-  lectureId Int @map("lecture_id")
-  professorId      Int @map("professor_id")
-  LectureSection LectureSection @relation(fields: [sectionId, lectureId], references: [id, lectureId])
-  Professor Professor @relation(fields: [professorId], references: [id])
-
-  @@id([sectionId, lectureId, professorId])
-  @@map("lecture_section_professor")
 }
 
 model LectureCode {
@@ -80,14 +69,13 @@ model Lecture {
 }
 
 model LectureSection {
-  id        Int @default(autoincrement())
+  id        Int @id @default(autoincrement())
   lectureId Int @map("lecture_id")
 
   Lecture   Lecture     @relation(fields: [lectureId], references: [id])
-  LectureSectionProfessor LectureSectionProfessor[]
+  Professor Professor[]
   Record    Record[]
 
-  @@id(name: "lectureSectionId", [id, lectureId])
   @@map("lecture_section")
 }
 
@@ -109,12 +97,11 @@ model Record {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  lectureId Int @map("lecture_id")
   sectionId Int    @map("section_id")
   userUuid  String @map("user_uuid") @db.Uuid
 
   User           User           @relation(fields: [userUuid], references: [uuid])
-  LectureSection LectureSection @relation(fields: [lectureId, sectionId], references: [lectureId, id])
+  LectureSection LectureSection @relation(fields: [sectionId], references: [id])
 
   RecordLike RecordLike[]
 

@@ -44,44 +44,31 @@ describe('LectureService', () => {
   });
 
   describe('getOne', () => {
-    it('should return one lecture whose id, LectureCode.lectureId, LectureSection.lectureId, LectureSectionProfessor.lectureId are the same with the given id', async () => {
-      const value = 1;
-      const expectedResult: ExpandedLectureResDto = {
-        id: value,
-        name: 'name',
-        LectureCode: [
-          {
-            code: 'code',
-            lectureId: value,
-          },
-        ],
-        LectureSection: [
-          {
-            id: 1,
-            lectureId: value,
-            LectureSectionProfessor: [
-              {
-                sectionId: 1,
-                lectureId: value,
-                professorId: 1,
-                Professor: {
-                  id: 1,
-                  name: 'name',
-                },
-              },
-            ],
-          },
-        ],
-      };
-      mockLectureRepository.getOne.mockResolvedValue(expectedResult);
+    it('should return one lecture whose id, LectureCode.lectureId, LectureSection.lectureId are the same with the given id', async () => {
+      mockLectureRepository.getOne.mockImplementation((id) =>
+        Promise.resolve({
+          id: id,
+          name: 'name',
+          LectureCode: [
+            {
+              code: 'code',
+              lectureId: id,
+            },
+          ],
+          LectureSection: [
+            {
+              id: 1,
+              lectureId: id,
+              Professor: [],
+            },
+          ],
+        }),
+      );
 
       const result: ExpandedLectureResDto = await lectureService.getOne(1);
-      expect(result.id).toBe(value);
-      expect(result.LectureCode[0].lectureId).toBe(value);
-      expect(result.LectureSection[0].lectureId).toBe(value);
-      expect(
-        result.LectureSection[0].LectureSectionProfessor[0].lectureId,
-      ).toBe(value);
+      expect(result.id).toBe(1);
+      expect(result.LectureCode[0].lectureId).toBe(1);
+      expect(result.LectureSection[0].lectureId).toBe(1);
     });
 
     it('should throw error when mockLectureRepository.getOne throws error', async () => {

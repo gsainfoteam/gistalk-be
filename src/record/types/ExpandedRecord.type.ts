@@ -5,11 +5,7 @@ export type ExpandedRecordType = Prisma.RecordGetPayload<{
     LectureSection: {
       include: {
         Lecture: true;
-        LectureSectionProfessor: {
-          include: {
-            Professor: true;
-          };
-        };
+        Professor: true;
       };
     };
   };

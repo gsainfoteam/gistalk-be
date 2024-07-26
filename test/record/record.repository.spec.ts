@@ -1,9 +1,12 @@
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaClient, RecordLike } from '@prisma/client';
+import { PrismaClient, RecordLike, User } from '@prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { RecordRepository } from '../../src/record/record.repository';
 import { PagenationQueryDto } from '../../src/record/dto/req/pagenationQuery.dto';
 import { ExpandedRecordType } from '../../src/record/types/ExpandedRecord.type';
@@ -57,7 +60,6 @@ describe('RecordRepository', () => {
         createdAt: new Date(),
         sectionId: 26,
         userUuid: 'uuid',
-        lectureId: 253,
         LectureSection: {
           id: 26,
           lectureId: 253,
@@ -65,15 +67,10 @@ describe('RecordRepository', () => {
             id: 253,
             name: 'name',
           },
-          LectureSectionProfessor: [
+          Professor: [
             {
-              sectionId: 26,
-              lectureId: 253,
-              professorId: 9,
-              Professor: {
-                id: 9,
-                name: 'name',
-              },
+              id: 9,
+              name: 'name',
             },
           ],
         },
@@ -135,7 +132,6 @@ describe('RecordRepository', () => {
         createdAt: new Date(),
         sectionId: 26,
         userUuid: 'uuid',
-        lectureId: 253,
         LectureSection: {
           id: 26,
           lectureId: 253,
@@ -143,12 +139,10 @@ describe('RecordRepository', () => {
             id: 253,
             name: 'name',
           },
-          LectureSectionProfessor: [
+          Professor: [
             {
-              sectionId: 26,
-              lectureId: 253,
-              professorId: 9,
-              Professor: { id: 9, name: 'name' },
+              id: 9,
+              name: 'name',
             },
           ],
         },
@@ -212,7 +206,6 @@ describe('RecordRepository', () => {
         createdAt: new Date(),
         sectionId: 26,
         userUuid: 'uuid',
-        lectureId: 253,
         LectureSection: {
           id: 26,
           lectureId: 253,
@@ -220,12 +213,10 @@ describe('RecordRepository', () => {
             id: 253,
             name: 'name',
           },
-          LectureSectionProfessor: [
+          Professor: [
             {
-              sectionId: 26,
-              lectureId: 253,
-              professorId: 9,
-              Professor: { id: 9, name: 'name' },
+              id: 9,
+              name: 'name',
             },
           ],
         },
@@ -301,7 +292,6 @@ describe('RecordRepository', () => {
       createdAt: new Date(),
       sectionId: 26,
       userUuid: 'uuid',
-      lectureId: 253,
     };
 
     it('should create record', async () => {
@@ -362,7 +352,6 @@ describe('RecordRepository', () => {
       createdAt: new Date(),
       sectionId: 26,
       userUuid: 'uuid',
-      lectureId: 253,
     };
 
     it('should update record', async () => {

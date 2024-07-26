@@ -23,12 +23,10 @@ export class LectureRepository {
         where: {
           LectureSection: {
             some: {
-              LectureSectionProfessor: {
+              Professor: {
                 some: {
-                  Professor: {
-                    name: {
-                      contains: professorName,
-                    },
+                  name: {
+                    contains: professorName,
                   },
                 },
               },
@@ -39,11 +37,7 @@ export class LectureRepository {
           LectureCode: true,
           LectureSection: {
             include: {
-              LectureSectionProfessor: {
-                include: {
-                  Professor: true,
-                },
-              },
+              Professor: true,
             },
           },
         },
@@ -68,11 +62,7 @@ export class LectureRepository {
           LectureCode: true,
           LectureSection: {
             include: {
-              LectureSectionProfessor: {
-                include: {
-                  Professor: true,
-                },
-              },
+              Professor: true,
             },
           },
         },
@@ -152,11 +142,7 @@ export class LectureRepository {
           LectureCode: true,
           LectureSection: {
             include: {
-              LectureSectionProfessor: {
-                include: {
-                  Professor: true,
-                },
-              },
+              Professor: true,
             },
           },
         },
