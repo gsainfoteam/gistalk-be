@@ -48,5 +48,8 @@ export class RecordResDto implements Record {
   userUuid: string;
 
   @ApiProperty()
+  lectureId: number;
+
+  @ApiProperty()
   sectionId: number;
 }
