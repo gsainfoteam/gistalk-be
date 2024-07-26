@@ -1,6 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { RecordResDto } from './recordRes.dto';
-import { Lecture, Professor } from '@prisma/client';
+import {
+  Lecture,
+  LectureSection,
+  Professor,
+  LectureSectionProfessor,
+} from '@prisma/client';
 import { ExpandedRecordType } from 'src/record/types/ExpandedRecord.type';
 
 class LectureResDto implements Lecture {
@@ -19,17 +24,56 @@ class ProfessorResDto implements Professor {
   name: string;
 }
 
+class LectureSectionProfessorResDto implements LectureSectionProfessor {
+  @ApiProperty()
+  sectionId: number;
+
+  @ApiProperty()
+  professorId: number;
+
+  @ApiProperty()
+  lectureId: number;
+
+  @ApiProperty({
+    type: ProfessorResDto,
+  })
+  Professor: ProfessorResDto;
+}
+
+class LectureSectionResDto implements LectureSection {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  lectureId: number;
+
+  @ApiProperty({
+    type: [LectureSectionProfessorResDto],
+  })
+  LectureSectionProfessor: LectureSectionProfessorResDto[];
+
+  @ApiProperty({
+    type: LectureResDto,
+  })
+  Lecture: LectureResDto;
+}
+
+class CountResDto {
+  @ApiProperty()
+  RecordLike: number;
+}
+
 export class ExpandedRecordResDto
   extends RecordResDto
   implements ExpandedRecordType
 {
-  LectureSection: {
-    Lecture: LectureResDto;
-    // Professor: ProfessorResDto[];
-    LectureSectionProfessor: ({ Professor: ProfessorResDto } & {
-      sectionId: number;
-      professorId: number;
-      lectureId: number;
-    })[];
-  } & { id: number; lectureId: number };
+  @ApiProperty({
+    type: () => LectureSectionResDto,
+  })
+  LectureSection: LectureSectionResDto;
+
+  @ApiPropertyOptional({
+    type: CountResDto,
+  })
+  _count?: CountResDto;
 }
