@@ -48,7 +48,7 @@ Table lecture {
 }
 
 Table lecture_section {
-  id Int [increment, not null]
+  id Int [not null]
   lectureId Int [not null]
   Lecture lecture [not null]
   LectureSectionProfessor lecture_section_professor [not null]
