@@ -84,6 +84,7 @@ describe('RecordController Integration Test', () => {
         createdAt: new Date(),
         sectionId: 26,
         userUuid: 'uuid',
+        lectureId: 253,
         LectureSection: {
           id: 26,
           lectureId: 253,
@@ -91,10 +92,15 @@ describe('RecordController Integration Test', () => {
             id: 253,
             name: 'name',
           },
-          Professor: [
+          LectureSectionProfessor: [
             {
-              id: 9,
-              name: 'name',
+              sectionId: 26,
+              lectureId: 253,
+              professorId: 9,
+              Professor: {
+                id: 9,
+                name: 'name',
+              },
             },
           ],
         },
@@ -209,6 +215,7 @@ describe('RecordController Integration Test', () => {
       createdAt: new Date(),
       sectionId: 26,
       userUuid: 'uuid',
+      lectureId: 253,
     };
 
     it('should create record', async () => {
@@ -309,6 +316,7 @@ describe('RecordController Integration Test', () => {
       createdAt: new Date(),
       sectionId: 26,
       userUuid: 'uuid',
+      lectureId: 253,
     };
 
     it('should update record', async () => {
