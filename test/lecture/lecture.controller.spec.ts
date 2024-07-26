@@ -37,44 +37,31 @@ describe('LectureController', () => {
   });
 
   describe('getOne', () => {
-    it('should return ExpandedLectureResDto whose id, LectureCode.lectureId, LectureSection.lectureId, LectureSectionProfessor.lectureId are the same with given id', async () => {
-      const value = 1;
-      const expectedResult: ExpandedLectureResDto = {
-        id: value,
-        name: 'name',
-        LectureCode: [
-          {
-            code: 'code',
-            lectureId: value,
-          },
-        ],
-        LectureSection: [
-          {
-            id: 1,
-            lectureId: value,
-            LectureSectionProfessor: [
-              {
-                lectureId: value,
-                sectionId: 1,
-                professorId: 1,
-                Professor: {
-                  id: 1,
-                  name: 'name',
-                },
-              },
-            ],
-          },
-        ],
-      };
-      mockLectureService.getOne.mockResolvedValue(expectedResult);
+    it('should return ExpandedLectureResDto whose id, LectureCode.lectureId, and LectureSection.lectureId are the same with given id', async () => {
+      mockLectureService.getOne.mockImplementation((value) =>
+        Promise.resolve({
+          id: value,
+          name: 'name',
+          LectureCode: [
+            {
+              code: 'code',
+              lectureId: value,
+            },
+          ],
+          LectureSection: [
+            {
+              id: 1,
+              lectureId: value,
+              Professor: [],
+            },
+          ],
+        }),
+      );
       const result: ExpandedLectureResDto = await mockLectureService.getOne(1);
 
-      expect(result.id).toBe(value);
-      expect(result.LectureCode[0].lectureId).toBe(value);
-      expect(result.LectureSection[0].lectureId).toBe(value);
-      expect(
-        result.LectureSection[0].LectureSectionProfessor[0].lectureId,
-      ).toBe(value);
+      expect(result.id).toBe(1);
+      expect(result.LectureCode[0].lectureId).toBe(1);
+      expect(result.LectureSection[0].lectureId).toBe(1);
     });
   });
 
@@ -133,7 +120,7 @@ describe('LectureController', () => {
               {
                 id: 1,
                 lectureId: 1,
-                LectureSectionProfessor: [],
+                Professor: [],
               },
             ],
           },

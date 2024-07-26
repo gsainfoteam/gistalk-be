@@ -19,19 +19,7 @@ Table user {
 Table professor {
   id Int [pk, increment]
   name String [not null]
-  LectureSectionProfessor lecture_section_professor [not null]
-}
-
-Table lecture_section_professor {
-  sectionId Int [not null]
-  lectureId Int [not null]
-  professorId Int [not null]
   LectureSection lecture_section [not null]
-  Professor professor [not null]
-
-  indexes {
-    (sectionId, lectureId, professorId) [pk]
-  }
 }
 
 Table lecture_code {
@@ -48,15 +36,11 @@ Table lecture {
 }
 
 Table lecture_section {
-  id Int [increment, not null]
+  id Int [pk, increment]
   lectureId Int [not null]
   Lecture lecture [not null]
-  LectureSectionProfessor lecture_section_professor [not null]
+  Professor professor [not null]
   Record record [not null]
-
-  indexes {
-    (id, lectureId) [pk]
-  }
 }
 
 Table record {
@@ -72,7 +56,6 @@ Table record {
   semester Semester [not null]
   year Int [not null]
   createdAt DateTime [default: `now()`, not null]
-  lectureId Int [not null]
   sectionId Int [not null]
   userUuid String [not null]
   User user [not null]
@@ -90,6 +73,11 @@ Table record_like {
   record record [not null]
 }
 
+Table LectureSectionToProfessor {
+  lecturesectionId Int [ref: > lecture_section.id]
+  professorId Int [ref: > professor.id]
+}
+
 Enum Semester {
   SPRING
   SUMMER
@@ -104,17 +92,13 @@ Enum Recommendation {
   MAYBE
 }
 
-Ref: lecture_section_professor.(sectionId, lectureId) > lecture_section.(id, lectureId)
-
-Ref: lecture_section_professor.professorId > professor.id
-
 Ref: lecture_code.lectureId > lecture.id
 
 Ref: lecture_section.lectureId > lecture.id
 
 Ref: record.userUuid > user.uuid
 
-Ref: record.(lectureId, sectionId) > lecture_section.(lectureId, id)
+Ref: record.sectionId > lecture_section.id
 
 Ref: record_like.userUuid > user.uuid
 

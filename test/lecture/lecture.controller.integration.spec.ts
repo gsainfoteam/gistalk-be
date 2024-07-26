@@ -72,15 +72,10 @@ describe('LectureController (integration)', () => {
             {
               id: 1,
               lectureId: 1,
-              LectureSectionProfessor: [
+              Professor: [
                 {
-                  sectionId: 1,
-                  lectureId: 1,
-                  professorId: 1,
-                  Professor: {
-                    id: 1,
-                    name: 'name',
-                  },
+                  id: 1,
+                  name: 'test',
                 },
               ],
             },
@@ -158,15 +153,10 @@ describe('LectureController (integration)', () => {
               {
                 id: 1,
                 lectureId: 1,
-                LectureSectionProfessor: [
+                Professor: [
                   {
-                    sectionId: 1,
-                    lectureId: 1,
-                    professorId: 1,
-                    Professor: {
-                      id: 1,
-                      name: 'name',
-                    },
+                    id: 1,
+                    name: 'name',
                   },
                 ],
               },
@@ -202,15 +192,10 @@ describe('LectureController (integration)', () => {
               {
                 id: 1,
                 lectureId: 1,
-                LectureSectionProfessor: [
+                Professor: [
                   {
-                    sectionId: 1,
-                    lectureId: 1,
-                    professorId: 1,
-                    Professor: {
-                      id: 1,
-                      name: 'name',
-                    },
+                    id: 1,
+                    name: 'name',
                   },
                 ],
               },
@@ -387,15 +372,10 @@ describe('LectureController (integration)', () => {
           {
             id: 1,
             lectureId: 1,
-            LectureSectionProfessor: [
+            Professor: [
               {
-                sectionId: 1,
-                lectureId: 1,
-                professorId: 1,
-                Professor: {
-                  id: 1,
-                  name: 'name',
-                },
+                id: 1,
+                name: 'name',
               },
             ],
           },

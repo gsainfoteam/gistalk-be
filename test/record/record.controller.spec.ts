@@ -58,7 +58,6 @@ describe('RecordController', () => {
           createdAt: new Date(),
           sectionId: 26,
           userUuid: 'uuid',
-          lectureId: 253,
           LectureSection: {
             id: 26,
             lectureId: 253,
@@ -66,15 +65,10 @@ describe('RecordController', () => {
               id: 253,
               name: 'name',
             },
-            LectureSectionProfessor: [
+            Professor: [
               {
-                sectionId: 26,
-                lectureId: 253,
-                professorId: 9,
-                Professor: {
-                  id: 9,
-                  name: 'name',
-                },
+                id: 9,
+                name: 'name',
               },
             ],
           },
@@ -148,7 +142,6 @@ describe('RecordController', () => {
         createdAt: new Date(),
         sectionId: 26,
         userUuid: 'uuid',
-        lectureId: 253,
       };
 
       mockRecordService.createRecord.mockResolvedValue(result);
@@ -223,7 +216,6 @@ describe('RecordController', () => {
         createdAt: new Date(),
         sectionId: 26,
         userUuid: 'uuid',
-        lectureId: 253,
       };
 
       mockRecordService.updateRecord.mockResolvedValue(result);

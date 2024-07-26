@@ -25,11 +25,7 @@ export class RecordRepository {
         LectureSection: {
           include: {
             Lecture: true,
-            LectureSectionProfessor: {
-              include: {
-                Professor: true,
-              },
-            },
+            Professor: true,
           },
         },
       },
@@ -53,11 +49,7 @@ export class RecordRepository {
         LectureSection: {
           include: {
             Lecture: true,
-            LectureSectionProfessor: {
-              include: {
-                Professor: true,
-              },
-            },
+            Professor: true,
           },
         },
       },
@@ -87,11 +79,7 @@ export class RecordRepository {
         LectureSection: {
           include: {
             Lecture: true,
-            LectureSectionProfessor: {
-              include: {
-                Professor: true,
-              },
-            },
+            Professor: true,
           },
         },
         _count: {
@@ -120,7 +108,6 @@ export class RecordRepository {
       semester,
       year,
       sectionId,
-      lectureId,
     }: CreateRecordBodyDto,
     userUuid: string,
   ): Promise<Record> {
@@ -138,7 +125,6 @@ export class RecordRepository {
         year,
         userUuid,
         sectionId,
-        lectureId,
       },
     });
   }
