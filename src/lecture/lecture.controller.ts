@@ -6,11 +6,12 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ExpandedLectureResDto } from './dto/res/lectureRes.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOAuth2, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LectureService } from './lecture.service';
 import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
@@ -19,12 +20,52 @@ import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { BookMark, User } from '@prisma/client';
+import { IdPOptionalGuard } from 'src/user/guard/idp.guard';
 
 @ApiTags('lecture')
 @UsePipes(new ValidationPipe({ transform: true }))
 @Controller('lecture')
 export class LectureController {
   constructor(private readonly lectureService: LectureService) {}
+
+  @ApiOperation({
+    summary: '강의 북마크',
+    description: '특정 강의 분반을 북마크합니다.',
+  })
+  @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
+  @UseGuards(IdPOptionalGuard)
+  @Post('bookmark')
+  async addBookMark(
+    @Query() query: BookMarkQueryDto,
+    @GetUser() user: User,
+  ): Promise<BookMark> {
+    return this.lectureService.addBookMark(query, user);
+  }
+
+  @ApiOperation({
+    summary: '강의 북마크 취소',
+    description: '특정 강의 분반의 북마크를 취소합니다.',
+  })
+  @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
+  @UseGuards(IdPOptionalGuard)
+  @Delete('bookmark')
+  async deleteBookMark(
+    @Query() query: BookMarkQueryDto,
+    @GetUser() user: User,
+  ): Promise<BookMark> {
+    return this.lectureService.deleteBookMark(query, user);
+  }
+
+  @ApiOperation({
+    summary: '북마크한 강의 조회',
+    description: '북마크한 강의를 모두 조회합니다.',
+  })
+  @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
+  @UseGuards(IdPOptionalGuard)
+  @Get('bookmark')
+  async getBookMark(@GetUser() user: User): Promise<BookMark[]> {
+    return this.lectureService.getBookMark(user!);
+  }
 
   @ApiOperation({
     summary: '강의 전체 조회',
@@ -71,38 +112,5 @@ export class LectureController {
     @Param('id', new ParseIntPipe()) id: number,
   ): Promise<ExpandedLectureResDto> {
     return this.lectureService.getOne(id);
-  }
-
-  @ApiOperation({
-    summary: '강의 북마크',
-    description: '특정 강의 분반을 북마크합니다.',
-  })
-  @Post('bookmark')
-  async addBookMark(
-    @Query() query: BookMarkQueryDto,
-    @GetUser() user: User,
-  ): Promise<BookMark> {
-    return this.lectureService.addBookMark(query, user);
-  }
-
-  @ApiOperation({
-    summary: '강의 북마크 취소',
-    description: '특정 강의 분반의 북마크를 취소합니다.',
-  })
-  @Delete('bookmark')
-  async deleteBookMark(
-    @Query() query: BookMarkQueryDto,
-    @GetUser() user: User,
-  ) {
-    return this.lectureService.deleteBookMark(query, user);
-  }
-
-  @ApiOperation({
-    summary: '북마크한 강의 조회',
-    description: '북마크한 강의를 모두 조회합니다.',
-  })
-  @Get('bookmark')
-  async getBookMark(@GetUser() user: User) {
-    return this.lectureService.getBookMark(user);
   }
 }
