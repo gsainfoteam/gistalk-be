@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Query,
   UsePipes,
   ValidationPipe,
@@ -14,6 +15,9 @@ import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
+import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
+import { GetUser } from 'src/user/decorator/get-user.decorator';
+import { User } from '@prisma/client';
 
 @ApiTags('lecture')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -66,5 +70,14 @@ export class LectureController {
     @Param('id', new ParseIntPipe()) id: number,
   ): Promise<ExpandedLectureResDto> {
     return this.lectureService.getOne(id);
+  }
+
+  @ApiOperation({
+    summary: '강의 북마크',
+    description: '특정 강의 분반을 북마크합니다.',
+  })
+  @Post('bookmark')
+  async addBookMark(@Query() query: BookMarkQueryDto, @GetUser() user: User) {
+    return this.lectureService.addBookMark(query, user);
   }
 }
