@@ -101,7 +101,7 @@ model BookMark {
   LectureSection LectureSection @relation(fields: [lectureId,sectionId], references: [id,lectureId])
   User User @relation(fields: [userUuid], references: [uuid])
 
-  @@id([sectionId, userUuid])
+  @@id([lectureId, sectionId, userUuid])
   @@map("bookmark")
 }
 

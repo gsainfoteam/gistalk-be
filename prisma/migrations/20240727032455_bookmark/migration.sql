@@ -8,7 +8,7 @@ CREATE TABLE "bookmark" (
     "section_id" INTEGER NOT NULL,
     "user_uuid" UUID NOT NULL,
 
-    CONSTRAINT "bookmark_pkey" PRIMARY KEY ("section_id","user_uuid")
+    CONSTRAINT "bookmark_pkey" PRIMARY KEY ("lecture_id","section_id","user_uuid")
 );
 
 -- AddForeignKey

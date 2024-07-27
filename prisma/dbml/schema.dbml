@@ -69,7 +69,7 @@ Table bookmark {
   User user [not null]
 
   indexes {
-    (sectionId, userUuid) [pk]
+    (lectureId, sectionId, userUuid) [pk]
   }
 }
 
