@@ -3,9 +3,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
+import { BookMark, PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { BookMarkQueryDto } from 'src/lecture/dto/req/bookmarkReq.dto';
 import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
 import { LectureRepository } from 'src/lecture/lecture.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -204,5 +205,211 @@ describe('LectureRepository', () => {
     expect(lectureRepository.search({ keyword: 'keyword' })).rejects.toThrow(
       new InternalServerErrorException('Unexpected Error Occurred'),
     );
+  });
+
+  describe('addBookMark', () => {
+    const mockReq: BookMarkQueryDto = {
+      lectureId: 1,
+      sectionId: 5,
+    };
+    const userUuid = 'uuid';
+
+    it('should create bookmark', async () => {
+      const lectureId = 1;
+      const sectionId = 5;
+      const expectedResult: BookMark = {
+        lectureId,
+        sectionId,
+        userUuid,
+      };
+
+      mockPrisma.bookMark.create.mockResolvedValue(expectedResult);
+
+      const result = await lectureRepository.addBookMark(mockReq, userUuid);
+
+      expect(result).toBeDefined();
+      expect(result.lectureId).toBe(lectureId);
+      expect(result.sectionId).toBe(sectionId);
+      expect(result.userUuid).toBe(userUuid);
+    });
+
+    it('should throw InternalServerErrorException when mockPrisma.addBookMark throws Unexpected Database Error', async () => {
+      mockPrisma.bookMark.create.mockRejectedValue(
+        new PrismaClientKnownRequestError(
+          'Unexpected Database Error Occurred',
+          {
+            code: 'code',
+            clientVersion: 'clientVersion',
+          },
+        ),
+      );
+
+      const result = lectureRepository.addBookMark(mockReq, userUuid);
+
+      expect(result).rejects.toThrow(
+        new InternalServerErrorException('Unexpected Database Error Occurred'),
+      );
+    });
+
+    it('should throw InternalServerErrorException when mockPrisma.addBookMark throws Error which is not PrismaKnownRequestErro', async () => {
+      mockPrisma.bookMark.create.mockRejectedValue(
+        new InternalServerErrorException('Unexpected Error Occurred'),
+      );
+
+      const result = lectureRepository.addBookMark(mockReq, userUuid);
+
+      expect(result).rejects.toThrow(
+        new InternalServerErrorException('Unexpected Error Occurred'),
+      );
+    });
+  });
+
+  describe('deleteBookMark', () => {
+    const mockQuery: BookMarkQueryDto = {
+      lectureId: 1,
+      sectionId: 5,
+    };
+    const userUuid = 'uuid';
+
+    it('should delete BookMark', async () => {
+      const lectureId = 1;
+      const sectionId = 5;
+      const expectedResult: BookMark = {
+        lectureId,
+        sectionId,
+        userUuid,
+      };
+
+      mockPrisma.bookMark.delete.mockResolvedValue(expectedResult);
+
+      const result = await lectureRepository.deleteBookMark(
+        mockQuery,
+        userUuid,
+      );
+
+      expect(result).toBeDefined();
+      expect(result.lectureId).toBe(lectureId);
+      expect(result.sectionId).toBe(sectionId);
+      expect(result.userUuid).toBe(userUuid);
+    });
+
+    it('should throw NotFoundException when mockPrisma.deleteBookMark throws PrismaKnownRequestError with code P2025', async () => {
+      mockPrisma.bookMark.delete.mockRejectedValue(
+        new PrismaClientKnownRequestError('No Such BookMark', {
+          code: 'P2025',
+          clientVersion: 'clientVersion',
+        }),
+      );
+
+      const result = lectureRepository.deleteBookMark(mockQuery, userUuid);
+
+      expect(result).rejects.toThrow(new NotFoundException('No Such BookMark'));
+    });
+
+    it('should throw InterServerErrorException when mockPrisma.deleteBookMark throws PrismaKnownRequestError but unexpected', async () => {
+      mockPrisma.bookMark.delete.mockRejectedValue(
+        new PrismaClientKnownRequestError(
+          'Unexpected Database Error Occurred',
+          {
+            code: 'code',
+            clientVersion: 'clientVersion',
+          },
+        ),
+      );
+
+      const result = lectureRepository.deleteBookMark(mockQuery, userUuid);
+
+      expect(result).rejects.toThrow(
+        new InternalServerErrorException('Unexpected Database Error Occurred'),
+      );
+    });
+
+    it('should throw InternalServerErrorException when mockPrisma.deleteBookMark throws Error which is not PrismaClientKnownRequestError', async () => {
+      mockPrisma.bookMark.delete.mockRejectedValue(
+        new InternalServerErrorException('Unexpected Error Occurred'),
+      );
+
+      const result = lectureRepository.deleteBookMark(mockQuery, userUuid);
+
+      expect(result).rejects.toThrow(
+        new InternalServerErrorException('Unexpected Error Occurred'),
+      );
+    });
+  });
+
+  describe('getBookMark', () => {
+    it('should return All bookmarks with userUuid', async () => {
+      const userUuid = 'uuid';
+      const expectedResult: BookMark[] = [
+        {
+          lectureId: 1,
+          sectionId: 5,
+          userUuid: 'uuid',
+        },
+        {
+          lectureId: 2,
+          sectionId: 1,
+          userUuid: 'uuid',
+        },
+      ];
+
+      mockPrisma.bookMark.findMany.mockResolvedValue(expectedResult);
+
+      const result = await lectureRepository.getBookMark(userUuid);
+
+      expect(result).toBeDefined();
+      expect(result[0].lectureId).toBe(expectedResult[0].lectureId);
+      expect(result[0].sectionId).toBe(expectedResult[0].sectionId);
+      expect(result[0].userUuid).toBe(expectedResult[0].userUuid);
+      expect(result[1].lectureId).toBe(expectedResult[1].lectureId);
+      expect(result[1].sectionId).toBe(expectedResult[1].sectionId);
+      expect(result[1].userUuid).toBe(expectedResult[1].userUuid);
+    });
+
+    it('should throw NotFoundException when mockPrisma.getBookMark throws PrismaClientRequestError with code P2025', async () => {
+      const userUuid = 'uuid';
+      mockPrisma.bookMark.findMany.mockRejectedValue(
+        new PrismaClientKnownRequestError('Invalid ID', {
+          code: 'P2025',
+          clientVersion: 'clientVersion',
+        }),
+      );
+
+      const result = lectureRepository.getBookMark(userUuid);
+
+      expect(result).rejects.toThrow(new NotFoundException('Invalid ID'));
+    });
+
+    it('should throw InteranlServerErrorException when mockPrisma.getBookMark throws Unexpected PrismaClientRequest', async () => {
+      const userUuid = 'uuid';
+      mockPrisma.bookMark.findMany.mockRejectedValue(
+        new PrismaClientKnownRequestError(
+          'Unexpected Database Error Occurred',
+          {
+            code: 'code',
+            clientVersion: 'clientVersion',
+          },
+        ),
+      );
+
+      const result = lectureRepository.getBookMark(userUuid);
+
+      expect(result).rejects.toThrow(
+        new InternalServerErrorException('Unexpected Database Error Occurred'),
+      );
+    });
+
+    it('should throw InternalServerErrorException when mockPrisma.getBookMark throws Error which is not PrismaClientKnownRequestError', async () => {
+      const userUuid = 'uuid';
+      mockPrisma.bookMark.findMany.mockRejectedValue(
+        new InternalServerErrorException('Unexpected Error Occurred'),
+      );
+
+      const result = lectureRepository.getBookMark(userUuid);
+
+      expect(result).rejects.toThrow(
+        new InternalServerErrorException('Unexpected Error Occurred'),
+      );
+    });
   });
 });
