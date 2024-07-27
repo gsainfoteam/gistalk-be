@@ -11,6 +11,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
+import { BookMark } from '@prisma/client';
 
 @Injectable()
 export class LectureRepository {
@@ -175,7 +176,7 @@ export class LectureRepository {
   async addBookMark(
     { lectureId, sectionId }: BookMarkQueryDto,
     userUuid: string,
-  ) {
+  ): Promise<BookMark> {
     return this.prismaService.bookMark
       .create({
         data: {
@@ -186,6 +187,51 @@ export class LectureRepository {
       })
       .catch((err) => {
         if (err instanceof PrismaClientKnownRequestError) {
+          throw new InternalServerErrorException(
+            'Unexpected Database Error Occurred',
+          );
+        }
+        throw new InternalServerErrorException('Unexpected Error Occurred');
+      });
+  }
+
+  async deleteBookMark(
+    { lectureId, sectionId }: BookMarkQueryDto,
+    userUuid: string,
+  ): Promise<BookMark> {
+    return this.prismaService.bookMark
+      .delete({
+        where: {
+          lectureId_sectionId_userUuid: {
+            sectionId,
+            lectureId,
+            userUuid,
+          },
+        },
+      })
+      .catch((err) => {
+        if (err instanceof PrismaClientKnownRequestError) {
+          if (err.code === 'P2025') {
+            throw new NotFoundException('No Such BookMark');
+          }
+          throw new InternalServerErrorException(
+            'Unexpected Database Error Occurred',
+          );
+        }
+        throw new InternalServerErrorException('Unexpected Error Occurred');
+      });
+  }
+
+  async getBookMark(userUuid: string): Promise<BookMark[]> {
+    return this.prismaService.bookMark
+      .findMany({
+        where: {
+          userUuid,
+        },
+      })
+      .catch((err) => {
+        if (err instanceof PrismaClientKnownRequestError) {
+          if (err.code === 'P2025') throw new NotFoundException('Invalid ID');
           throw new InternalServerErrorException(
             'Unexpected Database Error Occurred',
           );

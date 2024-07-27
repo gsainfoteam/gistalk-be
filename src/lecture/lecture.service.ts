@@ -31,4 +31,12 @@ export class LectureService {
   async addBookMark(query: BookMarkQueryDto, user: User) {
     return this.lectureRepository.addBookMark(query, user.uuid);
   }
+
+  async deleteBookMark(query: BookMarkQueryDto, user: User) {
+    return this.lectureRepository.deleteBookMark(query, user.uuid);
+  }
+
+  async getBookMark(user: User) {
+    return this.lectureRepository.getBookMark(user.uuid);
+  }
 }

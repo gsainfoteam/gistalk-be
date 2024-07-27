@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -17,7 +18,7 @@ import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
-import { User } from '@prisma/client';
+import { BookMark, User } from '@prisma/client';
 
 @ApiTags('lecture')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -77,7 +78,31 @@ export class LectureController {
     description: '특정 강의 분반을 북마크합니다.',
   })
   @Post('bookmark')
-  async addBookMark(@Query() query: BookMarkQueryDto, @GetUser() user: User) {
+  async addBookMark(
+    @Query() query: BookMarkQueryDto,
+    @GetUser() user: User,
+  ): Promise<BookMark> {
     return this.lectureService.addBookMark(query, user);
+  }
+
+  @ApiOperation({
+    summary: '강의 북마크 취소',
+    description: '특정 강의 분반의 북마크를 취소합니다.',
+  })
+  @Delete('bookmark')
+  async deleteBookMark(
+    @Query() query: BookMarkQueryDto,
+    @GetUser() user: User,
+  ) {
+    return this.lectureService.deleteBookMark(query, user);
+  }
+
+  @ApiOperation({
+    summary: '북마크한 강의 조회',
+    description: '북마크한 강의를 모두 조회합니다.',
+  })
+  @Get('bookmark')
+  async getBookMark(@GetUser() user: User) {
+    return this.lectureService.getBookMark(user);
   }
 }
