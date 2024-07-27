@@ -187,6 +187,7 @@ export class LectureRepository {
       })
       .catch((err) => {
         if (err instanceof PrismaClientKnownRequestError) {
+          if (err.code === 'P2025') throw new NotFoundException('invalid ID');
           throw new InternalServerErrorException(
             'Unexpected Database Error Occurred',
           );
@@ -212,7 +213,7 @@ export class LectureRepository {
       .catch((err) => {
         if (err instanceof PrismaClientKnownRequestError) {
           if (err.code === 'P2025') {
-            throw new NotFoundException('No Such BookMark');
+            throw new NotFoundException('Invalid ID');
           }
           throw new InternalServerErrorException(
             'Unexpected Database Error Occurred',
