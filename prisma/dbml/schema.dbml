@@ -14,6 +14,7 @@ Table user {
   createdAt DateTime [default: `now()`, not null]
   Record record [not null]
   RecordLike record_like [not null]
+  BookMark bookmark [not null]
 }
 
 Table professor {
@@ -53,9 +54,22 @@ Table lecture_section {
   Lecture lecture [not null]
   LectureSectionProfessor lecture_section_professor [not null]
   Record record [not null]
+  BookMark bookmark [not null]
 
   indexes {
     (id, lectureId) [pk]
+  }
+}
+
+Table bookmark {
+  lectureId Int [not null]
+  sectionId Int [not null]
+  userUuid String [not null]
+  LectureSection lecture_section [not null]
+  User user [not null]
+
+  indexes {
+    (sectionId, userUuid) [pk]
   }
 }
 
@@ -111,6 +125,10 @@ Ref: lecture_section_professor.professorId > professor.id
 Ref: lecture_code.lectureId > lecture.id
 
 Ref: lecture_section.lectureId > lecture.id
+
+Ref: bookmark.(lectureId, sectionId) > lecture_section.(id, lectureId)
+
+Ref: bookmark.userUuid > user.uuid
 
 Ref: record.userUuid > user.uuid
 

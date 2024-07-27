@@ -36,6 +36,7 @@ model User {
 
   Record     Record[]
   RecordLike RecordLike[]
+  BookMark BookMark[]
 
   @@map("user")
 }
@@ -86,9 +87,22 @@ model LectureSection {
   Lecture                 Lecture                   @relation(fields: [lectureId], references: [id])
   LectureSectionProfessor LectureSectionProfessor[]
   Record                  Record[]
+  BookMark BookMark[]
 
   @@id(name: "lectureSectionId", [id, lectureId])
   @@map("lecture_section")
+}
+
+model BookMark {
+  lectureId Int @map("lecture_id")
+  sectionId Int @map("section_id")
+  userUuid String @db.Uuid @map("user_uuid")
+
+  LectureSection LectureSection @relation(fields: [lectureId,sectionId], references: [id,lectureId])
+  User User @relation(fields: [userUuid], references: [uuid])
+
+  @@id([sectionId, userUuid])
+  @@map("bookmark")
 }
 
 model Record {
