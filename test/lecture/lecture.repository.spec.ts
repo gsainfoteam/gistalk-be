@@ -303,7 +303,7 @@ describe('LectureRepository', () => {
 
       const result = lectureRepository.deleteBookMark(mockQuery, userUuid);
 
-      expect(result).rejects.toThrow(new NotFoundException('No Such BookMark'));
+      expect(result).rejects.toThrow(new NotFoundException('Invalid ID'));
     });
 
     it('should throw InterServerErrorException when mockPrisma.deleteBookMark throws PrismaKnownRequestError but unexpected', async () => {
