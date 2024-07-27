@@ -1,21 +1,32 @@
 import {
+  BadRequestException,
   INestApplication,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { BookMark, User } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { IdpService } from 'src/idp/idp.service';
+import { UserInfo } from 'src/idp/types/userInfo.type';
+import { BookMarkQueryDto } from 'src/lecture/dto/req/bookmarkReq.dto';
 import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
 import { LectureController } from 'src/lecture/lecture.controller';
 import { LectureRepository } from 'src/lecture/lecture.repository';
 import { LectureService } from 'src/lecture/lecture.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { IdPGuard, IdPOptionalGuard } from 'src/user/guard/idp.guard';
+import { IdPStrategy } from 'src/user/guard/idp.strategy';
+import { IdPOptionalStrategy } from 'src/user/guard/idpOptional.strategy';
+import { UserService } from 'src/user/user.service';
 import * as request from 'supertest';
 
 describe('LectureController (integration)', () => {
   let app: INestApplication;
   let mockLectureService: DeepMockProxy<LectureService>;
   let mockLectureRepository: DeepMockProxy<LectureRepository>;
+  let mockIdPService: DeepMockProxy<IdpService>;
+  let mockUserService: DeepMockProxy<UserService>;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -30,12 +41,26 @@ describe('LectureController (integration)', () => {
           provide: LectureRepository,
           useValue: mockDeep<LectureRepository>(),
         },
+        {
+          provide: IdpService,
+          useValue: mockDeep<IdpService>(),
+        },
+        {
+          provide: UserService,
+          useValue: mockDeep<UserService>(),
+        },
+        IdPGuard,
+        IdPStrategy,
+        IdPOptionalGuard,
+        IdPOptionalStrategy,
       ],
     }).compile();
 
     app = moduleRef.createNestApplication();
     mockLectureService = moduleRef.get(LectureService);
     mockLectureRepository = moduleRef.get(LectureRepository);
+    mockUserService = moduleRef.get(UserService);
+    mockIdPService = moduleRef.get(IdpService);
 
     await app.init();
   });
@@ -451,6 +476,356 @@ describe('LectureController (integration)', () => {
 
       const result = await request(app.getHttpServer())
         .get('/lecture/1')
+        .send();
+
+      expect(result.status).toBe(500);
+    });
+  });
+
+  describe('addBookMark', () => {
+    const userInfo: UserInfo = {
+      uuid: 'uuid',
+      email: 'email',
+      name: 'name',
+      phoneNumber: 'phoneNumber',
+      studentNumber: 'studentNumber',
+    };
+
+    const user: User = {
+      uuid: 'uuid',
+      name: 'name',
+      consent: true,
+      createdAt: new Date(),
+    };
+    const mockQuery: BookMarkQueryDto = {
+      lectureId: 1,
+      sectionId: 2,
+    };
+
+    it('should create BookMark', async () => {
+      const expectedResult: BookMark = {
+        lectureId: 1,
+        sectionId: 2,
+        userUuid: 'uuid',
+      };
+
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.addBookMark.mockResolvedValue(expectedResult);
+
+      const result = await request(app.getHttpServer())
+        .post('/lecture/bookmark')
+        .query(mockQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(201);
+      expect(result.body.lectureId).toBe(expectedResult.lectureId);
+      expect(result.body.sectionId).toBe(expectedResult.sectionId);
+      expect(result.body.userUuid).toBe(expectedResult.userUuid);
+    });
+
+    it('should 400 error when lectureId or sectionId is invalid type', async () => {
+      const mockInvalidQuery = {
+        lectureId: 'invalid type',
+        sectionId: 2,
+      };
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.addBookMark.mockRejectedValue(
+        new BadRequestException(),
+      );
+
+      const result = await request(app.getHttpServer())
+        .post('/lecture/bookmark')
+        .query(mockInvalidQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(400);
+    });
+
+    it('should 400 error when query is invalid type', async () => {
+      const mockInvalidQuery = {
+        lectureId: 1,
+        sectionId: 'invalid type',
+      };
+
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.addBookMark.mockRejectedValue(
+        new BadRequestException(),
+      );
+      const result = await request(app.getHttpServer())
+        .post('/lecture/bookmark')
+        .query(mockInvalidQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(400);
+    });
+
+    it('should 404 error when invalid ID', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.addBookMark.mockRejectedValue(new NotFoundException());
+
+      const result = await request(app.getHttpServer())
+        .post('/lecture/bookmark')
+        .query(mockQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(404);
+    });
+
+    it('should 500 error when unexpected database error occurred', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.addBookMark.mockRejectedValue(
+        new InternalServerErrorException('Unexpected Database Error Occurred'),
+      );
+
+      const result = await request(app.getHttpServer())
+        .post('/lecture/bookmark')
+        .query(mockQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(500);
+    });
+
+    it('should 500 error when unexpected error occurred', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.addBookMark.mockRejectedValue(
+        new InternalServerErrorException('Unexpected Error Occurred'),
+      );
+
+      const result = await request(app.getHttpServer())
+        .post('/lecture/bookmark')
+        .query(mockQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(500);
+    });
+  });
+
+  describe('deleteBookMark', () => {
+    const userInfo: UserInfo = {
+      uuid: 'uuid',
+      email: 'email',
+      name: 'name',
+      phoneNumber: 'phoneNumber',
+      studentNumber: 'studentNumber',
+    };
+
+    const user: User = {
+      uuid: 'uuid',
+      name: 'name',
+      consent: true,
+      createdAt: new Date(),
+    };
+    const mockQuery: BookMarkQueryDto = {
+      lectureId: 1,
+      sectionId: 2,
+    };
+
+    it('should delete BookMark', async () => {
+      const expectedResult: BookMark = {
+        lectureId: 1,
+        sectionId: 2,
+        userUuid: 'uuid',
+      };
+
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.deleteBookMark.mockResolvedValue(expectedResult);
+
+      const result = await request(app.getHttpServer())
+        .delete('/lecture/bookmark')
+        .query(mockQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(200);
+      expect(result.body.lectureId).toBe(expectedResult.lectureId);
+      expect(result.body.sectionId).toBe(expectedResult.sectionId);
+      expect(result.body.userUuid).toBe(expectedResult.userUuid);
+    });
+
+    it('should 400 error when lectureId is invalid type', async () => {
+      const mockInvalidQuery = {
+        lectureId: 'invalid type',
+        sectionId: 2,
+      };
+
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.deleteBookMark.mockRejectedValue(
+        new BadRequestException(),
+      );
+      const result = await request(app.getHttpServer())
+        .delete('/lecture/bookmark')
+        .query(mockInvalidQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(400);
+    });
+
+    it('should 400 error when sectionId is invalid type', async () => {
+      const mockInvalidQuery = {
+        lectureId: 1,
+        sectionId: 'invalid type',
+      };
+
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.deleteBookMark.mockRejectedValue(
+        new BadRequestException(),
+      );
+      const result = await request(app.getHttpServer())
+        .delete('/lecture/bookmark')
+        .query(mockInvalidQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(400);
+    });
+
+    it('should 404 error when invalid ID', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.deleteBookMark.mockRejectedValue(
+        new NotFoundException(),
+      );
+
+      const result = await request(app.getHttpServer())
+        .delete('/lecture/bookmark')
+        .query(mockQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(404);
+    });
+
+    it('should 500 error when unexpected database error occurred', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.deleteBookMark.mockRejectedValue(
+        new InternalServerErrorException('Unexpected Database Error Occurred'),
+      );
+
+      const result = await request(app.getHttpServer())
+        .delete('/lecture/bookmark')
+        .query(mockQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(500);
+    });
+
+    it('should 500 error when unexpected error occurred', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.deleteBookMark.mockRejectedValue(
+        new InternalServerErrorException('Unexpected Error Occurred'),
+      );
+
+      const result = await request(app.getHttpServer())
+        .delete('/lecture/bookmark')
+        .query(mockQuery)
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(500);
+    });
+  });
+
+  describe('getBookMark', () => {
+    const userInfo: UserInfo = {
+      uuid: 'uuid',
+      email: 'email',
+      name: 'name',
+      phoneNumber: 'phoneNumber',
+      studentNumber: 'studentNumber',
+    };
+
+    const user: User = {
+      uuid: 'uuid',
+      name: 'name',
+      consent: true,
+      createdAt: new Date(),
+    };
+
+    it('should return all bookmarks with userUuid', async () => {
+      const expectedResult: BookMark[] = [
+        {
+          lectureId: 1,
+          sectionId: 2,
+          userUuid: 'uuid',
+        },
+        {
+          lectureId: 2,
+          sectionId: 1,
+          userUuid: 'uuid',
+        },
+      ];
+
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.getBookMark.mockResolvedValue(expectedResult);
+
+      const result = await request(app.getHttpServer())
+        .get('/lecture/bookmark')
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(200);
+      expect(result.body[0].lectureId).toBe(expectedResult[0].lectureId);
+      expect(result.body[0].sectionId).toBe(expectedResult[0].sectionId);
+      expect(result.body[0].userUuid).toBe(expectedResult[0].userUuid);
+      expect(result.body[1].lectureId).toBe(expectedResult[1].lectureId);
+      expect(result.body[1].sectionId).toBe(expectedResult[1].sectionId);
+      expect(result.body[1].userUuid).toBe(expectedResult[1].userUuid);
+    });
+
+    it('should 404 error when invalid ID', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.getBookMark.mockRejectedValue(new NotFoundException());
+
+      const result = await request(app.getHttpServer())
+        .get('/lecture/bookmark')
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(404);
+    });
+
+    it('should 500 error when unexpected database error occurred', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.getBookMark.mockRejectedValue(new Error());
+
+      const result = await request(app.getHttpServer())
+        .get('/lecture/bookmark')
+        .set('Authorization', 'Bearer test')
+        .send();
+
+      expect(result.status).toBe(500);
+    });
+
+    it('should 500 error when unexpected error occurred', async () => {
+      mockIdPService.getUserInfo.mockResolvedValue(userInfo);
+      mockUserService.findUserOrCreate.mockResolvedValue(user);
+      mockLectureService.getBookMark.mockRejectedValue(new Error());
+
+      const result = await request(app.getHttpServer())
+        .get('/lecture/bookmark')
+        .set('Authorization', 'Bearer test')
         .send();
 
       expect(result.status).toBe(500);
