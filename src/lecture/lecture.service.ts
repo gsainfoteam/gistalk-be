@@ -5,6 +5,8 @@ import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
 import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
+import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class LectureService {
@@ -24,5 +26,17 @@ export class LectureService {
 
   async search(query: SearchLectureQueryDto): Promise<ExpandedLectureResDto[]> {
     return this.lectureRepository.search(query);
+  }
+
+  async addBookMark(query: BookMarkQueryDto, user: User) {
+    return this.lectureRepository.addBookMark(query, user.uuid);
+  }
+
+  async deleteBookMark(query: BookMarkQueryDto, user: User) {
+    return this.lectureRepository.deleteBookMark(query, user.uuid);
+  }
+
+  async getBookMark(user: User) {
+    return this.lectureRepository.getBookMark(user.uuid);
   }
 }

@@ -1,5 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { BookMark, User } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { BookMarkQueryDto } from 'src/lecture/dto/req/bookmarkReq.dto';
 import { EvaluationResDto } from 'src/lecture/dto/res/evaluationRes.dto';
 import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
 import { LectureController } from 'src/lecture/lecture.controller';
@@ -144,6 +146,129 @@ describe('LectureController', () => {
 
       expect(/name/.test(result[0].name)).toBe(true);
       expect(/name/.test(result[0].LectureCode[0].code)).toBe(true);
+    });
+  });
+
+  describe('addBookMark', () => {
+    const mockQuery: BookMarkQueryDto = {
+      lectureId: 1,
+      sectionId: 2,
+    };
+
+    const mockUser: User = {
+      uuid: 'uuid',
+      name: 'name',
+      consent: true,
+      createdAt: new Date(),
+    };
+
+    it('should create BookMark', async () => {
+      const expectedResult: BookMark = {
+        lectureId: 1,
+        sectionId: 2,
+        userUuid: 'uuid',
+      };
+
+      mockLectureService.addBookMark.mockResolvedValue(expectedResult);
+
+      const result = await lectureController.addBookMark(mockQuery, mockUser);
+
+      expect(result).toBeDefined();
+      expect(result.lectureId).toBe(expectedResult.lectureId);
+      expect(result.sectionId).toBe(expectedResult.sectionId);
+      expect(result.userUuid).toBe(expectedResult.userUuid);
+    });
+
+    it('should throw error when mockLectureService.addBookMark throws error', async () => {
+      mockLectureService.addBookMark.mockRejectedValue(new Error());
+
+      expect(
+        lectureController.addBookMark(mockQuery, mockUser),
+      ).rejects.toThrow(Error);
+    });
+  });
+
+  describe('deleteBookMark', () => {
+    const mockQuery: BookMarkQueryDto = {
+      lectureId: 1,
+      sectionId: 2,
+    };
+
+    const mockUser: User = {
+      uuid: 'uuid',
+      name: 'name',
+      consent: true,
+      createdAt: new Date(),
+    };
+
+    it('should delete BookMark', async () => {
+      const expectedResult: BookMark = {
+        lectureId: 1,
+        sectionId: 2,
+        userUuid: 'uuid',
+      };
+
+      mockLectureService.deleteBookMark.mockResolvedValue(expectedResult);
+
+      const result = await lectureController.deleteBookMark(
+        mockQuery,
+        mockUser,
+      );
+
+      expect(result).toBeDefined();
+      expect(result.lectureId).toBe(expectedResult.lectureId);
+      expect(result.sectionId).toBe(expectedResult.sectionId);
+      expect(result.userUuid).toBe(expectedResult.userUuid);
+    });
+
+    it('should throw error when mockLectureService.deleteBookMark throws error', async () => {
+      mockLectureService.deleteBookMark.mockRejectedValue(new Error());
+
+      expect(
+        lectureController.deleteBookMark(mockQuery, mockUser),
+      ).rejects.toThrow(Error);
+    });
+  });
+
+  describe('getBookMark', () => {
+    const mockUser: User = {
+      uuid: 'uuid',
+      name: 'name',
+      consent: true,
+      createdAt: new Date(),
+    };
+
+    it('should return all BookMark with userUuid', async () => {
+      const expectedResult: BookMark[] = [
+        {
+          lectureId: 1,
+          sectionId: 2,
+          userUuid: 'uuid',
+        },
+        {
+          lectureId: 2,
+          sectionId: 1,
+          userUuid: 'uuid',
+        },
+      ];
+
+      mockLectureService.getBookMark.mockResolvedValue(expectedResult);
+
+      const result = await lectureController.getBookMark(mockUser);
+
+      expect(result).toBeDefined();
+      expect(result[0].lectureId).toBe(expectedResult[0].lectureId);
+      expect(result[0].sectionId).toBe(expectedResult[0].sectionId);
+      expect(result[0].userUuid).toBe(expectedResult[0].userUuid);
+      expect(result[1].lectureId).toBe(expectedResult[1].lectureId);
+      expect(result[1].sectionId).toBe(expectedResult[1].sectionId);
+      expect(result[1].userUuid).toBe(expectedResult[1].userUuid);
+    });
+
+    it('should throw error when mockLectureService.getBookMark throws error', async () => {
+      mockLectureService.getBookMark.mockRejectedValue(new Error());
+
+      expect(lectureController.getBookMark(mockUser)).rejects.toThrow(Error);
     });
   });
 });
