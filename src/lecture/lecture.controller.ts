@@ -20,7 +20,7 @@ import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { BookMark, User } from '@prisma/client';
-import { IdPOptionalGuard } from 'src/user/guard/idp.guard';
+import { IdPGuard } from 'src/user/guard/idp.guard';
 
 @ApiTags('lecture')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -33,7 +33,7 @@ export class LectureController {
     description: '특정 강의 분반을 북마크합니다.',
   })
   @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
-  @UseGuards(IdPOptionalGuard)
+  @UseGuards(IdPGuard)
   @Post('bookmark')
   async addBookMark(
     @Query() query: BookMarkQueryDto,
@@ -47,7 +47,7 @@ export class LectureController {
     description: '특정 강의 분반의 북마크를 취소합니다.',
   })
   @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
-  @UseGuards(IdPOptionalGuard)
+  @UseGuards(IdPGuard)
   @Delete('bookmark')
   async deleteBookMark(
     @Query() query: BookMarkQueryDto,
@@ -61,7 +61,7 @@ export class LectureController {
     description: '북마크한 강의를 모두 조회합니다.',
   })
   @ApiOAuth2(['email', 'profile', 'openid'], 'oauth2')
-  @UseGuards(IdPOptionalGuard)
+  @UseGuards(IdPGuard)
   @Get('bookmark')
   async getBookMark(@GetUser() user: User): Promise<BookMark[]> {
     return this.lectureService.getBookMark(user!);

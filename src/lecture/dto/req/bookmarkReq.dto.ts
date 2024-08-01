@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
+import { IsNumber } from 'class-validator';
 
 export class BookMarkQueryDto {
   @ApiProperty({
@@ -14,6 +15,7 @@ export class BookMarkQueryDto {
       return value;
     }
   })
+  @IsNumber()
   lectureId: number;
 
   @ApiProperty({
@@ -28,5 +30,6 @@ export class BookMarkQueryDto {
       return value;
     }
   })
+  @IsNumber()
   sectionId: number;
 }
