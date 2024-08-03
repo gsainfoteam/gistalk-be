@@ -54,15 +54,10 @@ describe('LectureController', () => {
           {
             id: 1,
             lectureId: value,
-            LectureSectionProfessor: [
+            Professor: [
               {
-                lectureId: value,
-                sectionId: 1,
-                professorId: 1,
-                Professor: {
-                  id: 1,
-                  name: 'name',
-                },
+                id: 1,
+                name: 'name',
               },
             ],
           },
@@ -74,9 +69,7 @@ describe('LectureController', () => {
       expect(result.id).toBe(value);
       expect(result.LectureCode[0].lectureId).toBe(value);
       expect(result.LectureSection[0].lectureId).toBe(value);
-      expect(
-        result.LectureSection[0].LectureSectionProfessor[0].lectureId,
-      ).toBe(value);
+      expect(result.LectureSection[0].Professor[0].id).toBe(value);
     });
   });
 
@@ -100,12 +93,12 @@ describe('LectureController', () => {
     };
 
     it('should return average Evaluation with lecture id or section id', async () => {
-      mockLectureService.getEvaluation.mockImplementationOnce(({ lectureId }) =>
+      mockLectureService.getEvaluation.mockImplementationOnce(({}) =>
         Promise.resolve(result1),
       );
 
-      mockLectureService.getEvaluation.mockImplementationOnce(
-        ({ lectureId, sectionId }) => Promise.resolve(result2),
+      mockLectureService.getEvaluation.mockImplementationOnce(({}) =>
+        Promise.resolve(result2),
       );
 
       expect(await lectureController.getEvaluation({ lectureId: 1 })).toEqual(
@@ -131,13 +124,7 @@ describe('LectureController', () => {
                 lectureId: 1,
               },
             ],
-            LectureSection: [
-              {
-                id: 1,
-                lectureId: 1,
-                LectureSectionProfessor: [],
-              },
-            ],
+            LectureSection: [],
           },
         ]),
       );

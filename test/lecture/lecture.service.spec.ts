@@ -4,12 +4,15 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { BookMarkQueryDto } from 'src/lecture/dto/req/bookmarkReq.dto';
 import { EvaluationResDto } from 'src/lecture/dto/res/evaluationRes.dto';
 import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
+import { LectureMapper } from 'src/lecture/lecture.mapper';
 import { LectureRepository } from 'src/lecture/lecture.repository';
 import { LectureService } from 'src/lecture/lecture.service';
+import { ExpandedLecture } from 'src/lecture/types/expandedLecture.type';
 
 describe('LectureService', () => {
   let lectureService: LectureService;
   let mockLectureRepository: DeepMockProxy<LectureRepository>;
+  let mockLectureMapper: DeepMockProxy<LectureMapper>;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -19,11 +22,16 @@ describe('LectureService', () => {
           provide: LectureRepository,
           useValue: mockDeep<LectureRepository>(),
         },
+        {
+          provide: LectureMapper,
+          useValue: mockDeep<LectureMapper>(),
+        },
       ],
     }).compile();
 
     lectureService = moduleRef.get<LectureService>(LectureService);
     mockLectureRepository = moduleRef.get(LectureRepository);
+    mockLectureMapper = moduleRef.get(LectureMapper);
   });
 
   it('to be defined', async () => {
@@ -36,60 +44,125 @@ describe('LectureService', () => {
       expect(await lectureService.getAll({})).toBeInstanceOf(Array);
     });
 
-    it('should throw error when mockLectureRepository.getAll throw ', async () => {
+    it('should throw error when mockLectureRepository.getAll throw and it does not call mockLectureMapper', async () => {
       mockLectureRepository.getAll.mockRejectedValue(new Error());
 
       expect(
         lectureService.getAll({ professorName: 'something' }),
       ).rejects.toThrow(Error);
+      expect(
+        mockLectureMapper.expandedLectureToExpandedLectureResDto,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when mockLectureMapper.expandedLectureToExpandedLectureResDto throws error', async () => {
+      mockLectureRepository.getAll.mockResolvedValue([
+        {
+          id: 1,
+          name: 'name',
+          LectureCode: [],
+          LectureSection: [],
+        },
+      ]);
+
+      mockLectureMapper.expandedLectureToExpandedLectureResDto.mockImplementationOnce(
+        () => {
+          throw new Error();
+        },
+      );
+
+      expect(lectureService.getAll({})).rejects.toThrow(Error);
     });
   });
 
   describe('getOne', () => {
-    it('should return one lecture whose id, LectureCode.lectureId, LectureSection.lectureId, LectureSectionProfessor.lectureId are the same with the given id', async () => {
-      const value = 1;
-      const expectedResult: ExpandedLectureResDto = {
-        id: value,
-        name: 'name',
-        LectureCode: [
-          {
-            code: 'code',
-            lectureId: value,
-          },
-        ],
-        LectureSection: [
-          {
-            id: 1,
-            lectureId: value,
-            LectureSectionProfessor: [
-              {
-                sectionId: 1,
-                lectureId: value,
-                professorId: 1,
-                Professor: {
-                  id: 1,
-                  name: 'name',
-                },
+    const value = 1;
+    const repositoryResult: ExpandedLecture = {
+      id: value,
+      name: 'name',
+      LectureCode: [
+        {
+          code: 'code',
+          lectureId: value,
+        },
+      ],
+      LectureSection: [
+        {
+          id: 1,
+          lectureId: value,
+          LectureSectionProfessor: [
+            {
+              sectionId: 1,
+              lectureId: value,
+              professorId: 1,
+              Professor: {
+                id: 1,
+                name: 'name',
               },
-            ],
-          },
-        ],
-      };
-      mockLectureRepository.getOne.mockResolvedValue(expectedResult);
+            },
+          ],
+        },
+      ],
+    };
+    const MapperResult: ExpandedLectureResDto = {
+      id: value,
+      name: 'name',
+      LectureCode: [
+        {
+          code: 'code',
+          lectureId: value,
+        },
+      ],
+      LectureSection: [
+        {
+          id: 1,
+          lectureId: value,
+          Professor: [
+            {
+              id: 1,
+              name: 'name',
+            },
+          ],
+        },
+      ],
+    };
+
+    it('should return one lecture whose id, LectureCode.lectureId, LectureSection.lectureId, LectureSectionProfessor.lectureId are the same with the given id', async () => {
+      mockLectureRepository.getOne.mockResolvedValue(repositoryResult);
+      mockLectureMapper.expandedLectureToExpandedLectureResDto.mockReturnValue(
+        MapperResult,
+      );
 
       const result: ExpandedLectureResDto = await lectureService.getOne(1);
       expect(result.id).toBe(value);
       expect(result.LectureCode[0].lectureId).toBe(value);
       expect(result.LectureSection[0].lectureId).toBe(value);
+      expect(result.LectureSection[0].Professor[0].id).toBe(value);
       expect(
-        result.LectureSection[0].LectureSectionProfessor[0].lectureId,
-      ).toBe(value);
+        mockLectureMapper.expandedLectureToExpandedLectureResDto,
+      ).toHaveBeenCalled();
+      expect(mockLectureRepository.getOne).toHaveBeenCalled();
     });
 
     it('should throw error when mockLectureRepository.getOne throws error', async () => {
-      await mockLectureRepository.getOne.mockRejectedValueOnce(new Error());
+      mockLectureRepository.getOne.mockRejectedValueOnce(new Error());
 
       expect(lectureService.getOne(1)).rejects.toThrow(Error);
+      expect(
+        mockLectureMapper.expandedLectureToExpandedLectureResDto,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when mockLectureMapper.expandedLectureToExpandedLectureResDto throws error', async () => {
+      mockLectureRepository.getOne.mockResolvedValueOnce(repositoryResult);
+      mockLectureMapper.expandedLectureToExpandedLectureResDto.mockImplementationOnce(
+        () => {
+          throw new Error();
+        },
+      );
+
+      expect(lectureService.getOne(1)).rejects.toThrow(Error);
+      expect(mockLectureRepository.getOne).toHaveBeenCalled();
     });
   });
 
@@ -111,12 +184,12 @@ describe('LectureService', () => {
       generosity: 2,
     };
     it('return evaluation', async () => {
-      mockLectureRepository.getEvaluation.mockImplementationOnce(
-        ({ lectureId }) => Promise.resolve(result1),
+      mockLectureRepository.getEvaluation.mockImplementationOnce(({}) =>
+        Promise.resolve(result1),
       );
 
-      mockLectureRepository.getEvaluation.mockImplementationOnce(
-        ({ lectureId, sectionId }) => Promise.resolve(result2),
+      mockLectureRepository.getEvaluation.mockImplementationOnce(({}) =>
+        Promise.resolve(result2),
       );
 
       expect(await lectureService.getEvaluation({ lectureId: 1 })).toEqual(
@@ -145,6 +218,9 @@ describe('LectureService', () => {
             LectureSection: [],
           },
         ]),
+      );
+      mockLectureMapper.expandedLectureToExpandedLectureResDto.mockImplementation(
+        (lecture) => ({ ...lecture, LectureSection: [] }),
       );
 
       const result = await lectureService.search({ keyword: 'name' });
