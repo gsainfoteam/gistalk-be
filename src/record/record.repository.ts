@@ -11,10 +11,10 @@ import { ExpandedRecordType } from './types/ExpandedRecord.type';
 export class RecordRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getRecentRecord({
-    take,
-    offset,
-  }: PagenationQueryDto): Promise<ExpandedRecordType[]> {
+  async getRecentRecord(
+    { take, offset }: PagenationQueryDto,
+    userUuid?: string,
+  ): Promise<ExpandedRecordType[]> {
     return this.prismaService.record.findMany({
       skip: offset,
       take,
@@ -32,6 +32,14 @@ export class RecordRepository {
             },
           },
         },
+        RecordLike: userUuid
+          ? {
+              where: {
+                userUuid,
+                deletedAt: null,
+              },
+            }
+          : undefined,
       },
     });
   }
@@ -60,16 +68,20 @@ export class RecordRepository {
             },
           },
         },
+        RecordLike: {
+          where: {
+            userUuid,
+            deletedAt: null,
+          },
+        },
       },
     });
   }
 
-  async getRecordByLectureSection({
-    lectureId,
-    sectionId,
-    take,
-    offset,
-  }: Omit<GetAllRecordQueryDto, 'type'>): Promise<ExpandedRecordType[]> {
+  async getRecordByLectureSection(
+    { lectureId, sectionId, take, offset }: Omit<GetAllRecordQueryDto, 'type'>,
+    userUuid?: string,
+  ): Promise<ExpandedRecordType[]> {
     return this.prismaService.record.findMany({
       where: {
         sectionId,
@@ -94,6 +106,14 @@ export class RecordRepository {
             },
           },
         },
+        RecordLike: userUuid
+          ? {
+              where: {
+                userUuid,
+                deletedAt: null,
+              },
+            }
+          : undefined,
         _count: {
           select: {
             RecordLike: {

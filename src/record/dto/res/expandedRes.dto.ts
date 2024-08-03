@@ -6,7 +6,6 @@ import {
   Professor,
   LectureSectionProfessor,
 } from '@prisma/client';
-import { ExpandedRecordType } from 'src/record/types/ExpandedRecord.type';
 
 class LectureResDto implements Lecture {
   @ApiProperty()
@@ -63,14 +62,14 @@ class CountResDto {
   RecordLike: number;
 }
 
-export class ExpandedRecordResDto
-  extends RecordResDto
-  implements ExpandedRecordType
-{
+export class ExpandedRecordResDto extends RecordResDto {
   @ApiProperty({
     type: () => LectureSectionResDto,
   })
   LectureSection: LectureSectionResDto;
+
+  @ApiPropertyOptional()
+  isLiked?: boolean;
 
   @ApiPropertyOptional({
     type: CountResDto,
