@@ -90,10 +90,28 @@ describe('RecordService', () => {
 
       mockRecordRepository.getRecentRecord.mockResolvedValue(recentRecords);
       mockRecordMapper.expandedRecordTypeToExpandedRecordResDto.mockImplementation(
-        (record) => record,
+        (record) => ({
+          ...record,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            Lecture: { id: 253, name: 'name' },
+            Professor: [],
+          },
+        }),
       );
 
-      expect(await service.getRecordList(query, user)).toEqual(recentRecords);
+      expect(await service.getRecordList(query, user)).toEqual(
+        recentRecords.map((record) => ({
+          ...record,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            Lecture: { id: 253, name: 'name' },
+            Professor: [],
+          },
+        })),
+      );
       expect(mockRecordRepository.getRecentRecord).toHaveBeenCalledWith(
         query,
         user.uuid,
@@ -152,10 +170,28 @@ describe('RecordService', () => {
 
       mockRecordRepository.getRecordByUser.mockResolvedValue(userRecords);
       mockRecordMapper.expandedRecordTypeToExpandedRecordResDto.mockImplementation(
-        (record) => record,
+        (record) => ({
+          ...record,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            Lecture: { id: 253, name: 'name' },
+            Professor: [],
+          },
+        }),
       );
 
-      expect(await service.getRecordList(query, user)).toEqual(userRecords);
+      expect(await service.getRecordList(query, user)).toEqual(
+        userRecords.map((record) => ({
+          ...record,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            Lecture: { id: 253, name: 'name' },
+            Professor: [],
+          },
+        })),
+      );
       expect(mockRecordRepository.getRecordByUser).toHaveBeenCalledWith(
         query,
         user.uuid,
@@ -233,10 +269,28 @@ describe('RecordService', () => {
 
       mockRecordRepository.getRecordByLectureSection.mockResolvedValue(records);
       mockRecordMapper.expandedRecordTypeToExpandedRecordResDto.mockImplementation(
-        (record) => record,
+        (record) => ({
+          ...record,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            Lecture: { id: 253, name: 'name' },
+            Professor: [],
+          },
+        }),
       );
 
-      expect(await service.getRecordList(query, user)).toEqual(records);
+      expect(await service.getRecordList(query, user)).toEqual(
+        records.map((record) => ({
+          ...record,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            Lecture: { id: 253, name: 'name' },
+            Professor: [],
+          },
+        })),
+      );
       expect(
         mockRecordRepository.getRecordByLectureSection,
       ).toHaveBeenCalledWith(query);

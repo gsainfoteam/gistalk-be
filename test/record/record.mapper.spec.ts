@@ -130,15 +130,10 @@ describe('RecordMapper', () => {
             id: 253,
             name: 'name',
           },
-          LectureSectionProfessor: [
+          Professor: [
             {
-              sectionId: 26,
-              lectureId: 253,
-              professorId: 9,
-              Professor: {
-                id: 9,
-                name: 'name',
-              },
+              id: 9,
+              name: 'name',
             },
           ],
         },
@@ -172,15 +167,10 @@ describe('RecordMapper', () => {
             id: 253,
             name: 'name',
           },
-          LectureSectionProfessor: [
+          Professor: [
             {
-              sectionId: 26,
-              lectureId: 253,
-              professorId: 9,
-              Professor: {
-                id: 9,
-                name: 'name',
-              },
+              id: 9,
+              name: 'name',
             },
           ],
         },
