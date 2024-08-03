@@ -35,6 +35,11 @@ jobs:
         env:
           DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
 
+      - name: Check if there are any changes
+        id: check_changes
+        run: |
+          git diff --quiet . || echo "changed=true" >> "$GITHUB_OUTPUT"
+          
       - name: Commit and Push
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
