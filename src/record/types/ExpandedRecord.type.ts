@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, RecordLike } from '@prisma/client';
 
 export type ExpandedRecordType = Prisma.RecordGetPayload<{
   include: {
@@ -14,6 +14,7 @@ export type ExpandedRecordType = Prisma.RecordGetPayload<{
     };
   };
 }> & {
+  RecordLike?: RecordLike[];
   _count?: {
     RecordLike: number;
   };

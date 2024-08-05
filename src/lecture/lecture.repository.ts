@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ExpandedLectureResDto } from './dto/res/lectureRes.dto';
 import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -12,14 +11,13 @@ import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
 import { BookMark } from '@prisma/client';
+import { ExpandedLecture } from './types/expandedLecture.type';
 
 @Injectable()
 export class LectureRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getAll({
-    professorName,
-  }: GetAllQueryDto): Promise<ExpandedLectureResDto[]> {
+  async getAll({ professorName }: GetAllQueryDto): Promise<ExpandedLecture[]> {
     return this.prismaService.lecture
       .findMany({
         where: {
@@ -60,7 +58,7 @@ export class LectureRepository {
       });
   }
 
-  async getOne(id: number): Promise<ExpandedLectureResDto> {
+  async getOne(id: number): Promise<ExpandedLecture> {
     return this.prismaService.lecture
       .findUniqueOrThrow({
         where: {
@@ -127,9 +125,7 @@ export class LectureRepository {
     return evaluation._avg;
   }
 
-  async search({
-    keyword,
-  }: SearchLectureQueryDto): Promise<ExpandedLectureResDto[]> {
+  async search({ keyword }: SearchLectureQueryDto): Promise<ExpandedLecture[]> {
     return this.prismaService.lecture
       .findMany({
         where: {

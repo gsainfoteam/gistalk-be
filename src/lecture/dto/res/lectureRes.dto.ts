@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma, Professor, LectureCode } from '@prisma/client';
+import { Prisma, Professor, LectureCode, LectureSection } from '@prisma/client';
 
 class ProfessorResDto implements Professor {
   @ApiProperty({
@@ -29,51 +29,7 @@ class LectureCodeResDto implements LectureCode {
   lectureId: number;
 }
 
-export class LectureSectionProfessorResDto
-  implements
-    Prisma.LectureSectionProfessorGetPayload<{
-      include: {
-        Professor: true;
-      };
-    }>
-{
-  @ApiProperty({
-    example: 1,
-    description: '강의 section id',
-  })
-  sectionId: number;
-
-  @ApiProperty({
-    example: 1,
-    description: '강의 id',
-  })
-  lectureId: number;
-
-  @ApiProperty({
-    example: 1,
-    description: '교수 id',
-  })
-  professorId: number;
-
-  @ApiProperty({
-    description: '교수 정보',
-    type: ProfessorResDto,
-  })
-  Professor: ProfessorResDto;
-}
-
-class LectureSectionResDto
-  implements
-    Prisma.LectureSectionGetPayload<{
-      include: {
-        LectureSectionProfessor: {
-          include: {
-            Professor: true;
-          };
-        };
-      };
-    }>
-{
+class LectureSectionResDto implements LectureSection {
   @ApiProperty({
     example: 1,
     description: '강의 section id',
@@ -87,10 +43,10 @@ class LectureSectionResDto
   lectureId: number;
 
   @ApiProperty({
-    type: [LectureSectionProfessorResDto],
-    description: '강의 section 교수 정보',
+    description: '교수 정보',
+    type: [ProfessorResDto],
   })
-  LectureSectionProfessor: LectureSectionProfessorResDto[];
+  Professor: ProfessorResDto[];
 }
 
 export class ExpandedLectureResDto
@@ -98,15 +54,7 @@ export class ExpandedLectureResDto
     Prisma.LectureGetPayload<{
       include: {
         LectureCode: true;
-        LectureSection: {
-          include: {
-            LectureSectionProfessor: {
-              include: {
-                Professor: true;
-              };
-            };
-          };
-        };
+        LectureSection: true;
       };
     }>
 {

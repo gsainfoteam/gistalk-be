@@ -9,12 +9,12 @@ import { UserInfo } from '../../src/idp/types/userInfo.type';
 import { RecordLike, User } from '@prisma/client';
 import { RecordService } from '../../src/record/record.service';
 import { RecordController } from '../../src/record/record.controller';
-import { ExpandedRecordType } from '../../src/record/types/ExpandedRecord.type';
 import { RecordResDto } from '../../src/record/dto/res/recordRes.dto';
 import { CreateRecordBodyDto } from '../../src/record/dto/req/createRecordBody.dto';
 import { UpdateRecordBodyDto } from '../../src/record/dto/req/updateRecordBody.dto';
 import { UserService } from '../../src/user/user.service';
 import { IdPOptionalStrategy } from '../../src/user/guard/idpOptional.strategy';
+import { ExpandedRecordResDto } from 'src/record/dto/res/expandedRes.dto';
 
 describe('RecordController Integration Test', () => {
   let app: INestApplication;
@@ -68,7 +68,7 @@ describe('RecordController Integration Test', () => {
       createdAt: new Date(),
     };
 
-    const recordResult: ExpandedRecordType[] = [
+    const recordResult: ExpandedRecordResDto[] = [
       {
         id: 1,
         difficulty: 1,
@@ -86,26 +86,18 @@ describe('RecordController Integration Test', () => {
         userUuid: 'uuid',
         lectureId: 253,
         LectureSection: {
-          id: 26,
+          id: 1,
           lectureId: 253,
           Lecture: {
             id: 253,
-            name: 'name',
+            name: 'test',
           },
-          LectureSectionProfessor: [
+          Professor: [
             {
-              sectionId: 26,
-              lectureId: 253,
-              professorId: 9,
-              Professor: {
-                id: 9,
-                name: 'name',
-              },
+              id: 1,
+              name: 'test',
             },
           ],
-        },
-        _count: {
-          RecordLike: 1,
         },
       },
     ];

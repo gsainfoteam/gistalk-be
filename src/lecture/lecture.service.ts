@@ -7,17 +7,25 @@ import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
 import { User } from '@prisma/client';
+import { LectureMapper } from './lecture.mapper';
 
 @Injectable()
 export class LectureService {
-  constructor(private readonly lectureRepository: LectureRepository) {}
+  constructor(
+    private readonly lectureRepository: LectureRepository,
+    private readonly lectureMapper: LectureMapper,
+  ) {}
 
   async getAll(query: GetAllQueryDto): Promise<ExpandedLectureResDto[]> {
-    return this.lectureRepository.getAll(query);
+    const lectures = await this.lectureRepository.getAll(query);
+    return lectures.map((lecture) =>
+      this.lectureMapper.expandedLectureToExpandedLectureResDto(lecture),
+    );
   }
 
   async getOne(id: number): Promise<ExpandedLectureResDto> {
-    return this.lectureRepository.getOne(id);
+    const lecture = await this.lectureRepository.getOne(id);
+    return this.lectureMapper.expandedLectureToExpandedLectureResDto(lecture);
   }
 
   async getEvaluation(query: EvaluationQueryDto): Promise<EvaluationResDto> {
@@ -25,7 +33,10 @@ export class LectureService {
   }
 
   async search(query: SearchLectureQueryDto): Promise<ExpandedLectureResDto[]> {
-    return this.lectureRepository.search(query);
+    const lectures = await this.lectureRepository.search(query);
+    return lectures.map((lecture) =>
+      this.lectureMapper.expandedLectureToExpandedLectureResDto(lecture),
+    );
   }
 
   async addBookMark(query: BookMarkQueryDto, user: User) {

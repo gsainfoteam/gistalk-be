@@ -97,15 +97,10 @@ describe('LectureController (integration)', () => {
             {
               id: 1,
               lectureId: 1,
-              LectureSectionProfessor: [
+              Professor: [
                 {
-                  sectionId: 1,
-                  lectureId: 1,
-                  professorId: 1,
-                  Professor: {
-                    id: 1,
-                    name: 'name',
-                  },
+                  id: 1,
+                  name: 'name',
                 },
               ],
             },
@@ -172,10 +167,10 @@ describe('LectureController (integration)', () => {
         Promise.resolve([
           {
             id: 1,
-            name: `contains ${keyword}`,
+            name: `contains ${keyword}.`,
             LectureCode: [
               {
-                code: 'code',
+                code: `.${keyword}.`,
                 lectureId: 1,
               },
             ],
@@ -183,15 +178,10 @@ describe('LectureController (integration)', () => {
               {
                 id: 1,
                 lectureId: 1,
-                LectureSectionProfessor: [
+                Professor: [
                   {
-                    sectionId: 1,
-                    lectureId: 1,
-                    professorId: 1,
-                    Professor: {
-                      id: 1,
-                      name: 'name',
-                    },
+                    id: 1,
+                    name: 'name',
                   },
                 ],
               },
@@ -216,10 +206,10 @@ describe('LectureController (integration)', () => {
         Promise.resolve([
           {
             id: 1,
-            name: 'name',
+            name: `contains ${keyword}.`,
             LectureCode: [
               {
-                code: `Contains ${keyword}`,
+                code: `.${keyword}.`,
                 lectureId: 1,
               },
             ],
@@ -227,15 +217,10 @@ describe('LectureController (integration)', () => {
               {
                 id: 1,
                 lectureId: 1,
-                LectureSectionProfessor: [
+                Professor: [
                   {
-                    sectionId: 1,
-                    lectureId: 1,
-                    professorId: 1,
-                    Professor: {
-                      id: 1,
-                      name: 'name',
-                    },
+                    id: 1,
+                    name: 'name',
                   },
                 ],
               },
@@ -412,15 +397,10 @@ describe('LectureController (integration)', () => {
           {
             id: 1,
             lectureId: 1,
-            LectureSectionProfessor: [
+            Professor: [
               {
-                sectionId: 1,
-                lectureId: 1,
-                professorId: 1,
-                Professor: {
-                  id: 1,
-                  name: 'name',
-                },
+                id: 1,
+                name: 'name',
               },
             ],
           },
