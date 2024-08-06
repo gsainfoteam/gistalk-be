@@ -31,7 +31,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Gistalk API')
     .setDescription('Gistalk API')
-    .setVersion('1.0')
+    .setVersion(configService.getOrThrow('API_VERSION'))
     .addTag('Gistalk')
     .addOAuth2(
       {
