@@ -39,7 +39,7 @@ export class RecordRepository {
                 deletedAt: null,
               },
             }
-          : undefined,
+          : false,
       },
     });
   }
@@ -113,7 +113,7 @@ export class RecordRepository {
                 deletedAt: null,
               },
             }
-          : undefined,
+          : false,
         _count: {
           select: {
             RecordLike: {
