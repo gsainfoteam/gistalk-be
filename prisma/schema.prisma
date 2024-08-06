@@ -88,7 +88,7 @@ model LectureSection {
   LectureSectionProfessor LectureSectionProfessor[]
   Record                  Record[]
   BookMark                BookMark[]
-  CourseRegistrationRate  CourseRegistrationRate[]
+  LectureSectionInfo      LectureSectionInfo[]
 
   @@id(name: "lectureSectionId", [id, lectureId])
   @@map("lecture_section")
@@ -150,15 +150,16 @@ model RecordLike {
   @@map("record_like")
 }
 
-model CourseRegistrationRate {
+model LectureSectionInfo {
   lectureId         Int @map("lecture_id")
   sectionId         Int @map("section_id")
+  year              Int
   capacity          Int
   registrationCount Int @map("registration_count")
   fullCapacityTime  Int @map("full_capacity_time")
 
   LectureSection LectureSection @relation(fields: [lectureId, sectionId], references: [id, lectureId])
 
-  @@id([lectureId, sectionId])
-  @@map("course_registration_rate")
+  @@id([lectureId, sectionId, year])
+  @@map("lecture_section_info")
 }

@@ -55,7 +55,7 @@ Table lecture_section {
   LectureSectionProfessor lecture_section_professor [not null]
   Record record [not null]
   BookMark bookmark [not null]
-  CourseRegistrationRate course_registration_rate [not null]
+  LectureSectionInfo lecture_section_info [not null]
 
   indexes {
     (id, lectureId) [pk]
@@ -105,16 +105,17 @@ Table record_like {
   record record [not null]
 }
 
-Table course_registration_rate {
+Table lecture_section_info {
   lectureId Int [not null]
   sectionId Int [not null]
   capacity Int [not null]
+  year Int [not null]
   registrationCount Int [not null]
   fullCapacityTime Int [not null]
   LectureSection lecture_section [not null]
 
   indexes {
-    (lectureId, sectionId) [pk]
+    (lectureId, sectionId, year) [pk]
   }
 }
 
@@ -152,4 +153,4 @@ Ref: record_like.userUuid > user.uuid
 
 Ref: record_like.recordId > record.id
 
-Ref: course_registration_rate.(lectureId, sectionId) > lecture_section.(id, lectureId)
+Ref: lecture_section_info.(lectureId, sectionId) > lecture_section.(id, lectureId)
