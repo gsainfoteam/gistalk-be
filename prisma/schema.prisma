@@ -36,7 +36,7 @@ model User {
 
   Record     Record[]
   RecordLike RecordLike[]
-  BookMark BookMark[]
+  BookMark   BookMark[]
 
   @@map("user")
 }
@@ -87,19 +87,20 @@ model LectureSection {
   Lecture                 Lecture                   @relation(fields: [lectureId], references: [id])
   LectureSectionProfessor LectureSectionProfessor[]
   Record                  Record[]
-  BookMark BookMark[]
+  BookMark                BookMark[]
+  CourseRegistrationRate  CourseRegistrationRate[]
 
   @@id(name: "lectureSectionId", [id, lectureId])
   @@map("lecture_section")
 }
 
 model BookMark {
-  lectureId Int @map("lecture_id")
-  sectionId Int @map("section_id")
-  userUuid String @db.Uuid @map("user_uuid")
+  lectureId Int    @map("lecture_id")
+  sectionId Int    @map("section_id")
+  userUuid  String @map("user_uuid") @db.Uuid
 
-  LectureSection LectureSection @relation(fields: [lectureId,sectionId], references: [id,lectureId])
-  User User @relation(fields: [userUuid], references: [uuid])
+  LectureSection LectureSection @relation(fields: [lectureId, sectionId], references: [id, lectureId])
+  User           User           @relation(fields: [userUuid], references: [uuid])
 
   @@id([lectureId, sectionId, userUuid])
   @@map("bookmark")
@@ -147,4 +148,17 @@ model RecordLike {
   record   Record @relation(fields: [recordId], references: [id])
 
   @@map("record_like")
+}
+
+model CourseRegistrationRate {
+  lectureId         Int @map("lecture_id")
+  sectionId         Int @map("section_id")
+  capacity          Int
+  registrationCount Int
+  fullCapacityTime  Int
+
+  LectureSection LectureSection @relation(fields: [lectureId, sectionId], references: [id, lectureId])
+
+  @@id([lectureId, sectionId])
+  @@map("course_registration_rate")
 }
