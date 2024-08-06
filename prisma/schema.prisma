@@ -154,8 +154,8 @@ model CourseRegistrationRate {
   lectureId         Int @map("lecture_id")
   sectionId         Int @map("section_id")
   capacity          Int
-  registrationCount Int
-  fullCapacityTime  Int
+  registrationCount Int @map("registration_count")
+  fullCapacityTime  Int @map("full_capacity_time")
 
   LectureSection LectureSection @relation(fields: [lectureId, sectionId], references: [id, lectureId])
 
