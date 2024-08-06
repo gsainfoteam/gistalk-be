@@ -41,7 +41,10 @@ export class RecordService {
         if (!query.lectureId) {
           throw new BadRequestException('need lectureId');
         }
-        records = await this.recordRepository.getRecordByLectureSection(query);
+        records = await this.recordRepository.getRecordByLectureSection(
+          query,
+          user?.uuid,
+        );
         break;
       default:
         throw new BadRequestException('invalid type');

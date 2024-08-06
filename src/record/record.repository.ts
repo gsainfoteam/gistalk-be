@@ -82,6 +82,7 @@ export class RecordRepository {
     { lectureId, sectionId, take, offset }: Omit<GetAllRecordQueryDto, 'type'>,
     userUuid?: string,
   ): Promise<ExpandedRecordType[]> {
+    console.log(userUuid);
     return this.prismaService.record.findMany({
       where: {
         sectionId,
