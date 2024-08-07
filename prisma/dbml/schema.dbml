@@ -108,8 +108,8 @@ Table record_like {
 Table lecture_section_info {
   lectureId Int [not null]
   sectionId Int [not null]
-  capacity Int [not null]
   year Int [not null]
+  capacity Int [not null]
   registrationCount Int [not null]
   fullCapacityTime Int [not null]
   LectureSection lecture_section [not null]
