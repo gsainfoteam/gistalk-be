@@ -190,7 +190,10 @@ export class LectureRepository {
           throw new InternalServerErrorException(
             'Unexpected Database Error Occurred',
           );
-          if (err.code === 'P2003') throw new ForbiddenException('invalid pk');
+          if (err.code === 'P2003')
+            throw new ForbiddenException(
+              'invalid fKey. check lectureId, sectionId, year, semester value',
+            );
           throw new InternalServerErrorException(
             'Unexpected Database Error Occurred',
           );
