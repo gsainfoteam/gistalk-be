@@ -2,7 +2,7 @@ name: Documentation Issue Template
 description: An Issue Template for Documentations
 title: '[Documentation] '
 labels: ['documentation']
-projects: ['gistalk']
+projects: ['gsainfoteam/7']
 assignees: []
 body:
   - type: textarea
