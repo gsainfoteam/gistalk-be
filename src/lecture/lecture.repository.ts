@@ -170,7 +170,7 @@ export class LectureRepository {
   }
 
   async addBookMark(
-    { lectureId, sectionId }: BookMarkQueryDto,
+    { lectureId, sectionId, year, semester }: BookMarkQueryDto,
     userUuid: string,
   ): Promise<BookMark> {
     return this.prismaService.bookMark
@@ -178,6 +178,8 @@ export class LectureRepository {
         data: {
           lectureId,
           sectionId,
+          year,
+          semester,
           userUuid,
         },
       })
