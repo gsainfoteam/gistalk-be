@@ -11,6 +11,11 @@ export class RecordMapper {
     const LectureSection = {
       id: expandedRecordType.LectureSection.id,
       lectureId: expandedRecordType.LectureSection.lectureId,
+      year: expandedRecordType.LectureSection.year,
+      semester: expandedRecordType.LectureSection.semester,
+      capacity: expandedRecordType.LectureSection.capacity,
+      registrationCount: expandedRecordType.LectureSection.registrationCount,
+      fullCapacityTime: expandedRecordType.LectureSection.fullCapacityTime,
       Lecture: {
         id: expandedRecordType.LectureSection.Lecture.id,
         name: expandedRecordType.LectureSection.Lecture.name,

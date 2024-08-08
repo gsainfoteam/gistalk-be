@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma, Professor, LectureCode, LectureSection } from '@prisma/client';
+import {
+  Prisma,
+  Professor,
+  LectureCode,
+  LectureSection,
+  Semester,
+} from '@prisma/client';
 
 class ProfessorResDto implements Professor {
   @ApiProperty({
@@ -41,6 +47,36 @@ class LectureSectionResDto implements LectureSection {
     description: '강의 id',
   })
   lectureId: number;
+
+  @ApiProperty({
+    example: 2024,
+    description: '강의 년도',
+  })
+  year: number;
+
+  @ApiProperty({
+    example: 'FALL',
+    description: '강의 학기',
+  })
+  semester: Semester;
+
+  @ApiProperty({
+    example: 1,
+    description: '수강 정원',
+  })
+  capacity: number;
+
+  @ApiProperty({
+    example: 1,
+    description: '수강 신청 인원수',
+  })
+  registrationCount: number;
+
+  @ApiProperty({
+    example: 1,
+    description: '정원 다차는데 걸리는 시간',
+  })
+  fullCapacityTime: number;
 
   @ApiProperty({
     description: '교수 정보',

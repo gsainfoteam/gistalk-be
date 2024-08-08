@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -170,7 +171,7 @@ export class LectureRepository {
   }
 
   async addBookMark(
-    { lectureId, sectionId }: BookMarkQueryDto,
+    { lectureId, sectionId, year, semester }: BookMarkQueryDto,
     userUuid: string,
   ): Promise<BookMark> {
     return this.prismaService.bookMark
@@ -178,12 +179,21 @@ export class LectureRepository {
         data: {
           lectureId,
           sectionId,
+          year,
+          semester,
           userUuid,
         },
       })
       .catch((err) => {
         if (err instanceof PrismaClientKnownRequestError) {
           if (err.code === 'P2025') throw new NotFoundException('invalid ID');
+          throw new InternalServerErrorException(
+            'Unexpected Database Error Occurred',
+          );
+          if (err.code === 'P2003')
+            throw new ForbiddenException(
+              'invalid fKey. check lectureId, sectionId, year, semester value',
+            );
           throw new InternalServerErrorException(
             'Unexpected Database Error Occurred',
           );
@@ -225,6 +235,33 @@ export class LectureRepository {
         where: {
           userUuid,
         },
+        include: { LectureSection: true },
+      })
+      .then((bookMarks) => {
+        const fullCapacityItems = bookMarks.filter(
+          (item) =>
+            item.LectureSection.capacity ===
+            item.LectureSection.registrationCount,
+        );
+
+        const partialCapacityItems = bookMarks.filter(
+          (item) =>
+            item.LectureSection.capacity !==
+            item.LectureSection.registrationCount,
+        );
+
+        fullCapacityItems.sort(
+          (a, b) =>
+            a.LectureSection.fullCapacityTime -
+            b.LectureSection.fullCapacityTime,
+        );
+        partialCapacityItems.sort(
+          (a, b) =>
+            a.LectureSection.fullCapacityTime -
+            b.LectureSection.fullCapacityTime,
+        );
+
+        return [...fullCapacityItems, ...partialCapacityItems];
       })
       .catch((err) => {
         if (err instanceof PrismaClientKnownRequestError) {
