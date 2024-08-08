@@ -1,7 +1,7 @@
 name: Feature Issue Template
 description: An Issue Template for Features
 title: '[FEATURE] '
-labels: ['feature']
+labels: ['enhancement']
 projects: ['gistalk']
 assignees: []
 body:
