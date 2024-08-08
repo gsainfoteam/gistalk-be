@@ -135,7 +135,7 @@ Ref: lecture_code.lectureId > lecture.id
 
 Ref: lecture_section.lectureId > lecture.id
 
-Ref: bookmark.(lectureId, sectionId, year, semester) > lecture_section.(id, lectureId, year, semester)
+Ref: bookmark.(lectureId, sectionId, year, semester) > lecture_section.(lectureId, id, year, semester)
 
 Ref: bookmark.userUuid > user.uuid
 

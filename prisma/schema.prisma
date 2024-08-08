@@ -108,7 +108,7 @@ model BookMark {
   year      Int
   semester  Semester
 
-  LectureSection LectureSection @relation(fields: [lectureId, sectionId, year, semester], references: [id, lectureId, year, semester])
+  LectureSection LectureSection @relation(fields: [lectureId, sectionId, year, semester], references: [lectureId, id, year, semester])
   User           User           @relation(fields: [userUuid], references: [uuid])
 
   @@id([lectureId, sectionId, userUuid])
