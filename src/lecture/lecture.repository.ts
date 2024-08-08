@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -189,6 +190,10 @@ export class LectureRepository {
           throw new InternalServerErrorException(
             'Unexpected Database Error Occurred',
           );
+          if (err.code === 'P2003') throw new ForbiddenException('invalid pk');
+          throw new InternalServerErrorException(
+            'Unexpected Database Error Occurred',
+          );
         }
         throw new InternalServerErrorException('Unexpected Error Occurred');
       });
@@ -227,6 +232,33 @@ export class LectureRepository {
         where: {
           userUuid,
         },
+        include: { LectureSection: true },
+      })
+      .then((bookMarks) => {
+        const fullCapacityItems = bookMarks.filter(
+          (item) =>
+            item.LectureSection.capacity ===
+            item.LectureSection.registrationCount,
+        );
+
+        const partialCapacityItems = bookMarks.filter(
+          (item) =>
+            item.LectureSection.capacity !==
+            item.LectureSection.registrationCount,
+        );
+
+        fullCapacityItems.sort(
+          (a, b) =>
+            a.LectureSection.fullCapacityTime -
+            b.LectureSection.fullCapacityTime,
+        );
+        partialCapacityItems.sort(
+          (a, b) =>
+            a.LectureSection.fullCapacityTime -
+            b.LectureSection.fullCapacityTime,
+        );
+
+        return [...fullCapacityItems, ...partialCapacityItems];
       })
       .catch((err) => {
         if (err instanceof PrismaClientKnownRequestError) {

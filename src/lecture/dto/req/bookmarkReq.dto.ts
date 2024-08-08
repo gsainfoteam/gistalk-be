@@ -39,13 +39,6 @@ export class BookMarkQueryDto {
     description: '수강 학기',
     required: true,
   })
-  @Transform(({ value }) => {
-    try {
-      return parseInt(value);
-    } catch {
-      return value;
-    }
-  })
   @IsEnum(Semester)
   semester: Semester;
 
