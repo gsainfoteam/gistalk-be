@@ -27,6 +27,8 @@ Table lecture_section_professor {
   sectionId Int [not null]
   lectureId Int [not null]
   professorId Int [not null]
+  year Int [not null]
+  semester Semester [not null]
   LectureSection lecture_section [not null]
   Professor professor [not null]
 
@@ -51,13 +53,18 @@ Table lecture {
 Table lecture_section {
   id Int [not null]
   lectureId Int [not null]
+  year Int [not null]
+  semester Semester [not null]
+  capacity Int [not null]
+  registrationCount Int [not null]
+  fullCapacityTime Int [not null]
   Lecture lecture [not null]
   LectureSectionProfessor lecture_section_professor [not null]
   Record record [not null]
   BookMark bookmark [not null]
 
   indexes {
-    (id, lectureId) [pk]
+    (id, lectureId, year, semester) [pk]
   }
 }
 
@@ -65,6 +72,8 @@ Table bookmark {
   lectureId Int [not null]
   sectionId Int [not null]
   userUuid String [not null]
+  year Int [not null]
+  semester Semester [not null]
   LectureSection lecture_section [not null]
   User user [not null]
 
@@ -118,7 +127,7 @@ Enum Recommendation {
   MAYBE
 }
 
-Ref: lecture_section_professor.(sectionId, lectureId) > lecture_section.(id, lectureId)
+Ref: lecture_section_professor.(sectionId, lectureId, year, semester) > lecture_section.(id, lectureId, year, semester)
 
 Ref: lecture_section_professor.professorId > professor.id
 
@@ -126,13 +135,13 @@ Ref: lecture_code.lectureId > lecture.id
 
 Ref: lecture_section.lectureId > lecture.id
 
-Ref: bookmark.(lectureId, sectionId) > lecture_section.(id, lectureId)
+Ref: bookmark.(lectureId, sectionId, year, semester) > lecture_section.(lectureId, id, year, semester)
 
 Ref: bookmark.userUuid > user.uuid
 
 Ref: record.userUuid > user.uuid
 
-Ref: record.(lectureId, sectionId) > lecture_section.(lectureId, id)
+Ref: record.(lectureId, sectionId, year, semester) > lecture_section.(lectureId, id, year, semester)
 
 Ref: record_like.userUuid > user.uuid
 

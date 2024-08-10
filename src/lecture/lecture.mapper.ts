@@ -10,6 +10,11 @@ export class LectureMapper {
     const LectureSection = expandedLecture.LectureSection.map((section) => ({
       id: section.id,
       lectureId: section.lectureId,
+      year: section.year,
+      semester: section.semester,
+      capacity: section.capacity,
+      registrationCount: section.registrationCount,
+      fullCapacityTime: section.fullCapacityTime,
       Professor: section.LectureSectionProfessor.map((professor) => ({
         id: professor.Professor.id,
         name: professor.Professor.name,

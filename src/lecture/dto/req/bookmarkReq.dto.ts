@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNumber } from 'class-validator';
+import { IsEnum, IsNumber } from 'class-validator';
+import { Semester } from '@prisma/client';
 
 export class BookMarkQueryDto {
   @ApiProperty({
@@ -17,6 +18,29 @@ export class BookMarkQueryDto {
   })
   @IsNumber()
   lectureId: number;
+
+  @ApiProperty({
+    example: 2024,
+    description: '수강 년도',
+    required: true,
+  })
+  @Transform(({ value }) => {
+    try {
+      return parseInt(value);
+    } catch {
+      return value;
+    }
+  })
+  @IsNumber()
+  year: number;
+
+  @ApiProperty({
+    example: 'FALL',
+    description: '수강 학기',
+    required: true,
+  })
+  @IsEnum(Semester)
+  semester: Semester;
 
   @ApiProperty({
     example: 1,
