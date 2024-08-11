@@ -33,7 +33,7 @@ Table lecture_section_professor {
   Professor professor [not null]
 
   indexes {
-    (sectionId, lectureId, professorId) [pk]
+    (sectionId, lectureId, professorId, year, semester) [pk]
   }
 }
 
