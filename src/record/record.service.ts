@@ -37,6 +37,15 @@ export class RecordService {
         }
         records = await this.recordRepository.getRecordByUser(query, user.uuid);
         break;
+      case 'professor':
+        if (!query.professorId) {
+          throw new BadRequestException('need professorId');
+        }
+        records = await this.recordRepository.getRecordByProfessor(
+          query,
+          user?.uuid,
+        );
+        break;
       case 'evaluation':
         if (!query.lectureId) {
           throw new BadRequestException('need lectureId');

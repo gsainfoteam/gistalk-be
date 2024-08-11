@@ -72,6 +72,11 @@ describe('RecordController', () => {
                 name: 'name',
               },
             ],
+            year: 0,
+            semester: 'FALL',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
           },
           _count: {
             RecordLike: 1,

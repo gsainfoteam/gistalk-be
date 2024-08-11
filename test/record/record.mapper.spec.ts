@@ -38,6 +38,11 @@ describe('RecordMapper', () => {
         LectureSection: {
           id: 26,
           lectureId: 253,
+          year: 2022,
+          semester: 'FALL',
+          capacity: 0,
+          registrationCount: null,
+          fullCapacityTime: null,
           Lecture: {
             id: 253,
             name: 'name',
@@ -46,6 +51,8 @@ describe('RecordMapper', () => {
             {
               sectionId: 26,
               lectureId: 253,
+              year: 2022,
+              semester: 'FALL',
               professorId: 9,
               Professor: {
                 id: 9,
@@ -76,6 +83,11 @@ describe('RecordMapper', () => {
         LectureSection: {
           id: 26,
           lectureId: 253,
+          year: 2022,
+          semester: 'FALL',
+          capacity: 0,
+          registrationCount: null,
+          fullCapacityTime: null,
           Lecture: {
             id: 253,
             name: 'name',
@@ -84,6 +96,8 @@ describe('RecordMapper', () => {
             {
               sectionId: 26,
               lectureId: 253,
+              year: 2022,
+              semester: 'FALL',
               professorId: 9,
               Professor: {
                 id: 9,
@@ -126,6 +140,11 @@ describe('RecordMapper', () => {
         LectureSection: {
           id: 26,
           lectureId: 253,
+          year: 2022,
+          semester: 'FALL',
+          capacity: 0,
+          fullCapacityTime: null,
+          registrationCount: null,
           Lecture: {
             id: 253,
             name: 'name',
@@ -163,6 +182,11 @@ describe('RecordMapper', () => {
         LectureSection: {
           id: 26,
           lectureId: 253,
+          year: 2022,
+          semester: 'FALL',
+          capacity: 0,
+          fullCapacityTime: null,
+          registrationCount: null,
           Lecture: {
             id: 253,
             name: 'name',

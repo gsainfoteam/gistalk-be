@@ -69,6 +69,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2022,
+            semester: 'FALL',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: {
               id: 253,
               name: 'name',
@@ -77,6 +82,8 @@ describe('RecordService', () => {
               {
                 sectionId: 26,
                 lectureId: 253,
+                year: 2022,
+                semester: 'FALL',
                 professorId: 9,
                 Professor: {
                   id: 9,
@@ -95,6 +102,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2022,
+            semester: 'FALL',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -107,6 +119,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2022,
+            semester: 'FALL',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -149,6 +166,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: {
               id: 253,
               name: 'name',
@@ -157,6 +179,8 @@ describe('RecordService', () => {
               {
                 sectionId: 26,
                 lectureId: 253,
+                year: 2021,
+                semester: 'SPRING',
                 professorId: 9,
                 Professor: {
                   id: 9,
@@ -175,6 +199,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -187,6 +216,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -211,6 +245,107 @@ describe('RecordService', () => {
       expect(
         mockRecordRepository.getRecordByLectureSection,
       ).not.toHaveBeenCalled();
+    });
+
+    it('should call getRecordByProfessor when query is professor', async () => {
+      const query: GetAllRecordQueryDto = {
+        type: 'professor',
+        lectureId: 253,
+        professorId: 9,
+      };
+      const user: User = {
+        uuid: 'uuid',
+        name: 'name',
+        consent: false,
+        createdAt: new Date(),
+      };
+      const records: ExpandedRecordType[] = [
+        {
+          id: 2,
+          difficulty: 1,
+          skill: 1,
+          helpfulness: 1,
+          interest: 1,
+          load: 1,
+          generosity: 1,
+          review: 'review',
+          recommendation: 'YES',
+          semester: 'SPRING',
+          year: 2021,
+          createdAt: new Date(),
+          sectionId: 26,
+          userUuid: 'uuid',
+          lectureId: 253,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
+            Lecture: {
+              id: 253,
+              name: 'name',
+            },
+            LectureSectionProfessor: [
+              {
+                sectionId: 26,
+                lectureId: 253,
+                year: 2021,
+                semester: 'SPRING',
+                professorId: 9,
+                Professor: {
+                  id: 9,
+                  name: 'name',
+                },
+              },
+            ],
+          },
+        },
+      ];
+
+      mockRecordRepository.getRecordByProfessor.mockResolvedValue(records);
+      mockRecordMapper.expandedRecordTypeToExpandedRecordResDto.mockImplementation(
+        (record) => ({
+          ...record,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
+            Lecture: { id: 253, name: 'name' },
+            Professor: [],
+          },
+        }),
+      );
+
+      expect(await service.getRecordList(query, user)).toEqual(
+        records.map((record) => ({
+          ...record,
+          LectureSection: {
+            id: 26,
+            lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
+            Lecture: { id: 253, name: 'name' },
+            Professor: [],
+          },
+        })),
+      );
+      expect(mockRecordRepository.getRecordByProfessor).toHaveBeenCalledWith(
+        query,
+        user.uuid,
+      );
+      expect(
+        mockRecordMapper.expandedRecordTypeToExpandedRecordResDto,
+      ).toHaveBeenCalled();
     });
 
     it('should call getRecordByLectureSection when query is evaluation', async () => {
@@ -245,6 +380,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: {
               id: 253,
               name: 'name',
@@ -253,6 +393,8 @@ describe('RecordService', () => {
               {
                 sectionId: 26,
                 lectureId: 253,
+                year: 2021,
+                semester: 'SPRING',
                 professorId: 9,
                 Professor: {
                   id: 9,
@@ -274,6 +416,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -286,6 +433,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -293,7 +445,7 @@ describe('RecordService', () => {
       );
       expect(
         mockRecordRepository.getRecordByLectureSection,
-      ).toHaveBeenCalledWith(query);
+      ).toHaveBeenCalledWith(query, user.uuid);
       expect(
         mockRecordMapper.expandedRecordTypeToExpandedRecordResDto,
       ).toHaveBeenCalled();
