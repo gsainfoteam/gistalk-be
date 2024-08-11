@@ -61,6 +61,11 @@ describe('RecordRepository', () => {
         LectureSection: {
           id: 26,
           lectureId: 253,
+          year: 2022,
+          semester: 'FALL',
+          capacity: 0,
+          registrationCount: null,
+          fullCapacityTime: null,
           Lecture: {
             id: 253,
             name: 'name',
@@ -69,6 +74,8 @@ describe('RecordRepository', () => {
             {
               sectionId: 26,
               lectureId: 253,
+              year: 2022,
+              semester: 'FALL',
               professorId: 9,
               Professor: {
                 id: 9,
@@ -139,6 +146,11 @@ describe('RecordRepository', () => {
         LectureSection: {
           id: 26,
           lectureId: 253,
+          year: 2021,
+          semester: 'SPRING',
+          capacity: 0,
+          registrationCount: null,
+          fullCapacityTime: null,
           Lecture: {
             id: 253,
             name: 'name',
@@ -147,6 +159,8 @@ describe('RecordRepository', () => {
             {
               sectionId: 26,
               lectureId: 253,
+              year: 2021,
+              semester: 'SPRING',
               professorId: 9,
               Professor: { id: 9, name: 'name' },
             },
@@ -216,6 +230,11 @@ describe('RecordRepository', () => {
         LectureSection: {
           id: 26,
           lectureId: 253,
+          year: 2021,
+          semester: 'SPRING',
+          capacity: 0,
+          registrationCount: null,
+          fullCapacityTime: null,
           Lecture: {
             id: 253,
             name: 'name',
@@ -224,6 +243,8 @@ describe('RecordRepository', () => {
             {
               sectionId: 26,
               lectureId: 253,
+              year: 2021,
+              semester: 'SPRING',
               professorId: 9,
               Professor: { id: 9, name: 'name' },
             },

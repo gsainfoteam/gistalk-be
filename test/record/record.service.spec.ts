@@ -69,6 +69,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2022,
+            semester: 'FALL',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: {
               id: 253,
               name: 'name',
@@ -77,6 +82,8 @@ describe('RecordService', () => {
               {
                 sectionId: 26,
                 lectureId: 253,
+                year: 2022,
+                semester: 'FALL',
                 professorId: 9,
                 Professor: {
                   id: 9,
@@ -95,6 +102,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2022,
+            semester: 'FALL',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -107,6 +119,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2022,
+            semester: 'FALL',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -149,6 +166,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: {
               id: 253,
               name: 'name',
@@ -157,6 +179,8 @@ describe('RecordService', () => {
               {
                 sectionId: 26,
                 lectureId: 253,
+                year: 2021,
+                semester: 'SPRING',
                 professorId: 9,
                 Professor: {
                   id: 9,
@@ -175,6 +199,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -187,6 +216,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -245,6 +279,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: {
               id: 253,
               name: 'name',
@@ -253,6 +292,8 @@ describe('RecordService', () => {
               {
                 sectionId: 26,
                 lectureId: 253,
+                year: 2021,
+                semester: 'SPRING',
                 professorId: 9,
                 Professor: {
                   id: 9,
@@ -274,6 +315,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -286,6 +332,11 @@ describe('RecordService', () => {
           LectureSection: {
             id: 26,
             lectureId: 253,
+            year: 2021,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
             Lecture: { id: 253, name: 'name' },
             Professor: [],
           },
@@ -293,7 +344,7 @@ describe('RecordService', () => {
       );
       expect(
         mockRecordRepository.getRecordByLectureSection,
-      ).toHaveBeenCalledWith(query);
+      ).toHaveBeenCalledWith(query, user.uuid);
       expect(
         mockRecordMapper.expandedRecordTypeToExpandedRecordResDto,
       ).toHaveBeenCalled();

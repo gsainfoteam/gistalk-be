@@ -98,6 +98,11 @@ describe('RecordController Integration Test', () => {
               name: 'test',
             },
           ],
+          year: 0,
+          semester: 'SPRING',
+          capacity: 0,
+          registrationCount: null,
+          fullCapacityTime: null,
         },
       },
     ];
