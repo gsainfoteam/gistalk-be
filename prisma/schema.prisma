@@ -59,7 +59,7 @@ model LectureSectionProfessor {
   LectureSection LectureSection @relation(fields: [sectionId, lectureId, year, semester], references: [id, lectureId, year, semester])
   Professor      Professor      @relation(fields: [professorId], references: [id])
 
-  @@id([sectionId, lectureId, professorId])
+  @@id([sectionId, lectureId, professorId, year, semester])
   @@map("lecture_section_professor")
 }
 
