@@ -89,8 +89,8 @@ model LectureSection {
   semester  Semester
 
   capacity          Int
-  registrationCount Int @map("registration_count")
-  fullCapacityTime  Int @map("full_capacity_time")
+  registrationCount Int? @map("registration_count")
+  fullCapacityTime  Int? @map("full_capacity_time")
 
   Lecture                 Lecture                   @relation(fields: [lectureId], references: [id])
   LectureSectionProfessor LectureSectionProfessor[]
