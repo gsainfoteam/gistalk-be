@@ -56,8 +56,8 @@ Table lecture_section {
   year Int [not null]
   semester Semester [not null]
   capacity Int [not null]
-  registrationCount Int [not null]
-  fullCapacityTime Int [not null]
+  registrationCount Int
+  fullCapacityTime Int
   Lecture lecture [not null]
   LectureSectionProfessor lecture_section_professor [not null]
   Record record [not null]
