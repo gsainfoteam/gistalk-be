@@ -35,10 +35,10 @@ class LectureSectionResDto implements LectureSection {
   capacity: number;
 
   @ApiProperty()
-  registrationCount: number;
+  registrationCount: number | null;
 
   @ApiProperty()
-  fullCapacityTime: number;
+  fullCapacityTime: number | null;
 
   @ApiProperty({
     type: [ProfessorResDto],
