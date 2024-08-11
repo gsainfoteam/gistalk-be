@@ -198,6 +198,91 @@ describe('RecordRepository', () => {
     });
   });
 
+  describe('getRecordByProfessor', () => {
+    it('should be defined', () => {
+      expect(repository.getRecordByProfessor).toBeDefined();
+    });
+
+    const recordQuery: GetAllRecordQueryDto = {
+      professorId: 1,
+      take: 10,
+      offset: 0,
+      type: 'professor',
+    };
+
+    const records: ExpandedRecordType[] = [
+      {
+        id: 2,
+        difficulty: 1,
+        skill: 1,
+        helpfulness: 1,
+        interest: 1,
+        load: 1,
+        generosity: 1,
+        review: 'review',
+        recommendation: 'YES',
+        semester: 'SPRING',
+        year: 2021,
+        createdAt: new Date(),
+        sectionId: 26,
+        userUuid: 'uuid',
+        lectureId: 253,
+        LectureSection: {
+          id: 26,
+          lectureId: 253,
+          year: 2021,
+          semester: 'SPRING',
+          capacity: 0,
+          registrationCount: null,
+          fullCapacityTime: null,
+          Lecture: {
+            id: 253,
+            name: 'name',
+          },
+          LectureSectionProfessor: [
+            {
+              sectionId: 26,
+              lectureId: 253,
+              year: 2021,
+              semester: 'SPRING',
+              professorId: 9,
+              Professor: { id: 9, name: 'name' },
+            },
+          ],
+        },
+        _count: {
+          RecordLike: 1,
+        },
+      },
+    ];
+
+    it('should find record by professor if exists', async () => {
+      mockPrisma.record.findMany.mockResolvedValue(records);
+      expect(await repository.getRecordByProfessor(recordQuery)).toBe(records);
+    });
+
+    it('should throw internalServerException if findMany fails with database error', async () => {
+      mockPrisma.record.findMany.mockRejectedValue(
+        new PrismaClientKnownRequestError('database error', {
+          code: 'P2002',
+          clientVersion: '2.20.0',
+        }),
+      );
+      await expect(
+        repository.getRecordByProfessor(recordQuery),
+      ).rejects.toThrow(new InternalServerErrorException('database error'));
+    });
+
+    it('should throw internalServerException if findMany fails with unexpected error', async () => {
+      mockPrisma.record.findMany.mockRejectedValue(
+        new Error('unexpected error'),
+      );
+      await expect(
+        repository.getRecordByProfessor(recordQuery),
+      ).rejects.toThrow(new InternalServerErrorException('unexpected error'));
+    });
+  });
+
   describe('getRecordByLectureSection', () => {
     it('should be defined', () => {
       expect(repository.getRecordByLectureSection).toBeDefined();
