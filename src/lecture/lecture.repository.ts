@@ -241,27 +241,32 @@ export class LectureRepository {
         const fullCapacityItems = bookMarks.filter(
           (item) =>
             item.LectureSection.capacity ===
-            item.LectureSection.registrationCount,
+              item.LectureSection.registrationCount &&
+            item.LectureSection.fullCapacityTime !== null,
         );
-
         const partialCapacityItems = bookMarks.filter(
           (item) =>
             item.LectureSection.capacity !==
-            item.LectureSection.registrationCount,
+              item.LectureSection.registrationCount &&
+            item.LectureSection.fullCapacityTime !== null,
         );
-
+        const nullItems = bookMarks.filter(
+          (item) =>
+            item.LectureSection.fullCapacityTime === null ||
+            item.LectureSection.registrationCount === null,
+        );
         fullCapacityItems.sort(
           (a, b) =>
-            a.LectureSection.fullCapacityTime -
-            b.LectureSection.fullCapacityTime,
-        );
-        partialCapacityItems.sort(
-          (a, b) =>
-            a.LectureSection.fullCapacityTime -
-            b.LectureSection.fullCapacityTime,
+            a.LectureSection.fullCapacityTime! -
+            b.LectureSection.fullCapacityTime!,
         );
 
-        return [...fullCapacityItems, ...partialCapacityItems];
+        partialCapacityItems.sort(
+          (a, b) =>
+            a.LectureSection.fullCapacityTime! -
+            b.LectureSection.fullCapacityTime!,
+        );
+        return [...fullCapacityItems, ...partialCapacityItems, ...nullItems];
       })
       .catch((err) => {
         if (err instanceof PrismaClientKnownRequestError) {

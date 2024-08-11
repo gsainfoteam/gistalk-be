@@ -70,13 +70,13 @@ class LectureSectionResDto implements LectureSection {
     example: 1,
     description: '수강 신청 인원수',
   })
-  registrationCount: number;
+  registrationCount: number | null;
 
   @ApiProperty({
     example: 1,
     description: '정원 다차는데 걸리는 시간',
   })
-  fullCapacityTime: number;
+  fullCapacityTime: number | null;
 
   @ApiProperty({
     description: '교수 정보',
