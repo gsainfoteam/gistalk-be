@@ -78,6 +78,63 @@ export class RecordRepository {
     });
   }
 
+  async getRecordByProfessor(
+    {
+      lectureId,
+      professorId,
+      take,
+      offset,
+    }: Omit<GetAllRecordQueryDto, 'type'>,
+    userUuid?: string,
+  ): Promise<ExpandedRecordType[]> {
+    return this.prismaService.record.findMany({
+      where: {
+        LectureSection: {
+          lectureId,
+          LectureSectionProfessor: {
+            some: {
+              professorId,
+            },
+          },
+        },
+      },
+      skip: offset,
+      take,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        LectureSection: {
+          include: {
+            Lecture: true,
+            LectureSectionProfessor: {
+              include: {
+                Professor: true,
+              },
+            },
+          },
+        },
+        RecordLike: userUuid
+          ? {
+              where: {
+                userUuid,
+                deletedAt: null,
+              },
+            }
+          : false,
+        _count: {
+          select: {
+            RecordLike: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   async getRecordByLectureSection(
     { lectureId, sectionId, take, offset }: Omit<GetAllRecordQueryDto, 'type'>,
     userUuid?: string,
