@@ -7,7 +7,7 @@ import { RecordLike, User } from '@prisma/client';
 import { CreateRecordBodyDto } from '../../src/record/dto/req/createRecordBody.dto';
 import { RecordResDto } from '../../src/record/dto/res/recordRes.dto';
 import { UpdateRecordBodyDto } from '../../src/record/dto/req/updateRecordBody.dto';
-import { ExpandedRecordResDto } from 'src/record/dto/res/expandedRes.dto';
+import { ExpandedRecordType } from 'src/record/types/ExpandedRecord.type';
 
 describe('RecordController', () => {
   let controller: RecordController;
@@ -42,7 +42,7 @@ describe('RecordController', () => {
         createdAt: new Date(),
       };
 
-      const result: ExpandedRecordResDto[] = [
+      const result: ExpandedRecordType[] = [
         {
           id: 1,
           difficulty: 1,
@@ -66,10 +66,17 @@ describe('RecordController', () => {
               id: 253,
               name: 'name',
             },
-            Professor: [
+            LectureSectionProfessor: [
               {
-                id: 9,
-                name: 'name',
+                sectionId: 26,
+                lectureId: 253,
+                professorId: 1,
+                year: 2022,
+                semester: 'FALL',
+                Professor: {
+                  id: 1,
+                  name: 'name',
+                },
               },
             ],
             year: 0,

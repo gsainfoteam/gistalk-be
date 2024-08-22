@@ -14,7 +14,7 @@ import { CreateRecordBodyDto } from '../../src/record/dto/req/createRecordBody.d
 import { UpdateRecordBodyDto } from '../../src/record/dto/req/updateRecordBody.dto';
 import { UserService } from '../../src/user/user.service';
 import { IdPOptionalStrategy } from '../../src/user/guard/idpOptional.strategy';
-import { ExpandedRecordResDto } from 'src/record/dto/res/expandedRes.dto';
+import { ExpandedRecordType } from 'src/record/types/ExpandedRecord.type';
 
 describe('RecordController Integration Test', () => {
   let app: INestApplication;
@@ -68,7 +68,7 @@ describe('RecordController Integration Test', () => {
       createdAt: new Date(),
     };
 
-    const recordResult: ExpandedRecordResDto[] = [
+    const recordResult: ExpandedRecordType[] = [
       {
         id: 1,
         difficulty: 1,
@@ -92,10 +92,17 @@ describe('RecordController Integration Test', () => {
             id: 253,
             name: 'test',
           },
-          Professor: [
+          LectureSectionProfessor: [
             {
-              id: 1,
-              name: 'test',
+              sectionId: 26,
+              lectureId: 253,
+              professorId: 1,
+              year: 2022,
+              semester: 'FALL',
+              Professor: {
+                id: 1,
+                name: 'test',
+              },
             },
           ],
           year: 0,
