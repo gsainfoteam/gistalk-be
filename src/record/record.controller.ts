@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -9,6 +10,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -26,6 +28,7 @@ import { ExpandedRecordResDto } from './dto/res/expandedRes.dto';
 @ApiTags('record')
 @Controller('record')
 @UsePipes(new ValidationPipe({ transform: true }))
+@UseInterceptors(ClassSerializerInterceptor)
 export class RecordController {
   constructor(private readonly recordService: RecordService) {}
 
@@ -42,7 +45,11 @@ export class RecordController {
     @Query() query: GetAllRecordQueryDto,
     @GetUser() user?: User,
   ): Promise<ExpandedRecordResDto[]> {
-    return this.recordService.getRecordList(query, user);
+    return (await this.recordService.getRecordList(query, user)).map(
+      (record) => {
+        return new ExpandedRecordResDto(record);
+      },
+    );
   }
 
   @ApiOperation({
