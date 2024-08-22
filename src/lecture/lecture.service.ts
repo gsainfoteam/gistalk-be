@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ExpandedLectureResDto } from './dto/res/lectureRes.dto';
 import { LectureRepository } from './lecture.repository';
 import { EvaluationQueryDto } from './dto/req/evaluationReq.dto';
 import { EvaluationResDto } from './dto/res/evaluationRes.dto';
@@ -7,36 +6,26 @@ import { SearchLectureQueryDto } from './dto/req/searchReq.dto';
 import { GetAllQueryDto } from './dto/req/getAllReq.dto';
 import { BookMarkQueryDto } from './dto/req/bookmarkReq.dto';
 import { User } from '@prisma/client';
-import { LectureMapper } from './lecture.mapper';
+import { ExpandedLecture } from './types/expandedLecture.type';
 
 @Injectable()
 export class LectureService {
-  constructor(
-    private readonly lectureRepository: LectureRepository,
-    private readonly lectureMapper: LectureMapper,
-  ) {}
+  constructor(private readonly lectureRepository: LectureRepository) {}
 
-  async getAll(query: GetAllQueryDto): Promise<ExpandedLectureResDto[]> {
-    const lectures = await this.lectureRepository.getAll(query);
-    return lectures.map((lecture) =>
-      this.lectureMapper.expandedLectureToExpandedLectureResDto(lecture),
-    );
+  async getAll(query: GetAllQueryDto): Promise<ExpandedLecture[]> {
+    return this.lectureRepository.getAll(query);
   }
 
-  async getOne(id: number): Promise<ExpandedLectureResDto> {
-    const lecture = await this.lectureRepository.getOne(id);
-    return this.lectureMapper.expandedLectureToExpandedLectureResDto(lecture);
+  async getOne(id: number): Promise<ExpandedLecture> {
+    return this.lectureRepository.getOne(id);
   }
 
   async getEvaluation(query: EvaluationQueryDto): Promise<EvaluationResDto> {
     return this.lectureRepository.getEvaluation(query);
   }
 
-  async search(query: SearchLectureQueryDto): Promise<ExpandedLectureResDto[]> {
-    const lectures = await this.lectureRepository.search(query);
-    return lectures.map((lecture) =>
-      this.lectureMapper.expandedLectureToExpandedLectureResDto(lecture),
-    );
+  async search(query: SearchLectureQueryDto): Promise<ExpandedLecture[]> {
+    return this.lectureRepository.search(query);
   }
 
   async addBookMark(query: BookMarkQueryDto, user: User) {
