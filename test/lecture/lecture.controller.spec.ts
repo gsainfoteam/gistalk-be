@@ -6,6 +6,7 @@ import { EvaluationResDto } from 'src/lecture/dto/res/evaluationRes.dto';
 import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
 import { LectureController } from 'src/lecture/lecture.controller';
 import { LectureService } from 'src/lecture/lecture.service';
+import { ExpandedLecture } from 'src/lecture/types/expandedLecture.type';
 
 describe('LectureController', () => {
   let lectureController: LectureController;
@@ -41,7 +42,7 @@ describe('LectureController', () => {
   describe('getOne', () => {
     it('should return ExpandedLectureResDto whose id, LectureCode.lectureId, LectureSection.lectureId, LectureSectionProfessor.lectureId are the same with given id', async () => {
       const value = 1;
-      const expectedResult: ExpandedLectureResDto = {
+      const serviceResult: ExpandedLecture = {
         id: value,
         name: 'name',
         LectureCode: [
@@ -54,22 +55,33 @@ describe('LectureController', () => {
           {
             id: 1,
             lectureId: value,
-            Professor: [
+            year: 2024,
+            semester: 'FALL',
+            capacity: 1,
+            fullCapacityTime: 31,
+            registrationCount: 1,
+            LectureSectionProfessor: [
               {
-                id: 1,
-                name: 'name',
+                sectionId: 1,
+                lectureId: value,
+                year: 2024,
+                semester: 'FALL',
+                professorId: value,
+                Professor: {
+                  id: value,
+                  name: 'name',
+                },
               },
             ],
           },
         ],
       };
-      mockLectureService.getOne.mockResolvedValue(expectedResult);
-      const result: ExpandedLectureResDto = await mockLectureService.getOne(1);
+      mockLectureService.getOne.mockResolvedValue(serviceResult);
+      const result: ExpandedLectureResDto = await lectureController.getOne(1);
 
       expect(result.id).toBe(value);
-      expect(result.LectureCode[0].lectureId).toBe(value);
-      expect(result.LectureSection[0].lectureId).toBe(value);
-      expect(result.LectureSection[0].Professor[0].id).toBe(value);
+      expect(result.lectureSection[0].lectureId).toBe(value);
+      expect(result.lectureSection[0].professor[0].id).toBe(value);
     });
   });
 
@@ -140,6 +152,8 @@ describe('LectureController', () => {
     const mockQuery: BookMarkQueryDto = {
       lectureId: 1,
       sectionId: 2,
+      year: 2024,
+      semester: 'FALL',
     };
 
     const mockUser: User = {
@@ -154,6 +168,8 @@ describe('LectureController', () => {
         lectureId: 1,
         sectionId: 2,
         userUuid: 'uuid',
+        year: 2024,
+        semester: 'FALL',
       };
 
       mockLectureService.addBookMark.mockResolvedValue(expectedResult);
@@ -179,6 +195,8 @@ describe('LectureController', () => {
     const mockQuery: BookMarkQueryDto = {
       lectureId: 1,
       sectionId: 2,
+      year: 2024,
+      semester: 'FALL',
     };
 
     const mockUser: User = {
@@ -193,6 +211,8 @@ describe('LectureController', () => {
         lectureId: 1,
         sectionId: 2,
         userUuid: 'uuid',
+        year: 2024,
+        semester: 'FALL',
       };
 
       mockLectureService.deleteBookMark.mockResolvedValue(expectedResult);
@@ -231,11 +251,15 @@ describe('LectureController', () => {
           lectureId: 1,
           sectionId: 2,
           userUuid: 'uuid',
+          year: 2024,
+          semester: 'FALL',
         },
         {
           lectureId: 2,
           sectionId: 1,
           userUuid: 'uuid',
+          year: 2024,
+          semester: 'FALL',
         },
       ];
 

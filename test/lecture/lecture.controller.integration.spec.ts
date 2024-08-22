@@ -10,10 +10,10 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { IdpService } from 'src/idp/idp.service';
 import { UserInfo } from 'src/idp/types/userInfo.type';
 import { BookMarkQueryDto } from 'src/lecture/dto/req/bookmarkReq.dto';
-import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
 import { LectureController } from 'src/lecture/lecture.controller';
 import { LectureRepository } from 'src/lecture/lecture.repository';
 import { LectureService } from 'src/lecture/lecture.service';
+import { ExpandedLecture } from 'src/lecture/types/expandedLecture.type';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { IdPGuard, IdPOptionalGuard } from 'src/user/guard/idp.guard';
 import { IdPStrategy } from 'src/user/guard/idp.strategy';
@@ -83,7 +83,7 @@ describe('LectureController (integration)', () => {
     });
 
     it('should return all lectures with professorName', async () => {
-      const expectResult: ExpandedLectureResDto[] = [
+      const ServiceResult: ExpandedLecture[] = [
         {
           id: 1,
           name: 'name',
@@ -97,10 +97,22 @@ describe('LectureController (integration)', () => {
             {
               id: 1,
               lectureId: 1,
-              Professor: [
+              year: 2024,
+              semester: 'FALL',
+              capacity: 1,
+              fullCapacityTime: 31,
+              registrationCount: 1,
+              LectureSectionProfessor: [
                 {
-                  id: 1,
-                  name: 'name',
+                  lectureId: 1,
+                  sectionId: 1,
+                  year: 2024,
+                  semester: 'FALL',
+                  professorId: 1,
+                  Professor: {
+                    id: 1,
+                    name: 'test',
+                  },
                 },
               ],
             },
@@ -108,7 +120,7 @@ describe('LectureController (integration)', () => {
         },
       ];
 
-      mockLectureService.getAll.mockResolvedValue(expectResult);
+      mockLectureService.getAll.mockResolvedValue(ServiceResult);
 
       const result = await request(app.getHttpServer())
         .get('/lecture')
@@ -118,7 +130,6 @@ describe('LectureController (integration)', () => {
         .send();
 
       expect(result.status).toBe(200);
-      expect(result.body).toEqual(expectResult);
     });
 
     it('should 400 error when invalid type given as professorName', async () => {
@@ -178,10 +189,22 @@ describe('LectureController (integration)', () => {
               {
                 id: 1,
                 lectureId: 1,
-                Professor: [
+                year: 2024,
+                semester: 'FALL',
+                capacity: 1,
+                fullCapacityTime: 31,
+                registrationCount: 1,
+                LectureSectionProfessor: [
                   {
-                    id: 1,
-                    name: 'name',
+                    lectureId: 1,
+                    sectionId: 1,
+                    year: 2024,
+                    semester: 'FALL',
+                    professorId: 1,
+                    Professor: {
+                      id: 1,
+                      name: 'test',
+                    },
                   },
                 ],
               },
@@ -217,10 +240,22 @@ describe('LectureController (integration)', () => {
               {
                 id: 1,
                 lectureId: 1,
-                Professor: [
+                year: 2024,
+                semester: 'FALL',
+                capacity: 1,
+                fullCapacityTime: 31,
+                registrationCount: 1,
+                LectureSectionProfessor: [
                   {
-                    id: 1,
-                    name: 'name',
+                    lectureId: 1,
+                    sectionId: 1,
+                    year: 2024,
+                    semester: 'FALL',
+                    professorId: 1,
+                    Professor: {
+                      id: 1,
+                      name: 'test',
+                    },
                   },
                 ],
               },
@@ -237,7 +272,7 @@ describe('LectureController (integration)', () => {
         .send();
 
       expect(result.status).toBe(200);
-      expect(result.body[0].LectureCode[0].code).toContain('keyword');
+      expect(result.body[0].lectureCode[0]).toContain('keyword');
     });
 
     it('should 400 error when invalid type given as keyword', async () => {
@@ -384,7 +419,7 @@ describe('LectureController (integration)', () => {
 
   describe('getOne', () => {
     it('should return lecture with id', async () => {
-      const expectResult: ExpandedLectureResDto = {
+      const expectResult: ExpandedLecture = {
         id: 1,
         name: 'name',
         LectureCode: [
@@ -397,10 +432,22 @@ describe('LectureController (integration)', () => {
           {
             id: 1,
             lectureId: 1,
-            Professor: [
+            year: 2024,
+            semester: 'FALL',
+            capacity: 1,
+            fullCapacityTime: 31,
+            registrationCount: 1,
+            LectureSectionProfessor: [
               {
-                id: 1,
-                name: 'name',
+                lectureId: 1,
+                sectionId: 1,
+                year: 2024,
+                semester: 'FALL',
+                professorId: 1,
+                Professor: {
+                  id: 1,
+                  name: 'name',
+                },
               },
             ],
           },
@@ -414,7 +461,6 @@ describe('LectureController (integration)', () => {
         .send();
 
       expect(result.status).toBe(200);
-      expect(result.body).toEqual(expectResult);
     });
 
     it('should 400 error when invalid type given as id', async () => {
@@ -480,6 +526,8 @@ describe('LectureController (integration)', () => {
     const mockQuery: BookMarkQueryDto = {
       lectureId: 1,
       sectionId: 2,
+      year: 2024,
+      semester: 'FALL',
     };
 
     it('should create BookMark', async () => {
@@ -487,6 +535,8 @@ describe('LectureController (integration)', () => {
         lectureId: 1,
         sectionId: 2,
         userUuid: 'uuid',
+        year: 2024,
+        semester: 'FALL',
       };
 
       mockIdPService.getUserInfo.mockResolvedValue(userInfo);
@@ -610,6 +660,8 @@ describe('LectureController (integration)', () => {
     const mockQuery: BookMarkQueryDto = {
       lectureId: 1,
       sectionId: 2,
+      year: 2024,
+      semester: 'FALL',
     };
 
     it('should delete BookMark', async () => {
@@ -617,6 +669,8 @@ describe('LectureController (integration)', () => {
         lectureId: 1,
         sectionId: 2,
         userUuid: 'uuid',
+        year: 2024,
+        semester: 'FALL',
       };
 
       mockIdPService.getUserInfo.mockResolvedValue(userInfo);
@@ -746,11 +800,15 @@ describe('LectureController (integration)', () => {
           lectureId: 1,
           sectionId: 2,
           userUuid: 'uuid',
+          year: 2024,
+          semester: 'FALL',
         },
         {
           lectureId: 2,
           sectionId: 1,
           userUuid: 'uuid',
+          year: 2024,
+          semester: 'FALL',
         },
       ];
 

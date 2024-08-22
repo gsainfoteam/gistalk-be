@@ -3,12 +3,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { BookMark, PrismaClient } from '@prisma/client';
+import { BookMark, Prisma, PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { BookMarkQueryDto } from 'src/lecture/dto/req/bookmarkReq.dto';
-import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
 import { LectureRepository } from 'src/lecture/lecture.repository';
+import { ExpandedLecture } from 'src/lecture/types/expandedLecture.type';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 describe('LectureRepository', () => {
@@ -67,8 +67,8 @@ describe('LectureRepository', () => {
   });
 
   describe('getOne', () => {
-    it('should return ExpandedLectureResDto with given lecture id', async () => {
-      const lecture: ExpandedLectureResDto = {
+    it('should return ExpandedLecture with given lecture id', async () => {
+      const lecture: ExpandedLecture = {
         id: 1,
         name: 'name',
         LectureCode: [],
@@ -211,6 +211,8 @@ describe('LectureRepository', () => {
     const mockReq: BookMarkQueryDto = {
       lectureId: 1,
       sectionId: 5,
+      year: 2024,
+      semester: 'FALL',
     };
     const userUuid = 'uuid';
 
@@ -220,6 +222,8 @@ describe('LectureRepository', () => {
       const expectedResult: BookMark = {
         lectureId,
         sectionId,
+        year: 2024,
+        semester: 'FALL',
         userUuid,
       };
 
@@ -251,7 +255,7 @@ describe('LectureRepository', () => {
       );
     });
 
-    it('should throw InternalServerErrorException when mockPrisma.addBookMark throws Error which is not PrismaKnownRequestErro', async () => {
+    it('should throw InternalServerErrorException when mockPrisma.addBookMark throws Error which is not PrismaKnownRequestError', async () => {
       mockPrisma.bookMark.create.mockRejectedValue(
         new InternalServerErrorException('Unexpected Error Occurred'),
       );
@@ -268,6 +272,8 @@ describe('LectureRepository', () => {
     const mockQuery: BookMarkQueryDto = {
       lectureId: 1,
       sectionId: 5,
+      year: 2024,
+      semester: 'FALL',
     };
     const userUuid = 'uuid';
 
@@ -278,6 +284,8 @@ describe('LectureRepository', () => {
         lectureId,
         sectionId,
         userUuid,
+        year: 2024,
+        semester: 'FALL',
       };
 
       mockPrisma.bookMark.delete.mockResolvedValue(expectedResult);
@@ -340,16 +348,40 @@ describe('LectureRepository', () => {
   describe('getBookMark', () => {
     it('should return All bookmarks with userUuid', async () => {
       const userUuid = 'uuid';
-      const expectedResult: BookMark[] = [
+      const expectedResult: Prisma.BookMarkGetPayload<{
+        include: { LectureSection: true };
+      }>[] = [
         {
           lectureId: 1,
           sectionId: 5,
           userUuid: 'uuid',
+          year: 2024,
+          semester: 'FALL',
+          LectureSection: {
+            capacity: 11,
+            registrationCount: 213,
+            fullCapacityTime: null,
+            id: 0,
+            lectureId: 0,
+            year: 0,
+            semester: 'SPRING',
+          },
         },
         {
           lectureId: 2,
           sectionId: 1,
           userUuid: 'uuid',
+          year: 2024,
+          semester: 'FALL',
+          LectureSection: {
+            id: 0,
+            lectureId: 0,
+            year: 0,
+            semester: 'SPRING',
+            capacity: 0,
+            registrationCount: null,
+            fullCapacityTime: null,
+          },
         },
       ];
 
@@ -380,7 +412,7 @@ describe('LectureRepository', () => {
       expect(result).rejects.toThrow(new NotFoundException('Invalid ID'));
     });
 
-    it('should throw InteranlServerErrorException when mockPrisma.getBookMark throws Unexpected PrismaClientRequest', async () => {
+    it('should throw InternalServerErrorException when mockPrisma.getBookMark throws Unexpected PrismaClientRequest', async () => {
       const userUuid = 'uuid';
       mockPrisma.bookMark.findMany.mockRejectedValue(
         new PrismaClientKnownRequestError(

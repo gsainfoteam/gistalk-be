@@ -3,8 +3,6 @@ import { BookMark, User } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { BookMarkQueryDto } from 'src/lecture/dto/req/bookmarkReq.dto';
 import { EvaluationResDto } from 'src/lecture/dto/res/evaluationRes.dto';
-import { ExpandedLectureResDto } from 'src/lecture/dto/res/lectureRes.dto';
-import { LectureMapper } from 'src/lecture/lecture.mapper';
 import { LectureRepository } from 'src/lecture/lecture.repository';
 import { LectureService } from 'src/lecture/lecture.service';
 import { ExpandedLecture } from 'src/lecture/types/expandedLecture.type';
@@ -12,7 +10,6 @@ import { ExpandedLecture } from 'src/lecture/types/expandedLecture.type';
 describe('LectureService', () => {
   let lectureService: LectureService;
   let mockLectureRepository: DeepMockProxy<LectureRepository>;
-  let mockLectureMapper: DeepMockProxy<LectureMapper>;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -22,16 +19,11 @@ describe('LectureService', () => {
           provide: LectureRepository,
           useValue: mockDeep<LectureRepository>(),
         },
-        {
-          provide: LectureMapper,
-          useValue: mockDeep<LectureMapper>(),
-        },
       ],
     }).compile();
 
     lectureService = moduleRef.get<LectureService>(LectureService);
     mockLectureRepository = moduleRef.get(LectureRepository);
-    mockLectureMapper = moduleRef.get(LectureMapper);
   });
 
   it('to be defined', async () => {
@@ -42,36 +34,6 @@ describe('LectureService', () => {
     it('should return an array', async () => {
       mockLectureRepository.getAll.mockResolvedValue(Promise.resolve([]));
       expect(await lectureService.getAll({})).toBeInstanceOf(Array);
-    });
-
-    it('should throw error when mockLectureRepository.getAll throw and it does not call mockLectureMapper', async () => {
-      mockLectureRepository.getAll.mockRejectedValue(new Error());
-
-      expect(
-        lectureService.getAll({ professorName: 'something' }),
-      ).rejects.toThrow(Error);
-      expect(
-        mockLectureMapper.expandedLectureToExpandedLectureResDto,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('should throw error when mockLectureMapper.expandedLectureToExpandedLectureResDto throws error', async () => {
-      mockLectureRepository.getAll.mockResolvedValue([
-        {
-          id: 1,
-          name: 'name',
-          LectureCode: [],
-          LectureSection: [],
-        },
-      ]);
-
-      mockLectureMapper.expandedLectureToExpandedLectureResDto.mockImplementationOnce(
-        () => {
-          throw new Error();
-        },
-      );
-
-      expect(lectureService.getAll({})).rejects.toThrow(Error);
     });
   });
 
@@ -90,37 +52,22 @@ describe('LectureService', () => {
         {
           id: 1,
           lectureId: value,
+          year: 2021,
+          semester: 'SPRING',
+          capacity: 100,
+          registrationCount: 1,
+          fullCapacityTime: 100,
           LectureSectionProfessor: [
             {
               sectionId: 1,
               lectureId: value,
-              professorId: 1,
+              professorId: value,
+              year: 2021,
+              semester: 'SPRING',
               Professor: {
-                id: 1,
+                id: value,
                 name: 'name',
               },
-            },
-          ],
-        },
-      ],
-    };
-    const MapperResult: ExpandedLectureResDto = {
-      id: value,
-      name: 'name',
-      LectureCode: [
-        {
-          code: 'code',
-          lectureId: value,
-        },
-      ],
-      LectureSection: [
-        {
-          id: 1,
-          lectureId: value,
-          Professor: [
-            {
-              id: 1,
-              name: 'name',
             },
           ],
         },
@@ -129,18 +76,14 @@ describe('LectureService', () => {
 
     it('should return one lecture whose id, LectureCode.lectureId, LectureSection.lectureId, LectureSectionProfessor.lectureId are the same with the given id', async () => {
       mockLectureRepository.getOne.mockResolvedValue(repositoryResult);
-      mockLectureMapper.expandedLectureToExpandedLectureResDto.mockReturnValue(
-        MapperResult,
-      );
 
-      const result: ExpandedLectureResDto = await lectureService.getOne(1);
+      const result: ExpandedLecture = await lectureService.getOne(1);
       expect(result.id).toBe(value);
       expect(result.LectureCode[0].lectureId).toBe(value);
       expect(result.LectureSection[0].lectureId).toBe(value);
-      expect(result.LectureSection[0].Professor[0].id).toBe(value);
       expect(
-        mockLectureMapper.expandedLectureToExpandedLectureResDto,
-      ).toHaveBeenCalled();
+        result.LectureSection[0].LectureSectionProfessor[0].professorId,
+      ).toBe(value);
       expect(mockLectureRepository.getOne).toHaveBeenCalled();
     });
 
@@ -148,21 +91,6 @@ describe('LectureService', () => {
       mockLectureRepository.getOne.mockRejectedValueOnce(new Error());
 
       expect(lectureService.getOne(1)).rejects.toThrow(Error);
-      expect(
-        mockLectureMapper.expandedLectureToExpandedLectureResDto,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('should throw error when mockLectureMapper.expandedLectureToExpandedLectureResDto throws error', async () => {
-      mockLectureRepository.getOne.mockResolvedValueOnce(repositoryResult);
-      mockLectureMapper.expandedLectureToExpandedLectureResDto.mockImplementationOnce(
-        () => {
-          throw new Error();
-        },
-      );
-
-      expect(lectureService.getOne(1)).rejects.toThrow(Error);
-      expect(mockLectureRepository.getOne).toHaveBeenCalled();
     });
   });
 
@@ -219,9 +147,6 @@ describe('LectureService', () => {
           },
         ]),
       );
-      mockLectureMapper.expandedLectureToExpandedLectureResDto.mockImplementation(
-        (lecture) => ({ ...lecture, LectureSection: [] }),
-      );
 
       const result = await lectureService.search({ keyword: 'name' });
       expect(result).toBeInstanceOf(Array);
@@ -234,6 +159,8 @@ describe('LectureService', () => {
     const mockQuery: BookMarkQueryDto = {
       lectureId: 1,
       sectionId: 2,
+      year: 2021,
+      semester: 'SPRING',
     };
 
     const mockUser: User = {
@@ -248,6 +175,8 @@ describe('LectureService', () => {
         lectureId: 1,
         sectionId: 2,
         userUuid: 'uuid',
+        year: 2021,
+        semester: 'SPRING',
       };
 
       mockLectureRepository.addBookMark.mockResolvedValue(expectedResult);
@@ -274,6 +203,8 @@ describe('LectureService', () => {
     const mockQuery: BookMarkQueryDto = {
       lectureId: 1,
       sectionId: 2,
+      year: 2021,
+      semester: 'SPRING',
     };
 
     const mockUser: User = {
@@ -288,6 +219,8 @@ describe('LectureService', () => {
         lectureId: 1,
         sectionId: 2,
         userUuid: 'uuid',
+        year: 2021,
+        semester: 'SPRING',
       };
 
       mockLectureRepository.deleteBookMark.mockResolvedValue(expectedResult);
@@ -323,11 +256,15 @@ describe('LectureService', () => {
           lectureId: 1,
           sectionId: 2,
           userUuid: 'uuid',
+          year: 2021,
+          semester: 'SPRING',
         },
         {
           lectureId: 2,
           sectionId: 1,
           userUuid: 'uuid',
+          year: 2021,
+          semester: 'SPRING',
         },
       ];
 
