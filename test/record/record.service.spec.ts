@@ -9,12 +9,10 @@ import { ExpandedRecordType } from '../../src/record/types/ExpandedRecord.type';
 import { CreateRecordBodyDto } from '../../src/record/dto/req/createRecordBody.dto';
 import { RecordResDto } from '../../src/record/dto/res/recordRes.dto';
 import { UpdateRecordBodyDto } from '../../src/record/dto/req/updateRecordBody.dto';
-import { RecordMapper } from 'src/record/record.mapper';
 
 describe('RecordService', () => {
   let service: RecordService;
   let mockRecordRepository: DeepMockProxy<RecordRepository>;
-  let mockRecordMapper: DeepMockProxy<RecordMapper>;
 
   beforeEach(async () => {
     const mockModule: TestingModule = await Test.createTestingModule({
@@ -24,16 +22,11 @@ describe('RecordService', () => {
           provide: RecordRepository,
           useValue: mockDeep<RecordRepository>(),
         },
-        {
-          provide: RecordMapper,
-          useValue: mockDeep<RecordMapper>(),
-        },
       ],
     }).compile();
 
     service = mockModule.get<RecordService>(RecordService);
     mockRecordRepository = mockModule.get(RecordRepository);
-    mockRecordMapper = mockModule.get(RecordMapper);
   });
 
   describe('getRecordList', () => {
@@ -96,46 +89,12 @@ describe('RecordService', () => {
       ];
 
       mockRecordRepository.getRecentRecord.mockResolvedValue(recentRecords);
-      mockRecordMapper.expandedRecordTypeToExpandedRecordResDto.mockImplementation(
-        (record) => ({
-          ...record,
-          LectureSection: {
-            id: 26,
-            lectureId: 253,
-            year: 2022,
-            semester: 'FALL',
-            capacity: 0,
-            registrationCount: null,
-            fullCapacityTime: null,
-            Lecture: { id: 253, name: 'name' },
-            Professor: [],
-          },
-        }),
-      );
 
-      expect(await service.getRecordList(query, user)).toEqual(
-        recentRecords.map((record) => ({
-          ...record,
-          LectureSection: {
-            id: 26,
-            lectureId: 253,
-            year: 2022,
-            semester: 'FALL',
-            capacity: 0,
-            registrationCount: null,
-            fullCapacityTime: null,
-            Lecture: { id: 253, name: 'name' },
-            Professor: [],
-          },
-        })),
-      );
+      expect(await service.getRecordList(query, user)).toEqual(recentRecords);
       expect(mockRecordRepository.getRecentRecord).toHaveBeenCalledWith(
         query,
         user.uuid,
       );
-      expect(
-        mockRecordMapper.expandedRecordTypeToExpandedRecordResDto,
-      ).toHaveBeenCalled();
     });
 
     it('should call getRecordByUser when query is user', async () => {
@@ -193,46 +152,12 @@ describe('RecordService', () => {
       ];
 
       mockRecordRepository.getRecordByUser.mockResolvedValue(userRecords);
-      mockRecordMapper.expandedRecordTypeToExpandedRecordResDto.mockImplementation(
-        (record) => ({
-          ...record,
-          LectureSection: {
-            id: 26,
-            lectureId: 253,
-            year: 2021,
-            semester: 'SPRING',
-            capacity: 0,
-            registrationCount: null,
-            fullCapacityTime: null,
-            Lecture: { id: 253, name: 'name' },
-            Professor: [],
-          },
-        }),
-      );
 
-      expect(await service.getRecordList(query, user)).toEqual(
-        userRecords.map((record) => ({
-          ...record,
-          LectureSection: {
-            id: 26,
-            lectureId: 253,
-            year: 2021,
-            semester: 'SPRING',
-            capacity: 0,
-            registrationCount: null,
-            fullCapacityTime: null,
-            Lecture: { id: 253, name: 'name' },
-            Professor: [],
-          },
-        })),
-      );
+      expect(await service.getRecordList(query, user)).toEqual(userRecords);
       expect(mockRecordRepository.getRecordByUser).toHaveBeenCalledWith(
         query,
         user.uuid,
       );
-      expect(
-        mockRecordMapper.expandedRecordTypeToExpandedRecordResDto,
-      ).toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when user is not provided', async () => {
@@ -306,46 +231,12 @@ describe('RecordService', () => {
       ];
 
       mockRecordRepository.getRecordByProfessor.mockResolvedValue(records);
-      mockRecordMapper.expandedRecordTypeToExpandedRecordResDto.mockImplementation(
-        (record) => ({
-          ...record,
-          LectureSection: {
-            id: 26,
-            lectureId: 253,
-            year: 2021,
-            semester: 'SPRING',
-            capacity: 0,
-            registrationCount: null,
-            fullCapacityTime: null,
-            Lecture: { id: 253, name: 'name' },
-            Professor: [],
-          },
-        }),
-      );
 
-      expect(await service.getRecordList(query, user)).toEqual(
-        records.map((record) => ({
-          ...record,
-          LectureSection: {
-            id: 26,
-            lectureId: 253,
-            year: 2021,
-            semester: 'SPRING',
-            capacity: 0,
-            registrationCount: null,
-            fullCapacityTime: null,
-            Lecture: { id: 253, name: 'name' },
-            Professor: [],
-          },
-        })),
-      );
+      expect(await service.getRecordList(query, user)).toEqual(records);
       expect(mockRecordRepository.getRecordByProfessor).toHaveBeenCalledWith(
         query,
         user.uuid,
       );
-      expect(
-        mockRecordMapper.expandedRecordTypeToExpandedRecordResDto,
-      ).toHaveBeenCalled();
     });
 
     it('should call getRecordByLectureSection when query is evaluation', async () => {
@@ -410,45 +301,11 @@ describe('RecordService', () => {
       ];
 
       mockRecordRepository.getRecordByLectureSection.mockResolvedValue(records);
-      mockRecordMapper.expandedRecordTypeToExpandedRecordResDto.mockImplementation(
-        (record) => ({
-          ...record,
-          LectureSection: {
-            id: 26,
-            lectureId: 253,
-            year: 2021,
-            semester: 'SPRING',
-            capacity: 0,
-            registrationCount: null,
-            fullCapacityTime: null,
-            Lecture: { id: 253, name: 'name' },
-            Professor: [],
-          },
-        }),
-      );
 
-      expect(await service.getRecordList(query, user)).toEqual(
-        records.map((record) => ({
-          ...record,
-          LectureSection: {
-            id: 26,
-            lectureId: 253,
-            year: 2021,
-            semester: 'SPRING',
-            capacity: 0,
-            registrationCount: null,
-            fullCapacityTime: null,
-            Lecture: { id: 253, name: 'name' },
-            Professor: [],
-          },
-        })),
-      );
+      expect(await service.getRecordList(query, user)).toEqual(records);
       expect(
         mockRecordRepository.getRecordByLectureSection,
       ).toHaveBeenCalledWith(query, user.uuid);
-      expect(
-        mockRecordMapper.expandedRecordTypeToExpandedRecordResDto,
-      ).toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when lectureId is not provided', async () => {

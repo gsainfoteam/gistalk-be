@@ -40,6 +40,15 @@ export class RecordRepository {
               },
             }
           : false,
+        _count: {
+          select: {
+            RecordLike: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -72,6 +81,15 @@ export class RecordRepository {
           where: {
             userUuid,
             deletedAt: null,
+          },
+        },
+        _count: {
+          select: {
+            RecordLike: {
+              where: {
+                deletedAt: null,
+              },
+            },
           },
         },
       },

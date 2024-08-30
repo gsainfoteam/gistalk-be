@@ -1,11 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  Prisma,
-  Professor,
-  LectureCode,
-  LectureSection,
-  Semester,
-} from '@prisma/client';
+import { Professor, LectureCode, Semester, Prisma } from '@prisma/client';
+import { Exclude, Expose } from 'class-transformer';
+import { ExpandedLecture } from 'src/lecture/types/expandedLecture.type';
 
 class ProfessorResDto implements Professor {
   @ApiProperty({
@@ -21,21 +17,25 @@ class ProfessorResDto implements Professor {
   name: string;
 }
 
-class LectureCodeResDto implements LectureCode {
-  @ApiProperty({
-    example: '1',
-    description: '강의코드',
-  })
-  code: string;
+class LectureSectionResDto
+  implements
+    Prisma.LectureSectionGetPayload<{
+      include: {
+        LectureSectionProfessor: {
+          include: {
+            Professor: true;
+          };
+        };
+      };
+    }>
+{
+  @Exclude()
+  LectureSectionProfessor: Prisma.LectureSectionProfessorGetPayload<{
+    include: {
+      Professor: true;
+    };
+  }>[];
 
-  @ApiProperty({
-    example: 1,
-    description: '강의 id',
-  })
-  lectureId: number;
-}
-
-class LectureSectionResDto implements LectureSection {
   @ApiProperty({
     example: 1,
     description: '강의 section id',
@@ -82,18 +82,34 @@ class LectureSectionResDto implements LectureSection {
     description: '교수 정보',
     type: [ProfessorResDto],
   })
-  Professor: ProfessorResDto[];
+  @Expose()
+  get professor(): ProfessorResDto[] {
+    return this.LectureSectionProfessor.map((professor) => ({
+      id: professor.Professor.id,
+      name: professor.Professor.name,
+    }));
+  }
+
+  constructor(partial: Partial<LectureSectionResDto>) {
+    Object.assign(this, partial);
+  }
 }
 
-export class ExpandedLectureResDto
-  implements
-    Prisma.LectureGetPayload<{
-      include: {
-        LectureCode: true;
-        LectureSection: true;
+export class ExpandedLectureResDto implements ExpandedLecture {
+  @Exclude()
+  LectureCode: LectureCode[];
+
+  @Exclude()
+  LectureSection: Prisma.LectureSectionGetPayload<{
+    include: {
+      LectureSectionProfessor: {
+        include: {
+          Professor: true;
+        };
       };
-    }>
-{
+    };
+  }>[];
+
   @ApiProperty({
     example: 1,
     description: '강의 Id',
@@ -106,14 +122,26 @@ export class ExpandedLectureResDto
   name: string;
 
   @ApiProperty({
-    description: '강의 코드 정보',
-    type: [LectureCodeResDto],
+    example: ['EC2202, MM2203'],
+    description: '강의 코드',
   })
-  LectureCode: LectureCodeResDto[];
+  @Expose()
+  get lectureCode(): string[] {
+    return this.LectureCode.map((code) => code.code);
+  }
 
   @ApiProperty({
     description: '강의 section 정보',
     type: [LectureSectionResDto],
   })
-  LectureSection: LectureSectionResDto[];
+  @Expose()
+  get lectureSection(): LectureSectionResDto[] {
+    return this.LectureSection.map(
+      (section) => new LectureSectionResDto(section),
+    );
+  }
+
+  constructor(partial: Partial<ExpandedLectureResDto>) {
+    Object.assign(this, partial);
+  }
 }
