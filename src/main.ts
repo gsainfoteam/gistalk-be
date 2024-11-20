@@ -30,7 +30,7 @@ async function bootstrap() {
   // set swagger config
   const config = new DocumentBuilder()
     .setTitle('Gistalk API')
-    .setDescription('API Document for Gistalk backend')
+    .setDescription('API Document for Gistalk backend!')
     .setVersion(configService.getOrThrow('API_VERSION'))
     .addTag('Gistalk')
     .addOAuth2(
